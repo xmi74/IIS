@@ -29,6 +29,11 @@ Vytvorenie databazy pouzitim skriptu create_db
 python3 create_db.py
 ```
 
+Alebo prepisanie Database URI v app.py na inu MySql databazu
+```python
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:password123@localhost/animal_shelter'
+```
+
 ### Samotne spustenie:
 ```
 python3 app.py
