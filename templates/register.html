@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Register
+{% endblock %}
+
+{% block body %}
+<div class="container">
+    <h2 class="text-center">Register a new user</h2>
+
+    <form method="POST" action="{{ url_for('routes.register_page') }}">
+        {{ form.hidden_tag() }}
+        
+        <div class="form-group">
+            {{ form.login.label }} {{ form.login(class_='form-control') }}
+        </div>
+        <div class="form-group">
+            {{ form.first_name.label }} {{ form.first_name(class_='form-control') }}
+        </div>
+        <div class="form-group">
+            {{ form.last_name.label }} {{ form.last_name(class_='form-control') }}
+        </div>
+        <div class="form-group">
+            {{ form.email.label }} {{ form.email(class_='form-control') }}
+        </div>
+        <div class="form-group">
+            {{ form.password.label }} {{ form.password(class_='form-control') }}
+        </div>
+        <div class="form-group">
+            {{ form.confirm_password.label }} {{ form.confirm_password(class_='form-control') }}
+        </div>
+
+        <div class="form-group">
+            {{ form.submit(class_='btn btn-primary') }}
+        </div>
+    </form>
+
+    <h3 class="text-center mt-4">Existing Users</h3>
+    <ul class="list-group">
+        {% for user in users %}
+            <li class="list-group-item bg-dark text-white">
+                <div class="row align-items-center">
+                    <div class="col-md-3">{{ user.login }}</div>
+                    <div class="col-md-3">{{ user.first_name }}</div>
+                    <div class="col-md-3">{{ user.last_name }}</div>
+                    <div class="col-md-3">{{ user.role }}</div>
+                </div>
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

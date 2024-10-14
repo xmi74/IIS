@@ -1,0 +1,64 @@
+<!-- 
+Administrator Dashboard
+    Route: login (as admin) => admin_dashboard
+    Able to:
+        Manage Users (see, create, delete)
+        Add roles - vet, caretaker
+-->
+
+{% extends 'base.html' %}
+
+{% block title %}
+{% endblock %}
+
+{% block navtitle %}
+Admin Dashboard
+{% endblock %}
+
+{% block body %}
+<div class="container">    
+    <h3 class="text-center mt-4">Existing Users</h3>
+
+    <div class="table-responsive">
+        <table class="table table-dark table-striped">
+            <!-- Table Header -->
+            <thead>
+                <tr>
+                    <th scope="col">Login</th>
+                    <th scope="col">First Name</th>
+                    <th scope="col">Last Name</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Role</th>
+                    <th scope="col">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Iterate through users and display each one as a row -->
+                {% for user in users %}
+                <tr>
+                    <td>{{ user.login }}</td>
+                    <td>{{ user.first_name }}</td>
+                    <td>{{ user.last_name }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>
+                        <form method="POST" action="{{ url_for('routes.update_user_role', user_id=user.id) }}">
+                            <select class="form-control" name="new_role" onchange="this.form.submit()">
+                                <option value="admin" {% if user.role == 'admin' %} selected {% endif %}>Admin</option>
+                                <option value="caretaker" {% if user.role == 'caretaker' %} selected {% endif %}>Caretaker</option>
+                                <option value="vet" {% if user.role == 'vet' %} selected {% endif %}>Vet</option>
+                                <option value="volunteer" {% if user.role == 'volunteer' %} selected {% endif %}>Volunteer</option>
+                            </select>
+                        </form>
+                    </td>
+                    <td>
+                        <form method="POST" action="{{ url_for('routes.delete_user', user_id=user.id) }}">
+                            <button class="btn btn-danger btn-sm" type="submit">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

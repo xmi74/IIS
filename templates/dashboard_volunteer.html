@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Login
+{% endblock %}
+
+{% block navtitle %}
+Volunteer Dashboard
+{% endblock %}
+
+{% block body %}
+
+<div class="container">
+    <h2 class="text-center">TODO</h2>
+
+    <h3 class="mt-5">All Animals</h3>
+    <ul class="list-group">
+        {% for animal in animals %}
+            <li class="list-group-item bg-dark">
+                <div class="row align-items-center">
+                    <div class="col-auto">
+                        Name: <b>{{ animal.name }}</b><br>
+                        Age: <b>{{ animal.age }}</b><br>
+                        Species: <b>{{ animal.species }} </b><br>
+                    </div>
+                </div>            
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+
+{% endblock %}
