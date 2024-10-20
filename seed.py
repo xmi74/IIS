@@ -24,8 +24,8 @@ def seed_data(db):
     db.session.commit()
 
     # Vytvoření zvířat a přiřazení ke konkrétnímu pečovateli
-    animal1 = Animal(name='Bob', species='Dog', age=2, weight=30, birth_date=datetime(2020, 10, 1, 12, 0), photo='https://example.com/dog.jpg')
-    animal2 = Animal(name='Greg', species='Cat', age=1, weight=30, birth_date=datetime(2021, 10, 1, 12, 0), photo='https://example.com/cat.jpg')
+    animal1 = Animal(name='Bob', species='Dog', age=2, weight=30, birth_date=datetime(2020, 10, 1, 12, 0), photo='https://images.pexels.com/photos/5265677/pexels-photo-5265677.jpeg')
+    animal2 = Animal(name='Greg', species='Cat', age=1, weight=30, birth_date=datetime(2021, 10, 1, 12, 0), photo='https://images.pexels.com/photos/20787/pexels-photo.jpg')
 
     # Přidání zvířat do session
     db.session.add_all([animal1, animal2])

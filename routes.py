@@ -14,9 +14,23 @@ routes = Blueprint('routes', __name__)
 def home_page():
     return render_template('home.html')
 
-@routes.route('/animals')
+@routes.route('/animals', methods=['GET'])
 def animals_page():
-    return render_template('animals.html')
+    query = Animal.query
+
+    name = request.args.get('name')
+    age = request.args.get('age')
+    species = request.args.get('species')
+
+    if name:
+        query = query.filter(Animal.name.ilike(name))
+    if age:
+        query = query.filter_by(age=age)
+    if species:
+        query = query.filter_by(species=species)
+
+    animals = query.all()
+    return render_template('animals.html', animals=animals)
 
 @routes.route('/login', methods=['GET', 'POST'])
 def login_page():
