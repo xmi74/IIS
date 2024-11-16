@@ -7,12 +7,18 @@ from models.examination import Examination, PreventiveCheckUp, Request, Vaccinat
 from models.walk_schedule import WalkSchedule
 from forms.register import RegistrationForm
 from forms.login import LoginForm
+from forms.edit_user import EditUserForm
+from api.api_users import *
 
 routes = Blueprint('routes', __name__)
+
+################ HOME PAGE ################
 
 @routes.route('/')
 def home_page():
     return render_template('home.html')
+
+################ ANIMALS PAGE ################
 
 @routes.route('/animals', methods=['GET'])
 def animals_page():
@@ -31,6 +37,8 @@ def animals_page():
 
     animals = query.all()
     return render_template('animals.html', animals=animals)
+
+################ LOGIN PAGE ################
 
 @routes.route('/login', methods=['GET', 'POST'])
 def login_page():
@@ -62,6 +70,8 @@ def login_page():
             flash('Non existent user', 'danger')
 
     return render_template('login.html', form=form)
+
+################ REGISTER PAGE ################
 
 @routes.route('/register', methods=['GET', 'POST'])
 def register_page():
@@ -99,6 +109,8 @@ def register_page():
     users = User.query.all()
     return render_template('register.html', form=form, users=users)
 
+################ LOGOUT REDIRECTION ################
+
 @routes.route('/logout')
 def logout_page():
     logout_user() # flask_login builtin
@@ -106,35 +118,98 @@ def logout_page():
     return redirect(url_for('routes.home_page'))
 
 
-# DASHBOARDS based on roles
+#################################################
+#                DASHBOARD ADMIN                #
+#################################################
+
+################ BASIC DASHBOARD ################
 @routes.route('/dashboard_admin')
 def dashboard_admin_page():
-    users = User.query.all()
-    return render_template('dashboard_admin.html', users=users)
+    # users = get_users()
 
-@routes.route('/dashboard_admin/update_role/<int:user_id>', methods=['POST'])
-def update_user_role(user_id):
-    new_role = request.form.get("new_role")
-    user = User.query.get_or_404(user_id)
-    user.role = new_role
-    flash(f"Role for user {user.login} has been updated to {new_role}", 'success')
-    return redirect(url_for('routes.dashboard_admin_page'))
+    ################ FILTERING USERS ################
+    filters = {
+        'role': request.args.get('role'),
+        'login': request.args.get('login'),
+        'first_name': request.args.get('first_name'),
+        'last_name': request.args.get('last_name'),
+        'email': request.args.get('email')
+    }
 
-@routes.route('/dashboard_admin/delete_user/<int:user_id>', methods=['POST'])
-def delete_user(user_id):
-    user = User.query.get_or_404(user_id)
-    db.session.delete(user)
-    db.session.commit()
-    flash(f"User {user.login} has been deleted", 'success')
-    return redirect(url_for('routes.dashboard_admin_page'))
+    users=filter_users(filters)
+
+    role_format = {
+        "admin": "Admin",
+        "caretaker": "Caretaker",
+        "vet": "Vet",
+        "volunteer": "Volunteer"
+    }
+
+    ################ ADDING USERS ?? ################
+
+    return render_template('dashboard_admin.html', users=users, role_format=role_format)
+
+################ EDIT USER ################
+@routes.route('/dashboard_admin/edit_user/<int:user_id>', methods=['GET', 'POST'])
+def update_user_page(user_id):    
+    user = get_user(user_id)        
+    form = EditUserForm(obj=user)
+
+    if form.validate_on_submit():
+        # If Cancel button
+        if form.cancel.data:
+            return redirect(url_for('routes.dashboard_admin_page'))
+        
+        # If Delete button
+        if form.delete.data:
+            try:
+                delete_user(user_id)
+                flash(f"User {user_id} has been deleted successfully", 'success')
+            except Exception as e:
+                flash(f"Error deleting user: {str(e)}", "danger")
+
+            return redirect(url_for('routes.dashboard_admin_page'))
+
+        # Save button
+        data = {
+            'login': form.login.data,
+            'first_name': form.first_name.data,
+            'last_name': form.last_name.data,
+            'email': form.email.data,
+            'role': form.role.data
+        }
+
+        try:
+            edit_user(user_id, data)
+            flash(f"User {user_id} has been updated successfully", 'success')
+        except Exception as e:
+            flash(f"Error updating user: {str(e)}", "danger")
+        return redirect(url_for('routes.dashboard_admin_page'))
+    
+    return render_template('edit_user.html', form=form, user=user)        
+
+
+#################################################
+#                 DASHBOARD VET                 #
+#################################################
 
 @routes.route('/dashboard_vet')
 def dashboard_vet_page():
     return render_template('dashboard_vet.html')
 
+
+#################################################
+#              DASHBOARD CARETAKER              #
+#################################################
+
 @routes.route('/dashboard_caretaker')
 def dashboard_caretaker_page():
     return render_template('dashboard_caretaker.html')
+
+
+#################################################
+#              DASHBOARD VOLUNTEER              #
+#################################################
 
 @routes.route('/dashboard_volunteer')
 def dashboard_volunteer_page():

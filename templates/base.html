@@ -51,7 +51,12 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#"><b>{{ current_user.login }}</b></a>
+                    <a class="nav-link" href="{% if current_user.role == 'admin' %} {{ url_for('routes.dashboard_admin_page') }}
+                                              {% elif current_user.role == 'caretaker' %} {{ url_for('routes.dashboard_caretaker_page') }}
+                                              {% elif current_user.role == 'vet' %} {{ url_for('routes.dashboard_vet_page') }}
+                                              {% elif current_user.role == 'volunteer' %} {{ url_for('routes.dashboard_volunteer_page') }}
+                                              {% endif %}">
+                    <b>{{ current_user.login }}</b></a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{{ url_for('routes.logout_page') }}">Logout</a>

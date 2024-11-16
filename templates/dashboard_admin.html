@@ -1,14 +1,7 @@
-<!-- 
-Administrator Dashboard
-    Route: login (as admin) => admin_dashboard
-    Able to:
-        Manage Users (see, create, delete)
-        Add roles - vet, caretaker
--->
-
 {% extends 'base.html' %}
 
 {% block title %}
+Animal Shelter
 {% endblock %}
 
 {% block navtitle %}
@@ -19,42 +12,68 @@ Admin Dashboard
 <div class="container">    
     <h3 class="text-center mt-4">Existing Users</h3>
 
+    <!-- Filtering -->
+     <form method="GET" action="{{ url_for('routes.dashboard_admin_page') }}" class="mb-4">
+        <div class="form-row">
+            <div class="form-group col-md-2">
+                <input type="text" name="login" class="form-control" placeholder="Filter by Login">
+            </div>
+            <div class="form-group col-md-2">
+                <input type="text" name="first_name" class="form-control" placeholder="Filter by First Name">
+            </div>
+            <div class="form-group col-md-2">
+                <input type="text" name="last_name" class="form-control" placeholder="Filter by Last Name">
+            </div>            
+            <div class="form-group col-md-2">
+                <input type="text" name="email" class="form-control" placeholder="Filter by Last Name">
+            </div>
+            <select class="form-group col-md-2" name="role">
+                    <option value="">All Roles</option>
+                    <option value="admin" {% if request.args.get('role') == 'admin' %} selected {% endif %}>Admin</option>
+                    <option value="caretaker" {% if request.args.get('role') == 'caretaker' %} selected {% endif %}>Caretaker</option>
+                    <option value="vet" {% if request.args.get('role') == 'vet' %} selected {% endif %}>Vet</option>
+                    <option value="volunteer" {% if request.args.get('role') == 'volunteer' %} selected {% endif %}>Volunteer</option>
+            </select>
+            <!-- TODO: verification state -->
+            <!-- <select class="form-group col-md-2" name="role">
+                <option value="">Verification state</option>
+                <option value="">All</option>
+                <option value="admin" {% if request.args.get('verified') == 'verified' %} selected {% endif %}>Verified</option>
+                <option value="caretaker" {% if request.args.get('verified') == 'unverified' %} selected {% endif %}>Unverified</option>
+                
+            </select> -->
+
+            <div class="form-group col-md-1">
+                <button type="submit" class="btn btn-primary">Filter</button>
+            </div>
+        </div>
+     </form>
+
     <div class="table-responsive">
         <table class="table table-dark table-striped">
             <!-- Table Header -->
             <thead>
                 <tr>
+                    <th scope="col">ID</th>
                     <th scope="col">Login</th>
                     <th scope="col">First Name</th>
                     <th scope="col">Last Name</th>
                     <th scope="col">Email</th>
                     <th scope="col">Role</th>
-                    <th scope="col">Actions</th>
+                    <th scope="col">Action</th>
                 </tr>
             </thead>
             <tbody>
                 <!-- Iterate through users and display each one as a row -->
                 {% for user in users %}
                 <tr>
+                    <td>{{ user.id }}</td>
                     <td>{{ user.login }}</td>
                     <td>{{ user.first_name }}</td>
                     <td>{{ user.last_name }}</td>
                     <td>{{ user.email }}</td>
-                    <td>
-                        <form method="POST" action="{{ url_for('routes.update_user_role', user_id=user.id) }}">
-                            <select class="form-control" name="new_role" onchange="this.form.submit()">
-                                <option value="admin" {% if user.role == 'admin' %} selected {% endif %}>Admin</option>
-                                <option value="caretaker" {% if user.role == 'caretaker' %} selected {% endif %}>Caretaker</option>
-                                <option value="vet" {% if user.role == 'vet' %} selected {% endif %}>Vet</option>
-                                <option value="volunteer" {% if user.role == 'volunteer' %} selected {% endif %}>Volunteer</option>
-                            </select>
-                        </form>
-                    </td>
-                    <td>
-                        <form method="POST" action="{{ url_for('routes.delete_user', user_id=user.id) }}">
-                            <button class="btn btn-danger btn-sm" type="submit">Delete</button>
-                        </form>
-                    </td>
+                    <td>{{ role_format[user.role] }}</td>
+                    <td><a href="{{ url_for('routes.update_user_page', user_id=user.id) }}" class="btn btn-info btn-sm">Edit</a></td>                    
                 </tr>
                 {% endfor %}
             </tbody>
