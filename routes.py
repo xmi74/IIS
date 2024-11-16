@@ -1,6 +1,8 @@
+from dns.dnssec import validate
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_user, logout_user, login_required
 from __init__ import db
+from controllers.user_controller import UserController
 from models.user import User, Admin, Caretaker, Volunteer, Vet
 from models.animal import Animal
 from models.examination import Examination, PreventiveCheckUp, Request, Vaccination
@@ -197,14 +199,23 @@ def update_user_page(user_id):
 def dashboard_vet_page():
     return render_template('dashboard_vet.html')
 
-
-#################################################
-#              DASHBOARD CARETAKER              #
-#################################################
-
-@routes.route('/dashboard_caretaker')
+@routes.route('/dashboard_caretaker', methods=['GET', 'POST'])
+@login_required
 def dashboard_caretaker_page():
-    return render_template('dashboard_caretaker.html')
+    user_controller = UserController()
+
+    #POST
+    if request.method == 'POST':
+        user_id = request.form.get('user_id')
+        validate = eval(request.form.get('validate'))
+        print(user_id)
+        print(validate)
+        user_controller.valideteVolunteer(user_id,validate)
+        return redirect(url_for('routes.dashboard_caretaker_page'))
+
+    # GET
+    users = user_controller.getVolunteers()
+    return render_template('caretaker/verify_users.html', users=users)
 
 
 #################################################
