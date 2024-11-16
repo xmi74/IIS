@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Caretaker
+{% endblock %}
+
+{% block navtitle %}
+Caretaker Dashboard
+{% endblock %}
+
+{% block body %}
+
+<div class="container-fluid ">
+     <div class="row">
+          <div class="col-2 bg-dark">
+               <ul class="nav flex-column">
+                    <li class="nav-item">
+                         <a class="nav-link"  href="#">Active</a>
+                    </li>
+                    <li class="nav-item">
+                         <a class="nav-link" href="#">Link</a>
+                    </li>
+                    <li class="nav-item">
+                         <a class="nav-link" href="#">Link</a>
+                    </li>
+                    <li class="nav-item">
+                         <a class="nav-link disabled" aria-disabled="true">Disabled</a>
+                    </li>
+               </ul>
+          </div>
+
+          <div class="col text-center">
+               {% block content %}
+               {% endblock %}
+          </div>
+     </div>
+</div>
+
+
+{% endblock %}
