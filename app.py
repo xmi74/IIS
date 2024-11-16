@@ -23,6 +23,9 @@ def create_app():
     # Register blueprints
     from routes import routes
     app.register_blueprint(routes)
+    # Register API
+    from api import api
+    app.register_blueprint(api)
 
     # Create tables and seed data if necessary
     with app.app_context():

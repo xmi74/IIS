@@ -13,8 +13,8 @@
                 <div class="form-group col-md-2">
                     <input type="text" name="name" class="form-control" placeholder="Filter by Name">
                 </div>
-                <div class="form-group col-md-2">
-                    <input type="number" name="age" class="form-control" placeholder="Filter by Age">
+                <!-- <div class="form-group col-md-2">
+                    <input type="number" name="age" class="form-control" placeholder="Filter by Age"> -->
                 </div>
                 <select class="form-group col-md-2" name="species">
                         <option value="">All Species</option>
@@ -36,7 +36,7 @@
                         <h5 class="card-title" style="color: rgb(3, 73, 3)">{{ animal.name }}</h5>
                         <p class="card-text" style="color: rgb(12, 12, 122)">
                             <i class="fas fa-birthday-cake"></i> 
-                            {{ animal.age }} {{ 'year' if animal.age == 1 else 'years' }} old <br>
+                            <!-- {{ animal.age }} {{ 'year' if animal.age == 1 else 'years' }} old <br> -->
                             <i class="fas fa-weight"></i> {{ animal.weight }} kg <br>
                             <i class="fas fa-paw"></i> {{ animal.species }}
                         </p>

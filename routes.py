@@ -19,13 +19,13 @@ def animals_page():
     query = Animal.query
 
     name = request.args.get('name')
-    age = request.args.get('age')
+    # age = request.args.get('age')
     species = request.args.get('species')
 
     if name:
         query = query.filter(Animal.name.ilike(name))
-    if age:
-        query = query.filter_by(age=age)
+    # if age:
+    #     query = query.filter_by(age=age)
     if species:
         query = query.filter_by(species=species)
 
