@@ -31,7 +31,9 @@
             {% for animal in animals %}
             <div class="col-md-4 mb-4">
                 <div class="card">
-                    <img src="{{ animal.photo or 'https://via.placeholder.com/300' }}" class="card-img-top" alt="{{ animal.name }}">
+                    <div class="embed-responsive embed-responsive-4by3">
+                        <img src="{{ animal.photo or 'https://via.placeholder.com/300' }}" class="card-img-top embed-responsive-item" alt="{{ animal.name }}">
+                    </div>
                     <div class="card-body">
                         <h5 class="card-title" style="color: rgb(3, 73, 3)">{{ animal.name }}</h5>
                         <p class="card-text" style="color: rgb(12, 12, 122)">

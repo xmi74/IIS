@@ -1,0 +1,28 @@
+{% extends 'caretaker/dashboard_caretaker_base.html' %}
+
+{% block content %}
+<h3>{{edit.title}} Animal</h3>
+<form method="POST" action="{{ url_for(edit.route, animal_id=animal_id) }}">
+    {{ form.hidden_tag() }}
+    <div class="form-group">
+        {{ form.name.label }} {{ form.name(class="form-control") }}
+    </div>
+    <div class="form-group">
+        {{ form.species.label }} {{ form.species(class="form-control") }}
+    </div>
+    <div class="form-group">
+        {{ form.weight.label }} {{ form.weight(class="form-control") }}
+    </div>
+    <div class="form-group">
+        {{ form.birth_date.label }} {{ form.birth_date(class="form-control") }}
+    </div>
+    <div class="form-group">
+        {{ form.photo.label }} {{ form.photo(class="form-control") }}
+    </div>
+    <div class="form-group">
+        {{ form.submit(class="btn btn-primary") }}
+        {{ form.cancel(class="btn btn-secondary") }}
+        {{ form.delete(class="btn btn-danger") }}
+    </div>
+    </form>
+{% endblock %}

@@ -1,0 +1,59 @@
+{% extends 'caretaker/dashboard_caretaker_base.html' %}
+
+{% block content %}
+<div class="container">
+        <h3>Animals</h3>
+
+        <div class="row">
+            <form method="GET" action="{{ url_for('routes.animals_caretaker_page') }}" class="col-11">
+                <div class="form-row">
+                    <div class="form-group col-md-2">
+                        <input type="text" name="name" class="form-control" placeholder="Filter by Name">
+                    </div>
+                    <select class="form-group col-md-2" name="species">
+                        <option value="">All Species</option>
+                        {% for specie in species %}
+                        <option value="{{specie}}">{{specie.capitalize()}}</option>
+                        {% endfor %}
+                    </select>
+                    <div class="form-group col-md-1">
+                        <button type="submit" class="btn btn-primary">Filter</button>
+                    </div>
+                </div>
+            </form>
+
+            <form action="{{ url_for('routes.animals_add_page') }}" method="get" class="col-1">
+                <div class="form-group col-md-1">
+                    <button type="submit" class="btn btn-success">Add</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="row">
+            {% for animal in animals %}
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <div class="embed-responsive embed-responsive-4by3">
+                        <img src="{{ animal.photo or 'https://via.placeholder.com/300' }}" class="card-img-top embed-responsive-item" alt="{{ animal.name }}">
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title" style="color: rgb(3, 73, 3)">{{ animal.name }}</h5>
+                        <p class="card-text" style="color: rgb(12, 12, 122)">
+                            <i class="fas fa-birthday-cake"></i>
+                            <i class="fas fa-weight"></i> {{ animal.weight }} kg <br>
+                            <i class="fas fa-paw"></i> {{ animal.species }}
+                        </p>
+                        <p class="card-text" style="color: black">
+                            {{ animal.description or 'No description available.' }}
+                        </p>
+
+                        <form method="get" action="{{ url_for('routes.animals_edit_page', animal_id=animal.id) }}">
+                        <button class="btn btn-primary btn-outline" type="submit">Edit</button>
+                    </form>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

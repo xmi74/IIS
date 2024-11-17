@@ -2,7 +2,8 @@ from dns.dnssec import validate
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_user, logout_user, login_required
 from __init__ import db
-from controllers.user_controller import UserController
+from api.api_animals import get_animals, get_animal, add_animal, edit_animal, delete_animal
+from forms.edit_animal import EditAnimalForm
 from models.user import User, Admin, Caretaker, Volunteer, Vet
 from models.animal import Animal
 from models.examination import Examination, PreventiveCheckUp, Request, Vaccination
@@ -206,7 +207,6 @@ def dashboard_vet_page():
 @routes.route('/dashboard_caretaker', methods=['GET', 'POST'])
 @login_required
 def dashboard_caretaker_page():
-    # user_controller = UserController()
 
     #POST
     if request.method == 'POST':
@@ -222,7 +222,97 @@ def dashboard_caretaker_page():
     users = filter_users(volunteer_filter)
     return render_template('caretaker/verify_users.html', users=users)
 
+@routes.route('/caretaker/animals', methods=['GET', 'POST'])
+@login_required
+def animals_caretaker_page():
 
+    #GET
+    animals = get_animals()
+    species = set()
+    for animal in animals:
+        species.add(animal.species)
+    return render_template('caretaker/animals.html', animals=animals, species=species)
+
+@routes.route('/caretaker/animals/add', methods=['GET', 'POST'])
+@login_required
+def animals_add_page():
+    edit = {
+        'title': 'Add',
+        'route': 'routes.animals_add_page',
+    }
+    form = EditAnimalForm()
+
+    #POST
+    if form.validate_on_submit():
+        # Cancel button or delete button
+        if form.cancel.data or form.delete.data:
+            return redirect(url_for('routes.animals_caretaker_page'))
+
+        # Save button
+        data = {
+            'name': form.name.data,
+            'species': form.species.data,
+            'weight': form.weight.data,
+            'birth_date': form.birth_date.data,
+            'photo': form.photo.data
+        }
+
+        try:
+            animal = add_animal(data)
+            flash(f"User {animal.name} has been updated successfully", 'success')
+        except Exception as e:
+            flash(f"Error updating user: {str(e)}", "danger")
+        return redirect(url_for('routes.animals_caretaker_page'))
+
+    #GET
+    return render_template('caretaker/edit_animal.html', edit = edit, form=form)
+
+@routes.route('/caretaker/animals/edit/<int:animal_id>', methods=['GET', 'POST'])
+@login_required
+def animals_edit_page(animal_id):
+    edit = {
+        'title': 'Edit',
+        'route': 'routes.animals_edit_page',
+    }
+    animal = get_animal(animal_id)
+    print(type(animal.birth_date))
+    form = EditAnimalForm(obj=animal)
+
+    # POST
+    if form.validate_on_submit():
+        # Cancel button
+        if form.cancel.data:
+            return redirect(url_for('routes.animals_caretaker_page'))
+
+        # Delete button
+        if form.delete.data:
+            try:
+                delete_animal(animal_id)
+                flash(f"User {animal.name} has been deleted successfully", 'success')
+            except Exception as e:
+                flash(f"Error deleting user: {str(e)}", "danger")
+
+            return redirect(url_for('routes.animals_caretaker_page'))
+
+        # Save button
+        print(f"submitted type: {type(form.birth_date.data)}")
+        data = {
+            'name': form.name.data,
+            'species': form.species.data,
+            'weight': form.weight.data,
+            'birth_date': form.birth_date.data,
+            'photo': form.photo.data
+        }
+
+        try:
+            animal = edit_animal(animal_id ,data)
+            flash(f"User {animal.name} has been updated successfully", 'success')
+        except Exception as e:
+            flash(f"Error updating user: {str(e)}", "danger")
+        return redirect(url_for('routes.animals_caretaker_page'))
+
+    #GET
+    return render_template('caretaker/edit_animal.html', edit = edit, form=form, animal_id=animal_id)
 #################################################
 #              DASHBOARD VOLUNTEER              #
 #################################################
