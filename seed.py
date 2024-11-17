@@ -1,4 +1,6 @@
 from datetime import datetime
+
+from models.enums.schedule_state import ScheduleState
 from models.user import Admin, Vet, Caretaker, Volunteer
 from models.animal import Animal
 from models.walk_schedule import WalkSchedule
@@ -41,8 +43,8 @@ def seed_data(db):
     db.session.commit()
 
     # Vytvoření rozvrhu pro procházky
-    schedule1 = WalkSchedule(start_time=datetime(2024, 10, 6, 12, 0), end_time=datetime(2024, 10, 6, 13, 0), description='Morning walk', state='Free', animal_id=animal1.id, caretaker_id=caretaker1.id)
-    schedule2 = WalkSchedule(start_time=datetime(2024, 10, 7, 12, 0), end_time=datetime(2024, 10, 7, 13, 0), description='Evening walk', state='Free', animal_id=animal2.id, caretaker_id=caretaker1.id)
+    schedule1 = WalkSchedule(start_time=datetime(2024, 10, 6, 12, 0), end_time=datetime(2024, 10, 6, 13, 0), description='Morning walk', state=ScheduleState.FREE.value, animal_id=animal1.id, caretaker_id=caretaker1.id)
+    schedule2 = WalkSchedule(start_time=datetime(2024, 10, 7, 12, 0), end_time=datetime(2024, 10, 7, 13, 0), description='Evening walk', state=ScheduleState.FREE.value, animal_id=animal2.id, caretaker_id=caretaker1.id)
 
     # Přidání rozvrhu do session
     db.session.add_all([schedule1, schedule2])

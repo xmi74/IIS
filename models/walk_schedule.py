@@ -1,6 +1,7 @@
 from __init__ import db
 from datetime import datetime
 from sqlalchemy.orm import relationship
+from models.enums.schedule_state import ScheduleState
 
 class WalkSchedule(db.Model):
     __tablename__ = 'walk_schedules'
@@ -8,7 +9,7 @@ class WalkSchedule(db.Model):
     start_time = db.Column(db.DateTime(), default=datetime.utcnow, nullable=False)
     end_time = db.Column(db.DateTime(), nullable=False)
     description = db.Column(db.String(255), nullable=True)
-    state = db.Column(db.String(20), nullable=False, default='Reservable') # ENUM
+    state = db.Column(db.String(20), nullable=False, default=ScheduleState.FREE.value) # ENUM
 
     animal_id = db.Column(db.Integer(), db.ForeignKey('animals.id', ondelete="CASCADE"), nullable=False)
     caretaker_id = db.Column(db.Integer(), db.ForeignKey('users.id', ondelete="CASCADE"), nullable=False)
