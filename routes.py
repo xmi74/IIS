@@ -212,8 +212,6 @@ def dashboard_caretaker_page():
     if request.method == 'POST':
         user_id = request.form.get('user_id')
         validate = eval(request.form.get('validate'))
-        print(user_id)
-        print(validate)
         edit_user_verified(user_id,validate)
         return redirect(url_for('routes.dashboard_caretaker_page'))
 
@@ -275,7 +273,6 @@ def animals_edit_page(animal_id):
         'route': 'routes.animals_edit_page',
     }
     animal = get_animal(animal_id)
-    print(type(animal.birth_date))
     form = EditAnimalForm(obj=animal)
 
     # POST
@@ -295,7 +292,6 @@ def animals_edit_page(animal_id):
             return redirect(url_for('routes.animals_caretaker_page'))
 
         # Save button
-        print(f"submitted type: {type(form.birth_date.data)}")
         data = {
             'name': form.name.data,
             'species': form.species.data,
