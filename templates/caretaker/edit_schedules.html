@@ -1,0 +1,22 @@
+{% extends 'caretaker/dashboard_caretaker_base.html' %}
+
+{% block content %}
+<h3>Edit Schedule</h3>
+<form method="POST" action="{{ url_for('routes.schedules_edit_page', schedule_id=schedule_id) }}">
+    {{ form.hidden_tag() }}
+    <div class="form-group">
+        {{ form.start_time.label }} {{ form.start_time(class="form-control") }}
+    </div>
+    <div class="form-group">
+        {{ form.end_time.label }} {{ form.end_time(class="form-control") }}
+    </div>
+    <div class="form-group">
+        {{ form.state.label }} {{ form.state(class="form-control") }}
+    </div>
+    <div class="form-group">
+        {{ form.submit(class="btn btn-primary") }}
+        {{ form.cancel(class="btn btn-secondary") }}
+        {{ form.delete(class="btn btn-danger") }}
+    </div>
+    </form>
+{% endblock %}

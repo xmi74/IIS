@@ -47,9 +47,9 @@
                             {{ animal.description or 'No description available.' }}
                         </p>
 
-                        <form method="get" action="{{ url_for('routes.animals_edit_page', animal_id=animal.id) }}">
-                        <button class="btn btn-primary btn-outline" type="submit">Edit</button>
-                    </form>
+                        <a href="{{ url_for('routes.animals_edit_page', animal_id=animal.id) }}" class="btn btn-info btn-md" >Edit</a>
+                        <a href="{{ url_for('routes.animal_schedules_page', animal_id=animal.id) }}" class="btn btn-info btn-md">Schedules</a>
+
                     </div>
                 </div>
             </div>

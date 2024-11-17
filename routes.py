@@ -3,7 +3,9 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_user, logout_user, login_required
 from __init__ import db
 from api.api_animals import get_animals, get_animal, add_animal, edit_animal, delete_animal
+from api.api_schedules import get_animal_schedules, get_schedule, delete_schedule, edit_schedule
 from forms.edit_animal import EditAnimalForm
+from forms.edit_schedules import EditSchedules
 from models.user import User, Admin, Caretaker, Volunteer, Vet
 from models.animal import Animal
 from models.examination import Examination, PreventiveCheckUp, Request, Vaccination
@@ -224,8 +226,6 @@ def dashboard_caretaker_page():
 @login_required
 def animals_caretaker_page():
     filters = dict()
-    # if 'name' in request.args: filters['name'] =  request.args.get('name')
-    # if 'species' in filters: filters['species'] = request.args.get('species')
     filters['name'] = request.args.get('name') or None
     filters['species'] = request.args.get('species') or None
 
@@ -313,6 +313,53 @@ def animals_edit_page(animal_id):
 
     #GET
     return render_template('caretaker/edit_animal.html', edit = edit, form=form, animal_id=animal_id)
+
+@routes.route('/caretaker/animals/<int:animal_id>/schedules', methods=['GET', 'POST'])
+@login_required
+def animal_schedules_page(animal_id):
+
+    #GET
+    schedules = get_animal_schedules(animal_id)
+    return render_template('caretaker/schedules.html', schedules=schedules)
+@routes.route('/caretaker/schedules/edit/<int:schedule_id>', methods=['GET', 'POST'])
+def schedules_edit_page(schedule_id):
+    schedule = get_schedule(schedule_id)
+    form = EditSchedules(obj=schedule)
+
+    # POST
+    if form.validate_on_submit():
+        # Cancel button
+        if form.cancel.data:
+            return redirect(url_for('routes.animal_schedules_page', animal_id=schedule.animal_id))
+
+        # Delete button
+        if form.delete.data:
+            try:
+                delete_schedule(schedule_id)
+
+                flash(f"Schedule has been deleted successfully", 'success')
+            except Exception as e:
+                flash(f"Error deleting schedule: {str(e)}", "danger")
+
+            return redirect(url_for('routes.animal_schedules_page', animal_id=schedule.animal_id))
+
+        # Save button
+        data = {
+            'start_time': form.start_time.data,
+            'end_time': form.end_time.data,
+            'state': form.state.data,
+        }
+
+        try:
+            edit_schedule(schedule_id, data)
+            flash(f"Schedule has been updated successfully", 'success')
+        except Exception as e:
+            flash(f"Error updating schedule: {str(e)}", "danger")
+            print(str(e))
+        return redirect(url_for('routes.animal_schedules_page', animal_id=schedule.animal_id))
+
+    #GET
+    return render_template('caretaker/edit_schedules.html', form=form, schedule_id=schedule_id)
 #################################################
 #              DASHBOARD VOLUNTEER              #
 #################################################
