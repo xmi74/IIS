@@ -1,10 +1,21 @@
+from re import search
+
 from models.animal import Animal
 from __init__ import db
 
 
 #READ ALL
-def get_animals():
-    return Animal.query.all()
+def get_animals(filters=None):
+    query = Animal.query
+
+    if 'name' in filters and filters['name'] is not None:
+        name = '%{}%'.format(filters['name'])
+        query = query.filter(Animal.name.like(name))
+
+    if 'species' in filters and filters['species'] is not None:
+        query = query.filter(Animal.species == filters['species'])
+
+    return query.all()
 
 #READ ONE
 def get_animal(id):

@@ -220,12 +220,16 @@ def dashboard_caretaker_page():
     users = filter_users(volunteer_filter)
     return render_template('caretaker/verify_users.html', users=users)
 
-@routes.route('/caretaker/animals', methods=['GET', 'POST'])
+@routes.route('/caretaker/animals', methods=['GET'])
 @login_required
 def animals_caretaker_page():
+    filters = dict()
+    # if 'name' in request.args: filters['name'] =  request.args.get('name')
+    # if 'species' in filters: filters['species'] = request.args.get('species')
+    filters['name'] = request.args.get('name') or None
+    filters['species'] = request.args.get('species') or None
 
-    #GET
-    animals = get_animals()
+    animals = get_animals(filters)
     species = set()
     for animal in animals:
         species.add(animal.species)
