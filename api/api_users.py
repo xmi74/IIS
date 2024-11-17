@@ -77,7 +77,7 @@ def edit_user_email(user_id, new_email):
 # EDIT VERIFIED STATUS
 def edit_user_verified(user_id, new_verified):
     user = User.query.get_or_404(user_id)
-    edit_user_verified = new_verified
+    user.verified = new_verified
     db.session.commit()
 
 # EDIT ROLE

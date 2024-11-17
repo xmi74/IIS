@@ -199,10 +199,14 @@ def update_user_page(user_id):
 def dashboard_vet_page():
     return render_template('dashboard_vet.html')
 
+#######################################################
+#                 DASHBOARD CARETAKER                 #
+#######################################################
+
 @routes.route('/dashboard_caretaker', methods=['GET', 'POST'])
 @login_required
 def dashboard_caretaker_page():
-    user_controller = UserController()
+    # user_controller = UserController()
 
     #POST
     if request.method == 'POST':
@@ -210,11 +214,12 @@ def dashboard_caretaker_page():
         validate = eval(request.form.get('validate'))
         print(user_id)
         print(validate)
-        user_controller.valideteVolunteer(user_id,validate)
+        edit_user_verified(user_id,validate)
         return redirect(url_for('routes.dashboard_caretaker_page'))
 
     # GET
-    users = user_controller.getVolunteers()
+    volunteer_filter = {'role': 'volunteer'}
+    users = filter_users(volunteer_filter)
     return render_template('caretaker/verify_users.html', users=users)
 
 
