@@ -2,6 +2,9 @@
 
 {% block content %}
 <h3>Schedules</h3>
+<div class="col-1 my-2">
+    <a href="{{ url_for('routes.schedules_add_page' , animal_id=animal_id) }}" class="btn btn-success ">Add</a>
+</div>
 <table class="table table-hover table-dark">
     <thead>
         <tr>

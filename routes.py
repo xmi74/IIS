@@ -3,7 +3,9 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_user, logout_user, login_required
 from __init__ import db
 from api.api_animals import get_animals, get_animal, add_animal, edit_animal, delete_animal
-from api.api_schedules import get_animal_schedules, get_schedule, delete_schedule, edit_schedule
+from api.api_schedules import get_animal_schedules, get_schedule, delete_schedule, edit_schedule, create_schedule
+from forms import edit_schedules
+from forms.add_schedule import AddSchedule
 from forms.edit_animal import EditAnimalForm
 from forms.edit_schedules import EditSchedules
 from models.user import User, Admin, Caretaker, Volunteer, Vet
@@ -310,14 +312,16 @@ def animals_edit_page(animal_id):
     #GET
     return render_template('caretaker/edit_animal.html', edit = edit, form=form, animal_id=animal_id)
 
-@routes.route('/caretaker/animals/<int:animal_id>/schedules', methods=['GET', 'POST'])
+@routes.route('/caretaker/animals/<int:animal_id>/schedules', methods=['GET'])
 @login_required
 def animal_schedules_page(animal_id):
 
     #GET
     schedules = get_animal_schedules(animal_id)
-    return render_template('caretaker/schedules.html', schedules=schedules)
+    return render_template('caretaker/schedules.html', schedules=schedules, animal_id=animal_id)
+
 @routes.route('/caretaker/schedules/edit/<int:schedule_id>', methods=['GET', 'POST'])
+@login_required
 def schedules_edit_page(schedule_id):
     schedule = get_schedule(schedule_id)
     form = EditSchedules(obj=schedule)
@@ -353,6 +357,39 @@ def schedules_edit_page(schedule_id):
 
     #GET
     return render_template('caretaker/edit_schedules.html', form=form, schedule=schedule)
+
+@routes.route('/caretaker/animal/<int:animal_id>/add', methods=['GET', 'POST'])
+@login_required
+def schedules_add_page(animal_id):
+    form = AddSchedule()
+
+    #POST
+    if form.validate_on_submit():
+        #DELETE
+        if form.delete.data:
+            return redirect(url_for('routes.animal_schedules_page', animal_id=animal_id))
+
+        #SAVE
+        #TODO REPEAT
+        data = {
+            'date': form.date.data,
+            'start_time': form.start_time.data,
+            'end_time': form.end_time.data,
+            'state': form.state.data,
+            'animal_id': animal_id,
+        }
+
+        try:
+            create_schedule(data)
+            flash(f"Schedule has been created successfully", 'success')
+        except Exception as e:
+            flash(f"Error creating schedule: {str(e)}", "danger")
+            print(str(e))
+        return redirect(url_for('routes.animal_schedules_page', animal_id=animal_id))
+
+    #GET
+    return render_template('caretaker/add_schedule.html', form=form, animal_id=animal_id)
+
 #################################################
 #              DASHBOARD VOLUNTEER              #
 #################################################

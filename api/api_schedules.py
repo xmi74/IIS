@@ -18,13 +18,20 @@ def delete_schedule(schedule_id):
     return schedule
 
 #CREATE
-#TODO
 def create_schedule(schedule):
-    raise NotImplemented
+    new_schedule = WalkSchedule(
+        date=schedule.get('date'),
+        start_time=schedule.get('start_time'),
+        end_time=schedule.get('end_time'),
+        animal_id=schedule.get('animal_id'),
+        state=schedule.get('state'),
+    )
+    db.session.add(new_schedule)
+    db.session.commit()
+    return new_schedule
 
 #EDIT
 def edit_schedule(id, new_schedule):
-    print(new_schedule)
     schedule = WalkSchedule.query.get_or_404(id)
     schedule.date = new_schedule.get('date')
     schedule.start_time = new_schedule.get('start_time')
