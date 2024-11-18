@@ -21,7 +21,7 @@
     </div>
     <div class="form-group">
         {{ form.submit(class="btn btn-primary") }}
-        {{ form.cancel(class="btn btn-secondary") }}
+        <a href="{{ url_for('routes.animals_caretaker_page') }}" class="btn btn-secondary">Cancel</a>
         {{ form.delete(class="btn btn-danger") }}
     </div>
     </form>

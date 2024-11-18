@@ -15,5 +15,4 @@ class EditSchedules(FlaskForm):
                         )
 
     submit = SubmitField('Save')
-    cancel = SubmitField('Cancel')
     delete = SubmitField('Delete')

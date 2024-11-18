@@ -16,5 +16,4 @@ class EditAnimalForm(FlaskForm):
     photo = StringField('Photo', validators=[])
 
     submit = SubmitField('Save')
-    cancel = SubmitField('Cancel')
     delete = SubmitField('Delete')

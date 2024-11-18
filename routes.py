@@ -359,7 +359,7 @@ def schedules_edit_page(schedule_id):
         return redirect(url_for('routes.animal_schedules_page', animal_id=schedule.animal_id))
 
     #GET
-    return render_template('caretaker/edit_schedules.html', form=form, schedule_id=schedule_id)
+    return render_template('caretaker/edit_schedules.html', form=form, schedule=schedule)
 #################################################
 #              DASHBOARD VOLUNTEER              #
 #################################################
