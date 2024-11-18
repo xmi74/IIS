@@ -5,6 +5,9 @@
 <form method="POST" action="{{ url_for('routes.schedules_edit_page', schedule_id=schedule.id) }}">
     {{ form.hidden_tag() }}
     <div class="form-group">
+        {{ form.date.label }} {{form.date(clss="form-control") }}
+    </div>
+    <div class="form-group">
         {{ form.start_time.label }} {{ form.start_time(class="form-control") }}
     </div>
     <div class="form-group">

@@ -24,7 +24,9 @@ def create_schedule(schedule):
 
 #EDIT
 def edit_schedule(id, new_schedule):
+    print(new_schedule)
     schedule = WalkSchedule.query.get_or_404(id)
+    schedule.date = new_schedule.get('date')
     schedule.start_time = new_schedule.get('start_time')
     schedule.end_time = new_schedule.get('end_time')
     schedule.state = new_schedule.get('state')

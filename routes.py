@@ -246,8 +246,8 @@ def animals_add_page():
 
     #POST
     if form.validate_on_submit():
-        # Cancel button or delete button
-        if form.cancel.data or form.delete.data:
+        # Delete button
+        if form.delete.data:
             return redirect(url_for('routes.animals_caretaker_page'))
 
         # Save button
@@ -281,10 +281,6 @@ def animals_edit_page(animal_id):
 
     # POST
     if form.validate_on_submit():
-        # Cancel button
-        if form.cancel.data:
-            return redirect(url_for('routes.animals_caretaker_page'))
-
         # Delete button
         if form.delete.data:
             try:
@@ -328,10 +324,6 @@ def schedules_edit_page(schedule_id):
 
     # POST
     if form.validate_on_submit():
-        # Cancel button
-        if form.cancel.data:
-            return redirect(url_for('routes.animal_schedules_page', animal_id=schedule.animal_id))
-
         # Delete button
         if form.delete.data:
             try:
@@ -345,6 +337,7 @@ def schedules_edit_page(schedule_id):
 
         # Save button
         data = {
+            'date': form.date.data,
             'start_time': form.start_time.data,
             'end_time': form.end_time.data,
             'state': form.state.data,
