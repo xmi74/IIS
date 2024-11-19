@@ -42,15 +42,4 @@ class PreventiveCheckUp(Examination):
         'polymorphic_identity': 'preventive_checkup'
     }
 
-class Request(Examination):
-    __tablename__ = 'requests'
-    id = db.Column(db.Integer(), db.ForeignKey('examinations.id'), primary_key=True)
-    
-    caretaker_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete="CASCADE"), nullable=False)
 
-    caretaker = relationship("Caretaker", back_populates="requests", foreign_keys=[caretaker_id])  # Použitie reťazca pre vzťah
-
-    __mapper_args__ = {
-        'polymorphic_identity': 'request'
-    }
-    

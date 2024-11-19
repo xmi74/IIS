@@ -4,7 +4,8 @@ from models.enums.schedule_state import ScheduleState
 from models.user import Admin, Vet, Caretaker, Volunteer
 from models.animal import Animal
 from models.walk_schedule import WalkSchedule
-from models.examination import Examination, Vaccination, PreventiveCheckUp, Request
+from models.examination import Examination, Vaccination, PreventiveCheckUp
+from models.request import Request
 from models.enums.vaccination_type import VaccinationType
 from models.metadata import Metadata
 # from db import db
@@ -36,10 +37,23 @@ def seed_data(db):
     # Vytvoření záznamů o zdravotních prohlídkách
     vaccination1 = Vaccination(date=datetime(2024, 10, 6, 12, 0), description='Rabies vaccination', type='vaccination', animal_id=animal1.id, vet_id=vet1.id, vaccination_type=VaccinationType.RABIES.value)
     checkup1 = PreventiveCheckUp(date=datetime(2024, 10, 6, 15, 0), description='General health checkup', type='checkup', animal_id=animal2.id, vet_id=vet1.id)
-    request1 = Request(date=datetime(2024, 10, 5, 10, 0), description='Check for ticks', animal_id=animal1.id, type='request', vet_id=vet1.id, caretaker_id=caretaker1.id)
+    db.session.add_all([vaccination1, checkup1])
+    db.session.commit()
+
+    request1 = Request(
+        description="Animal needs a preventive checkup",
+        caretaker_id=caretaker1.id,
+        animal_id=animal1.id,
+        vet_id=vet1.id)
+    
+    request2 = Request(
+        description="Animal needs to get checked for ticks",
+        caretaker_id=caretaker1.id,
+        animal_id=animal2.id,
+        vet_id=vet1.id)
 
     # Přidání záznamů do session
-    db.session.add_all([vaccination1, checkup1, request1])
+    db.session.add_all([request1, request2])
     db.session.commit()
 
     # Vytvoření rozvrhu pro procházky
