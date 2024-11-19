@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from __init__ import db
 from models.walk_schedule import WalkSchedule
 
@@ -25,10 +27,23 @@ def create_schedule(schedule):
         end_time=schedule.get('end_time'),
         animal_id=schedule.get('animal_id'),
         state=schedule.get('state'),
+        caretaker_id=schedule.get('caretaker_id'),
     )
     db.session.add(new_schedule)
     db.session.commit()
     return new_schedule
+
+#CREATE MULTIPLE
+def create_multiple_schedules(data):
+    schedule_date = data.get('date')
+    for count in range(data.get('count')):
+        if data.get('interval') == 'day':
+            data['date'] = schedule_date + timedelta(days=count)
+        elif data.get('interval') == 'week':
+            data['date'] = schedule_date + timedelta(weeks=count)
+
+        create_schedule(data)
+
 
 #EDIT
 def edit_schedule(id, new_schedule):

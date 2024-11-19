@@ -2,7 +2,7 @@
 
 {% block content %}
 <h3>Verify Caretakers</h3>
-<table class="table table-hover table-dark">
+<table class="table table-hover table-dark table-striped">
     <thead>
         <tr>
             <th scope="col">Name</th>
@@ -18,8 +18,6 @@
                 <td>{{ user.last_name }}</td>
                 <td>{{ user.verified }}</td>
                 <td>
-<!--                    <button class="btn btn-success btn-outline">Verify</button>-->
-<!--                    <button class="btn btn-danger btn-outline">Unverify</button>-->
                     <form method="post">
                         <input type="hidden" name="user_id" value="{{user.id}}">
                         <button class="btn btn-success btn-outline"

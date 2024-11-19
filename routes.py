@@ -1,9 +1,10 @@
 from dns.dnssec import validate
 from flask import Blueprint, render_template, request, redirect, url_for, flash
-from flask_login import login_user, logout_user, login_required
+from flask_login import login_user, logout_user, login_required, current_user
 from __init__ import db
 from api.api_animals import get_animals, get_animal, add_animal, edit_animal, delete_animal
-from api.api_schedules import get_animal_schedules, get_schedule, delete_schedule, edit_schedule, create_schedule
+from api.api_schedules import get_animal_schedules, get_schedule, delete_schedule, edit_schedule, create_schedule, \
+    create_multiple_schedules
 from forms import edit_schedules
 from forms.add_schedule import AddSchedule
 from forms.edit_animal import EditAnimalForm
@@ -312,9 +313,18 @@ def animals_edit_page(animal_id):
     #GET
     return render_template('caretaker/edit_animal.html', edit = edit, form=form, animal_id=animal_id)
 
-@routes.route('/caretaker/animals/<int:animal_id>/schedules', methods=['GET'])
+@routes.route('/caretaker/animals/<int:animal_id>/schedules', methods=['GET', 'POST'])
 @login_required
 def animal_schedules_page(animal_id):
+    #POST
+    if request.method == 'POST':
+        schedule_id = request.form.get('schedule_id')
+        try:
+            delete_schedule(schedule_id)
+            flash(f"Schedule has been deleted successfully", 'success')
+        except Exception as e:
+            flash(f"Error deleting schedule: {str(e)}", "danger")
+        return redirect(url_for('routes.animal_schedules_page', animal_id=animal_id))
 
     #GET
     schedules = get_animal_schedules(animal_id)
@@ -332,7 +342,6 @@ def schedules_edit_page(schedule_id):
         if form.delete.data:
             try:
                 delete_schedule(schedule_id)
-
                 flash(f"Schedule has been deleted successfully", 'success')
             except Exception as e:
                 flash(f"Error deleting schedule: {str(e)}", "danger")
@@ -370,18 +379,24 @@ def schedules_add_page(animal_id):
             return redirect(url_for('routes.animal_schedules_page', animal_id=animal_id))
 
         #SAVE
-        #TODO REPEAT
         data = {
             'date': form.date.data,
             'start_time': form.start_time.data,
             'end_time': form.end_time.data,
             'state': form.state.data,
             'animal_id': animal_id,
+            'caretaker_id': current_user.id,
+            'interval': form.interval.data,
+            'count': form.count.data,
         }
 
         try:
-            create_schedule(data)
-            flash(f"Schedule has been created successfully", 'success')
+            if form.repeat.data:
+                create_multiple_schedules(data)
+                flash(f"{form.count.data} schedules have been created successfully", 'success')
+            else:
+                create_schedule(data)
+                flash(f"Schedule has been created successfully", 'success')
         except Exception as e:
             flash(f"Error creating schedule: {str(e)}", "danger")
             print(str(e))

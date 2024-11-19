@@ -1,13 +1,14 @@
 {% extends 'caretaker/dashboard_caretaker_base.html' %}
 
 {% block content %}
-<h3>Schedules</h3>
+<h3 class="">Schedules</h3>
 <div class="col-1 my-2">
     <a href="{{ url_for('routes.schedules_add_page' , animal_id=animal_id) }}" class="btn btn-success ">Add</a>
 </div>
-<table class="table table-hover table-dark">
+<table class="table table-hover table-dark table-striped">
     <thead>
         <tr>
+            <th scope="col">Date</th>
             <th scope="col">Start</th>
             <th scope="col">End</th>
             <th scope="col">State</th>
@@ -18,12 +19,29 @@
     <tbody>
         {% for schedule in schedules %}
             <tr>
+                <td>{{ schedule.date.strftime('%d.%m.%Y') }}</td>
                 <td>{{ schedule.start_time }}</td>
                 <td>{{ schedule.end_time }}</td>
                 <td>{{ schedule.state }}</td>
                 <td>{{ schedule.volunteer }}</td>
-                <td>
+                <td class="row mr-1">
+                    <div class="col">
                         <a href="{{ url_for('routes.schedules_edit_page', schedule_id=schedule.id) }}" class="btn btn-info btn-md" >Edit</a>
+                    </div>
+
+                    <div class="col">
+                        <form method="post">
+                            <input type="hidden" name="schedule_id" value="{{schedule.id}}">
+                            <button class="btn btn-danger btn-outline"
+                                    type="submit"
+                                    name="delete"
+                                    value="True"
+                            >
+                                Delete
+                            </button>
+                        </form>
+                    </div>
+
                 </td>
             </tr>
         {% endfor %}
