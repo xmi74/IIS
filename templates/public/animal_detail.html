@@ -48,6 +48,10 @@
                 <td style="color: white;">
                     {% if schedule.state == 'Free' %}
                         <span class="text-success">{{ schedule.state }}</span>
+                    {% elif schedule.state == 'Reserved' %}
+                        <span class="text-warning">{{ schedule.state }}</span>
+                    {% elif schedule.state == 'Confirmed' %}
+                        <span class="text-danger">{{ schedule.state }}</span>
                     {% else %}
                         {{ schedule.state }}
                     {% endif %}

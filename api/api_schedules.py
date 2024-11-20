@@ -17,7 +17,7 @@ def get_animal_schedules(animal_id):
 def get_incoming_animal_schedules(animal_id):
     return WalkSchedule.query.filter(
         WalkSchedule.animal_id == animal_id,
-        WalkSchedule.state.in_([ScheduleState.FREE.value, ScheduleState.RESERVED.value])
+        WalkSchedule.state.in_([ScheduleState.FREE.value, ScheduleState.RESERVED.value, ScheduleState.CONFIRMED.value])
     ).order_by(WalkSchedule.start_time).all()
 
 #DELETE
