@@ -2,6 +2,7 @@ from datetime import timedelta
 
 from __init__ import db
 from models.walk_schedule import WalkSchedule
+from models.enums.schedule_state import ScheduleState
 
 
 #READ ONE
@@ -11,6 +12,13 @@ def get_schedule(schedule_id):
 #READ FOR ONE ANIMAL
 def get_animal_schedules(animal_id):
     return WalkSchedule.query.filter_by(animal_id=animal_id).order_by(WalkSchedule.start_time).all()
+
+#READ SCHEDULES WITCH STATE FREE OR RESERVED FOR ONE ANIMAL
+def get_incoming_animal_schedules(animal_id):
+    return WalkSchedule.query.filter(
+        WalkSchedule.animal_id == animal_id,
+        WalkSchedule.state.in_([ScheduleState.FREE.value, ScheduleState.RESERVED.value])
+    ).order_by(WalkSchedule.start_time).all()
 
 #DELETE
 def delete_schedule(schedule_id):
@@ -59,3 +67,13 @@ def edit_schedule(id, new_schedule):
         print(f"Error commiting to database: {str(e)}")
         raise
     return schedule
+
+
+def reserve_schedule(schedule_id, user_id):
+    schedule = WalkSchedule.query.get(schedule_id)
+    if schedule and schedule.state == ScheduleState.FREE.value:
+        schedule.state = ScheduleState.RESERVED.value
+        schedule.volunteer_id = user_id
+        db.session.commit()
+        return True
+    return False

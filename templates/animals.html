@@ -13,13 +13,10 @@
                 <div class="form-group col-md-2">
                     <input type="text" name="name" class="form-control" placeholder="Filter by Name">
                 </div>
-                <!-- <div class="form-group col-md-2">
-                    <input type="number" name="age" class="form-control" placeholder="Filter by Age"> -->
-<!--                </div>-->
                 <select class="form-group col-md-2" name="species">
-                        <option value="">All Species</option>
-                        <option value="Dog">Dog</option>
-                        <option value="Cat">Cat</option>
+                    <option value="">All Species</option>
+                    <option value="Dog">Dog</option>
+                    <option value="Cat">Cat</option>
                 </select>
                 <div class="form-group col-md-1">
                     <button type="submit" class="btn btn-primary">Filter</button>
@@ -30,45 +27,27 @@
         <div class="row">
             {% for animal in animals %}
             <div class="col-md-4 mb-4">
-                <div class="card">
-                    <div class="embed-responsive embed-responsive-4by3">
-                        <img src="{{ animal.photo or 'https://via.placeholder.com/300' }}" class="card-img-top embed-responsive-item" alt="{{ animal.name }}">
-                    </div>
+                <div class="card text-center">
+                    <!-- Link the image to the animal detail page -->
+                    <a href="{{ url_for('routes.animal_detail', animal_id=animal.id) }}">
+                        <div class="embed-responsive embed-responsive-4by3">
+                            <img src="{{ animal.photo or 'https://via.placeholder.com/300' }}" class="card-img-top embed-responsive-item" alt="{{ animal.name }}">
+                        </div>
+                    </a>
                     <div class="card-body">
-                        <h5 class="card-title" style="color: rgb(3, 73, 3)">{{ animal.name }}</h5>
-                        <p class="card-text" style="color: rgb(12, 12, 122)">
-                            <i class="fas fa-birthday-cake"></i> 
-                            <!-- {{ animal.age }} {{ 'year' if animal.age == 1 else 'years' }} old <br> -->
-                            <i class="fas fa-weight"></i> {{ animal.weight }} kg <br>
+                        <!-- Link the animal's name to the detail page -->
+                        <h5 class="card-title" style="color: rgb(3, 73, 3); font-size: 1.5rem;"> <!-- Increased font size -->
+                            <a href="{{ url_for('routes.animal_detail', animal_id=animal.id) }}" style="color: inherit; text-decoration: none;">
+                                {{ animal.name }}
+                            </a>
+                        </h5>
+                        <p class="card-text" style="color: rgb(12, 12, 122); font-size: 1.2rem;"> <!-- Optional: Increased font size for species -->
                             <i class="fas fa-paw"></i> {{ animal.species }}
                         </p>
-                        <p class="card-text" style="color: black">
-                            {{ animal.description or 'No description available.' }}
-                        </p>
-
-                        <!-- Zobrazenie prechádzok -->
-                        <h6 style="color: black">Walk Schedules:</h6>
-                        <ul style="color: black">
-                            {% for schedule in animal.walk_schedules %}
-                                <li>
-                                    <b>START:</b> {{ schedule.start_time }} <br>
-                                    <b>END:</b> {{ schedule.end_time }} <br> 
-                                    <b>
-                                        STATE: 
-                                        {% if schedule.state == 'Free' %}
-                                            <span style="color: green">{{ schedule.state }}</span>
-                                        {% elif schedule.state == 'Taken' %}
-                                            <span style="color: red">{{ schedule.state }}</span>
-                                        {% else %}
-                                            <span>{{ schedule.state }}</span>
-                                        {% endif %}
-                                    </b>
-                                </li>
-                            {% else %}
-                                <li>No walk schedules available</li>
-                            {% endfor %}
-                        </ul>
-
+                        
+                        <a href="{{ url_for('routes.animal_detail', animal_id=animal.id) }}" class="btn btn-primary">
+                            View Details
+                        </a>
                     </div>
                 </div>
             </div>

@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    {{ animal.name }} Details
+{% endblock %}
+
+{% block body %}
+<div class="container">
+    <div class="row">
+        <!-- Animal Photo -->
+        <div class="col-md-4 mt-4">
+            <img src="{{ animal.photo }}" 
+                 alt="{{ animal.name }}" 
+                 class="img-fluid rounded shadow border border-white" 
+                 style="width: 300px; height: 300px; object-fit: cover;">
+        </div>
+        
+        <!-- Animal Details -->
+        <div class="col-md-8 mt-4">
+            <h2>{{ animal.name }}</h2>
+            <p><strong>Species:</strong> {{ animal.species }}</p>
+            <p><strong>Weight:</strong> {{ animal.weight }} kg</p>
+            <p><strong>Birth Date:</strong> {{ animal.birth_date.strftime('%d.%m.%Y') if animal.birth_date else 'Not specified' }}</p>
+            <p><strong>Description:</strong> {{ animal.description or 'No description available.' }}</p>
+        </div>
+    </div>
+
+    <!-- Walk Schedules -->
+    <h3 class="mt-5">Walk Schedules</h3>
+    <table class="table table-hover mt-3">
+        <thead>
+            <tr>
+                <th style="color: white;">Date</th>
+                <th style="color: white;">Start</th>
+                <th style="color: white;">End</th>
+                <th style="color: white;">State</th>
+                {% if current_user.is_authenticated and current_user.role == 'volunteer' and current_user.verified %}
+                <th style="color: white;">Options</th>
+                {% endif %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for schedule in schedules %}
+            <tr>
+                <td style="color: white;">{{ schedule.date.strftime('%d.%m.%Y') }}</td>
+                <td style="color: white;">{{ schedule.start_time }}</td>
+                <td style="color: white;">{{ schedule.end_time }}</td>
+                <td style="color: white;">
+                    {% if schedule.state == 'Free' %}
+                        <span class="text-success">{{ schedule.state }}</span>
+                    {% else %}
+                        {{ schedule.state }}
+                    {% endif %}
+                </td>
+                {% if current_user.is_authenticated and current_user.role == 'volunteer' and current_user.verified %}
+                <td>
+                    {% if schedule.state == 'Free' %}
+                    <!-- Reserve Button -->
+                    <form action="{{ url_for('routes.reserve_schedule_view', schedule_id=schedule.id) }}" method="POST" style="display: inline;">
+                        <button type="submit" class="btn btn-primary">Reserve</button>
+                    </form>
+                    {% elif schedule.volunteer_id == current_user.id %}
+                    <!-- Cancel Button -->
+                    <form action="{{ url_for('routes.cancel_schedule_view', schedule_id=schedule.id) }}" method="POST" style="display: inline;">
+                        <button type="submit" class="btn btn-danger">Cancel</button>
+                    </form>
+                    {% else %}
+                    <span style="color: white;">N/A</span>
+                    {% endif %}
+                </td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

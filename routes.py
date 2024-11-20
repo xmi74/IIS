@@ -1,10 +1,9 @@
-from dns.dnssec import validate
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_user, logout_user, login_required, current_user
 from __init__ import db
 from api.api_animals import get_animals, get_animal, add_animal, edit_animal, delete_animal
 from api.api_schedules import get_animal_schedules, get_schedule, delete_schedule, edit_schedule, create_schedule, \
-    create_multiple_schedules
+    create_multiple_schedules, reserve_schedule, get_incoming_animal_schedules
 from forms import edit_schedules
 from forms.add_schedule import AddSchedule
 from forms.edit_animal import EditAnimalForm
@@ -17,6 +16,7 @@ from forms.register import RegistrationForm
 from forms.login import LoginForm
 from forms.edit_user import EditUserForm
 from api.api_users import *
+from models.enums.schedule_state import ScheduleState
 
 routes = Blueprint('routes', __name__)
 
@@ -45,6 +45,48 @@ def animals_page():
 
     animals = query.all()
     return render_template('animals.html', animals=animals)
+
+
+# Route: Animal Detail View
+@routes.route('/animals/<int:animal_id>')
+def animal_detail(animal_id):
+
+    animal = get_animal(animal_id)
+    
+    schedules = get_incoming_animal_schedules(animal_id)
+
+    return render_template('public/animal_detail.html', animal=animal, schedules=schedules)
+
+
+@routes.route('/schedules/reserve/<int:schedule_id>', methods=['POST'])
+def reserve_schedule_view(schedule_id):
+    if not current_user.is_authenticated or current_user.role != 'volunteer' or not current_user.verified:
+        return redirect(url_for('routes.login'))
+    
+    success = reserve_schedule(schedule_id, current_user.id)
+    if success:
+        return redirect(request.referrer or url_for('routes.animals_page'))
+    
+    return "Error reserving schedule", 400
+
+
+@routes.route('/schedules/cancel/<int:schedule_id>', methods=['POST'])
+def cancel_schedule_view(schedule_id):
+    if not current_user.is_authenticated or current_user.role != 'volunteer' or not current_user.verified:
+        return redirect(url_for('routes.login'))
+
+    # Fetch the schedule and ensure the current user is the one who reserved it
+    schedule = WalkSchedule.query.get(schedule_id)
+    if schedule and schedule.volunteer_id == current_user.id:
+        schedule.state = ScheduleState.FREE.value
+        schedule.volunteer_id = None
+        db.session.commit()
+        return redirect(request.referrer or url_for('routes.animals_page'))
+
+    return "Error canceling reservation. Ensure you are the one who reserved it.", 400
+
+
+
 
 ################ LOGIN PAGE ################
 
