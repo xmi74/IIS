@@ -56,3 +56,7 @@ def edit_animal(id, new_animal):
         print(f"Error commiting to database: {str(e)}")
         raise
     return animal
+
+#GET PHOTOS OF LIMITED NUMBER OF ANIMALS
+def get_animal_photos(limit=4):
+    return Animal.query.filter(Animal.photo.isnot(None)).limit(limit).all()

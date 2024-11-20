@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_user, logout_user, login_required, current_user
 from __init__ import db
-from api.api_animals import get_animals, get_animal, add_animal, edit_animal, delete_animal
+from api.api_animals import get_animals, get_animal, add_animal, edit_animal, delete_animal, get_animal_photos
 from api.api_schedules import get_animal_schedules, get_schedule, delete_schedule, edit_schedule, create_schedule, \
     create_multiple_schedules, reserve_schedule, get_incoming_animal_schedules
 from forms import edit_schedules
@@ -25,7 +25,9 @@ routes = Blueprint('routes', __name__)
 
 @routes.route('/')
 def home_page():
-    return render_template('home.html')
+    caretakers = get_caretakers()
+    animals = get_animal_photos()
+    return render_template('public/home.html', caretakers=caretakers, animals=animals)
 
 ################ ANIMALS PAGE ################
 

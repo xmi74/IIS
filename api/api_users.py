@@ -118,4 +118,7 @@ def filter_users(filters):
             query = query.filter(User.verified.is_(False))
 
     return query.all()
+
+def get_caretakers():
+    return User.query.filter_by(role='caretaker').all()
     
