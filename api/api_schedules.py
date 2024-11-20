@@ -9,16 +9,30 @@ from models.enums.schedule_state import ScheduleState
 def get_schedule(schedule_id):
     return WalkSchedule.query.get(schedule_id)
 
-#READ FOR ONE ANIMAL
-def get_animal_schedules(animal_id):
-    return WalkSchedule.query.filter_by(animal_id=animal_id).order_by(WalkSchedule.start_time).all()
+#READ ALL MAY FILTER
+def get_schedules(filters=None):
+    query = WalkSchedule.query
+
+    if 'date' in filters and filters['date'] is not None:
+        query = query.filter(WalkSchedule.date >= filters['date'])
+    if 'start_time' in filters and filters['start_time'] is not None:
+        query = query.filter(WalkSchedule.start_time <= filters['start_time'])
+    if 'end_time' in filters and filters['end_time'] is not None:
+        query = query.filter(WalkSchedule.end_time >= filters['end_time'])
+    if 'animal_id' in filters and filters['animal_id'] is not None:
+        query = query.filter(WalkSchedule.animal_id == filters['animal_id'])
+    if 'state' in filters and filters['state'] is not None:
+        query = query.filter(WalkSchedule.state == filters['state'])
+
+    query = query.order_by(WalkSchedule.date, WalkSchedule.start_time)
+    return query.all()
 
 #READ SCHEDULES WITCH STATE FREE OR RESERVED FOR ONE ANIMAL
 def get_incoming_animal_schedules(animal_id):
     return WalkSchedule.query.filter(
         WalkSchedule.animal_id == animal_id,
         WalkSchedule.state.in_([ScheduleState.FREE.value, ScheduleState.RESERVED.value, ScheduleState.CONFIRMED.value])
-    ).order_by(WalkSchedule.start_time).all()
+    ).order_by(WalkSchedule.date).all()
 
 #DELETE
 def delete_schedule(schedule_id):

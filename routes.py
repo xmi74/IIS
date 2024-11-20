@@ -1,9 +1,11 @@
+from datetime import date
+
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_user, logout_user, login_required, current_user
 from __init__ import db
 from api.api_animals import get_animals, get_animal, add_animal, edit_animal, delete_animal, get_animal_photos
-from api.api_schedules import get_animal_schedules, get_schedule, delete_schedule, edit_schedule, create_schedule, \
-    create_multiple_schedules, reserve_schedule, get_incoming_animal_schedules
+from api.api_schedules import get_schedule, delete_schedule, edit_schedule, create_schedule, \
+    create_multiple_schedules, reserve_schedule, get_incoming_animal_schedules, get_schedules
 from forms import edit_schedules
 from forms.add_schedule import AddSchedule
 from forms.edit_animal import EditAnimalForm
@@ -381,8 +383,13 @@ def animal_schedules_page(animal_id):
         return redirect(url_for('routes.animal_schedules_page', animal_id=animal_id))
 
     #GET
-    schedules = get_animal_schedules(animal_id)
-    return render_template('caretaker/schedules.html', schedules=schedules, animal_id=animal_id)
+    filters = dict()
+    filters['animal'] = animal_id
+    filters['state'] = request.args.get('state') or None
+    if request.args.get('old') is None:
+        filters['date'] = date.today()
+    schedules = get_schedules(filters)
+    return render_template('caretaker/schedules.html', schedules=schedules, animal_id=animal_id, ScheduleState=ScheduleState)
 
 @routes.route('/caretaker/schedules/edit/<int:schedule_id>', methods=['GET', 'POST'])
 @login_required

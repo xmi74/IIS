@@ -1,10 +1,37 @@
 {% extends 'caretaker/dashboard_caretaker_base.html' %}
 
 {% block content %}
-<h3 class="">Schedules</h3>
-<div class="col-1 my-2">
-    <a href="{{ url_for('routes.schedules_add_page' , animal_id=animal_id) }}" class="btn btn-success ">Add</a>
+<h3>Schedules</h3>
+
+<div class="row">
+    <form method="GET" action="{{ url_for('routes.animal_schedules_page', animal_id=animal_id) }}" class="col-11">
+        <div class="form-row">
+            <div class="form-group col-md-2">
+                <input type="text" name="name" class="form-control" placeholder="Filter by Name">
+            </div>
+
+            <div class="form-group form-check form-check-inline col-md-2">
+                <label for="old" class=" form-check-label">Old</label>
+                <input type="checkbox" class="form-control form-check-input" name="old" id="old">
+            </div>
+
+            <select class="form-group col-md-2" name="state">
+                <option value="">All States</option>
+                {% for data in ScheduleState %}
+                <option value="{{data.value}}">{{data.value}}</option>
+                {% endfor %}
+            </select>
+            <div class="form-group col-md-1">
+                <button type="submit" class="btn btn-primary">Filter</button>
+            </div>
+        </div>
+    </form>
+
+    <div class="col-1 my-2">
+        <a href="{{ url_for('routes.schedules_add_page' , animal_id=animal_id) }}" class="btn btn-success ">Add</a>
+    </div>
 </div>
+
 <table class="table table-hover table-dark table-striped">
     <thead>
         <tr>
