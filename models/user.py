@@ -51,7 +51,8 @@ class Vet(User):
     # 1:N Examination, Overlaps = silencing same foreign key warning
     examinations = relationship("Examination", back_populates="vet", overlaps="vaccinations") 
     # 1:N Vaccination, Overlaps = silencing same foreign key warning
-    vaccinations = relationship("Vaccination", back_populates="vet", overlaps="examinations")  
+    vaccinations = relationship("Vaccination", back_populates="vet", overlaps="examinations")
+    requests = relationship("Request", back_populates="vet", foreign_keys="[Request.vet_id]")
 
     __mapper_args__ = {
         'polymorphic_identity': 'vet'

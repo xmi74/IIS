@@ -10,7 +10,8 @@ from forms.edit_animal import EditAnimalForm
 from forms.edit_schedules import EditSchedules
 from models.user import User, Admin, Caretaker, Volunteer, Vet
 from models.animal import Animal
-from models.examination import Examination, PreventiveCheckUp, Request, Vaccination
+from models.examination import Examination, PreventiveCheckUp, Vaccination
+from models.request import Request
 from models.walk_schedule import WalkSchedule
 from forms.register import RegistrationForm
 from forms.login import LoginForm
@@ -245,7 +246,16 @@ def update_user_page(user_id):
 
 @routes.route('/dashboard_vet')
 def dashboard_vet_page():
-    return render_template('dashboard_vet.html')
+    vet_requests = get_requests_by_vet(current_user.id)
+
+    return render_template('dashboard_vet.html', vet_requests=vet_requests)
+
+@routes.route('/dashboard_vet/request_detail')
+def request_detail_page():
+    return render_template('request_detail.html')
+
+
+
 
 #######################################################
 #                 DASHBOARD CARETAKER                 #
