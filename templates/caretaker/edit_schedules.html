@@ -6,12 +6,18 @@
     {{ form.hidden_tag() }}
     <div class="form-group">
         {{ form.date.label }} {{form.date(clss="form-control") }}
+        {% for error in form.date.errors %}
+            <span class="rounded bg-danger p-1"> {{ error }}</span>
+        {% endfor %}
     </div>
     <div class="form-group">
         {{ form.start_time.label }} {{ form.start_time(class="form-control") }}
     </div>
     <div class="form-group">
         {{ form.end_time.label }} {{ form.end_time(class="form-control") }}
+        {% for error in form.end_time.errors %}
+            <span class="rounded bg-danger p-1"> {{ error }}</span>
+        {% endfor %}
     </div>
     <div class="form-group">
         {{ form.state.label }} {{ form.state(class="form-control") }}

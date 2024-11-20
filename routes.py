@@ -141,7 +141,7 @@ def register_page():
 
         print(f"Creating new user: {login}, {first_name}, {last_name}, {email}")
 
-        # New User is automaticaly taken as volunteer
+        # New User is automatically taken as volunteer
         new_user = Volunteer(login=login, 
                             first_name=first_name, 
                             last_name=last_name, 
@@ -150,7 +150,7 @@ def register_page():
         db.session.add(new_user)
         db.session.commit()
 
-        flash('Account created successfuly!', 'success')
+        flash('Account created successfully!', 'success')
         return redirect(url_for('routes.dashboard_volunteer_page'))    
     
     # Handle form errors (flash messages)
