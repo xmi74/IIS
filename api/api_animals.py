@@ -29,6 +29,7 @@ def add_animal(animal):
         weight=animal.get('weight'),
         birth_date=animal.get('birth_date'),
         photo=animal.get('photo'),
+        description=animal.get('description'),
     )
     db.session.add(new_animal)
     db.session.commit()
@@ -49,6 +50,7 @@ def edit_animal(id, new_animal):
     animal.weight = new_animal.get('weight')
     animal.birth_date = new_animal.get('birth_date')
     animal.photo = new_animal.get('photo')
+    animal.description = new_animal.get('description')
 
     try:
         db.session.commit()

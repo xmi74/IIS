@@ -1,5 +1,6 @@
 from datetime import datetime, time, date, timedelta
 
+from models.enums.animal_species import Species
 from models.enums.schedule_state import ScheduleState
 from models.user import Admin, Vet, Caretaker, Volunteer
 from models.animal import Animal
@@ -27,8 +28,8 @@ def seed_data(db):
     db.session.commit()
 
     # Vytvoření zvířat a přiřazení ke konkrétnímu pečovateli
-    animal1 = Animal(name='Bob', species='Dog', weight=30, birth_date=datetime(2020, 10, 1, 12, 0), photo='https://images.pexels.com/photos/5265677/pexels-photo-5265677.jpeg')
-    animal2 = Animal(name='Greg', species='Cat', weight=30, birth_date=datetime(2021, 10, 1, 12, 0), photo='https://images.pexels.com/photos/20787/pexels-photo.jpg')
+    animal1 = Animal(name='Bob', species=Species.DOG.value, weight=30, birth_date=datetime(2020, 10, 1, 12, 0), photo='https://images.pexels.com/photos/5265677/pexels-photo-5265677.jpeg', description="A good Boy")
+    animal2 = Animal(name='Greg', species=Species.CAT.value, weight=30, birth_date=datetime(2021, 10, 1, 12, 0), photo='https://images.pexels.com/photos/20787/pexels-photo.jpg', description="A cute cat")
 
     # Přidání zvířat do session
     db.session.add_all([animal1, animal2])

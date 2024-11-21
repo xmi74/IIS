@@ -11,6 +11,7 @@ from forms.add_schedule import AddSchedule
 from forms.edit_animal import EditAnimalForm
 from forms.edit_request import EditRequest
 from forms.edit_schedules import EditSchedules
+from models.enums.animal_species import Species
 from models.user import User, Admin, Caretaker, Volunteer, Vet
 from models.animal import Animal
 from models.examination import Examination, PreventiveCheckUp, Vaccination
@@ -337,12 +338,8 @@ def animals_caretaker_page():
     filters = dict()
     filters['name'] = request.args.get('name') or None
     filters['species'] = request.args.get('species') or None
-
     animals = get_animals(filters)
-    species = set()
-    for animal in animals:
-        species.add(animal.species)
-    return render_template('caretaker/animals.html', animals=animals, species=species)
+    return render_template('caretaker/animals.html', animals=animals, species=Species)
 
 @routes.route('/caretaker/animals/add', methods=['GET', 'POST'])
 @role_required('caretaker')
@@ -361,7 +358,8 @@ def animals_add_page():
             'species': form.species.data,
             'weight': form.weight.data,
             'birth_date': form.birth_date.data,
-            'photo': form.photo.data
+            'photo': form.photo.data,
+            'description': form.description.data,
         }
 
         try:
@@ -403,7 +401,8 @@ def animals_edit_page(animal_id):
             'species': form.species.data,
             'weight': form.weight.data,
             'birth_date': form.birth_date.data,
-            'photo': form.photo.data
+            'photo': form.photo.data,
+            'description': form.description.data,
         }
 
         try:
