@@ -48,7 +48,7 @@ def animals_page():
         query = query.filter_by(species=species)
 
     animals = query.all()
-    return render_template('animals.html', animals=animals)
+    return render_template('public/animals.html', animals=animals)
 
 
 # Route: Animal Detail View
