@@ -16,7 +16,8 @@ class EditSchedules(FlaskForm):
     end_time = TimeField('End Time', validators=[DataRequired(), ScheduleTime()])
     state = SelectField('State',
                         validators=[DataRequired()],
-                        choices=[data.value for data in ScheduleState]
+                        choices=[data.value for data in ScheduleState],
+                        default=ScheduleState.FREE.value,
                         )
 
     submit = SubmitField('Save')

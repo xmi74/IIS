@@ -481,7 +481,7 @@ def schedules_edit_page(id):
         'id': schedule.id,
         'animal_id': schedule.animal_id,
     }
-    return render_template('caretaker/add_schedule.html', form=form, edit=edit)
+    return render_template('caretaker/edit_schedule.html', form=form, edit=edit)
 
 @routes.route('/caretaker/animal/<int:id>/schedules/add', methods=['GET', 'POST'])
 @role_required('caretaker')
@@ -491,10 +491,7 @@ def schedules_add_page(id):
 
     #POST
     if form.validate_on_submit():
-        #DELETE IS CANCEL
-        if form.delete.data:
-            return redirect(url_for('routes.animal_schedules_page', animal_id=id))
-
+        print('kek')
         #SAVE
         data = {
             'date': form.date.data,
@@ -526,12 +523,22 @@ def schedules_add_page(id):
         'id': id,
         'animal_id': id,
     }
-    return render_template('caretaker/add_schedule.html', form=form, edit=edit)
+    return render_template('caretaker/edit_schedule.html', form=form, edit=edit)
 
-@routes.route('/caretaker/animals/<int:animal_id>/requests', methods=['GET'])
+@routes.route('/caretaker/animals/<int:animal_id>/requests', methods=['GET', 'POST'])
 @role_required('caretaker')
 @login_required
 def animal_request_page(animal_id):
+
+    #POST
+    if request.method == 'POST':
+        request_id = request.form.get('request_id')
+        print(request_id)
+        try:
+            delete_request(request_id)
+            flash(f"Request has been deleted successfully", 'success')
+        except Exception as e:
+            flash(f"Error deleting request: {str(e)}", "danger")
 
     #GET
     filters = dict()
@@ -600,12 +607,13 @@ def add_request_page(id):
             flash(f"Request has been created successfully", 'success')
         except Exception as e:
             flash(f"Error creating request: {str(e)}", "danger")
-        return redirect(url_for('routes.animal_med_page', animal_id=id))
+        return redirect(url_for('routes.animal_request_page', animal_id=id))
 
     #GET
     edit = {
         'title': 'Add',
         'route': 'routes.add_request_page',
+        'id': id,
         'animal_id': id,
     }
     return render_template('caretaker/edit_request.html', form=form, edit=edit)

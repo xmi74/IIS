@@ -19,12 +19,15 @@
             <span class="rounded bg-danger p-1"> {{ error }}</span>
         {% endfor %}
     </div>
-    <div class="form-group">
-        {{ form.state.label }} {{ form.state(class="form-control") }}
-    </div>
+
+    <!--  When Creating only FREE state is allowed  -->
+    {% if edit.title == 'Edit' %}
+        <div class="form-group">
+            {{ form.state.label }} {{ form.state(class="form-control") }}
+        </div>
 
     <!--  Optional multiple schedule creation  -->
-    {% if edit.title == 'Add' %}
+    {% elif edit.title == 'Add' %}
         <div class="form-group row">
             <div class="col-2">
                 {{ form.repeat.label }} {{ form.repeat(class="form-control") }}
@@ -41,7 +44,11 @@
     <div class="form-group">
         {{ form.submit(class="btn btn-primary") }}
         <a href="{{ url_for('routes.animal_schedules_page', animal_id=edit.animal_id) }}" class="btn btn-secondary">Cancel</a>
-        {{ form.delete(class="btn btn-danger") }}
+
+        <!--   Delete only if editing existing schedule     -->
+        {% if edit.title == 'Edit' %}
+            {{ form.delete(class="btn btn-danger") }}
+        {% endif %}
     </div>
     </form>
 {% endblock %}
