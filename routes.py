@@ -20,6 +20,7 @@ from forms.login import LoginForm
 from forms.edit_user import EditUserForm
 from api.api_users import *
 from models.enums.schedule_state import ScheduleState
+from utils.decorators import role_required
 
 routes = Blueprint('routes', __name__)
 
@@ -43,8 +44,6 @@ def animals_page():
 
     if name:
         query = query.filter(Animal.name.ilike(name))
-    # if age:
-    #     query = query.filter_by(age=age)
     if species:
         query = query.filter_by(species=species)
 
@@ -66,7 +65,7 @@ def animal_detail(animal_id):
 @routes.route('/schedules/reserve/<int:schedule_id>', methods=['POST'])
 def reserve_schedule_view(schedule_id):
     if not current_user.is_authenticated or current_user.role != 'volunteer' or not current_user.verified:
-        return redirect(url_for('routes.login'))
+        return redirect(url_for('routes.login_page'))
     
     success = reserve_schedule(schedule_id, current_user.id)
     if success:
@@ -78,7 +77,7 @@ def reserve_schedule_view(schedule_id):
 @routes.route('/schedules/cancel/<int:schedule_id>', methods=['POST'])
 def cancel_schedule_view(schedule_id):
     if not current_user.is_authenticated or current_user.role != 'volunteer' or not current_user.verified:
-        return redirect(url_for('routes.login'))
+        return redirect(url_for('routes.login_page'))
 
     # Fetch the schedule and ensure the current user is the one who reserved it
     schedule = WalkSchedule.query.get(schedule_id)
@@ -89,6 +88,16 @@ def cancel_schedule_view(schedule_id):
         return redirect(request.referrer or url_for('routes.animals_page'))
 
     return "Error canceling reservation. Ensure you are the one who reserved it.", 400
+
+#################################################
+#              DASHBOARD VOLUNTEER              #
+#################################################
+
+@routes.route('/dashboard_volunteer')
+@role_required('volunteer')
+@login_required
+def dashboard_volunteer_page(): 
+    return render_template('volunteer/dashboard_volunteer.html')
 
 
 
@@ -179,6 +188,8 @@ def logout_page():
 
 ################ BASIC DASHBOARD ################
 @routes.route('/dashboard_admin')
+@role_required('admin')
+@login_required
 def dashboard_admin_page():
     # users = get_users()
 
@@ -206,6 +217,8 @@ def dashboard_admin_page():
 
 ################ EDIT USER ################
 @routes.route('/dashboard_admin/edit_user/<int:user_id>', methods=['GET', 'POST'])
+@role_required('admin')
+@login_required
 def update_user_page(user_id):    
     user = get_user(user_id)        
     form = EditUserForm(obj=user)
@@ -249,12 +262,17 @@ def update_user_page(user_id):
 #################################################
 
 @routes.route('/dashboard_vet')
+@role_required('vet')
+@login_required
 def dashboard_vet_page():
     vet_requests = get_requests_by_vet(current_user.id)
 
     return render_template('dashboard_vet.html', vet_requests=vet_requests)
 
+
 @routes.route('/dashboard_vet/request_detail')
+@role_required('vet')
+@login_required
 def request_detail_page():
     return render_template('request_detail.html')
 
@@ -266,6 +284,7 @@ def request_detail_page():
 #######################################################
 
 @routes.route('/dashboard_caretaker', methods=['GET', 'POST'])
+@role_required('caretaker')
 @login_required
 def dashboard_caretaker_page():
 
@@ -282,6 +301,7 @@ def dashboard_caretaker_page():
     return render_template('caretaker/verify_users.html', users=users)
 
 @routes.route('/caretaker/animals', methods=['GET'])
+@role_required('caretaker')
 @login_required
 def animals_caretaker_page():
     filters = dict()
@@ -295,6 +315,7 @@ def animals_caretaker_page():
     return render_template('caretaker/animals.html', animals=animals, species=species)
 
 @routes.route('/caretaker/animals/add', methods=['GET', 'POST'])
+@role_required('caretaker')
 @login_required
 def animals_add_page():
     edit = {
@@ -329,6 +350,7 @@ def animals_add_page():
     return render_template('caretaker/edit_animal.html', edit = edit, form=form)
 
 @routes.route('/caretaker/animals/edit/<int:animal_id>', methods=['GET', 'POST'])
+@role_required('caretaker')
 @login_required
 def animals_edit_page(animal_id):
     edit = {
@@ -370,6 +392,7 @@ def animals_edit_page(animal_id):
     return render_template('caretaker/edit_animal.html', edit = edit, form=form, animal_id=animal_id)
 
 @routes.route('/caretaker/animals/<int:animal_id>/schedules', methods=['GET', 'POST'])
+@role_required('caretaker')
 @login_required
 def animal_schedules_page(animal_id):
     #POST
@@ -392,6 +415,7 @@ def animal_schedules_page(animal_id):
     return render_template('caretaker/schedules.html', schedules=schedules, animal_id=animal_id, ScheduleState=ScheduleState)
 
 @routes.route('/caretaker/schedules/edit/<int:schedule_id>', methods=['GET', 'POST'])
+@role_required('caretaker')
 @login_required
 def schedules_edit_page(schedule_id):
     schedule = get_schedule(schedule_id)
@@ -429,6 +453,7 @@ def schedules_edit_page(schedule_id):
     return render_template('caretaker/edit_schedules.html', form=form, schedule=schedule)
 
 @routes.route('/caretaker/animal/<int:animal_id>/add', methods=['GET', 'POST'])
+@role_required('caretaker')
 @login_required
 def schedules_add_page(animal_id):
     form = AddSchedule()
@@ -465,14 +490,4 @@ def schedules_add_page(animal_id):
 
     #GET
     return render_template('caretaker/add_schedule.html', form=form, animal_id=animal_id)
-
-#################################################
-#              DASHBOARD VOLUNTEER              #
-#################################################
-
-@routes.route('/dashboard_volunteer')
-def dashboard_volunteer_page():
-    animals = Animal.query.all()
-
-    return render_template('dashboard_volunteer.html', animals=animals)
 
