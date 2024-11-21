@@ -25,7 +25,9 @@
     <div class="form-group">
         {{ form.submit(class="btn btn-primary") }}
         <a href="{{ url_for('routes.animals_caretaker_page') }}" class="btn btn-secondary">Cancel</a>
-        {{ form.delete(class="btn btn-danger") }}
+        {% if edit.title == 'Edit' %}
+            {{ form.delete(class="btn btn-danger") }}
+        {% endif %}
     </div>
     </form>
 {% endblock %}

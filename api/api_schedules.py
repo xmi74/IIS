@@ -86,6 +86,7 @@ def edit_schedule(id, new_schedule):
     schedule.start_time = new_schedule.get('start_time')
     schedule.end_time = new_schedule.get('end_time')
     schedule.state = new_schedule.get('state')
+    schedule.volunteer_id = new_schedule.get('volunteer_id')
 
     try:
         db.session.commit()
