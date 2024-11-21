@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block body %}
-<div class="container mt-4">
+<div class="container mt-4 text-center">
     <!-- Animal Photos -->
     <div class="row mb-4 justify-content-center align-items-center">
         {% for animal in animals %}
@@ -27,16 +27,20 @@
 
     <!-- Volunteer Process -->
     <h3 class="mt-5 text-primary">How can I Become a Volunteer?</h3>
-    <ol style="font-size: 1.1rem;">
-        <li>Register on our website.</li>
-        <li>Wait for your profile to be approved by one of our caretakers.</li>
-        <li>Book a walking session (needs to be confirmed by a caretaker).</li>
-        <li>Arrive at the shelter <strong>5 minutes before your session</strong></li>
-    </ol>
+    <div class="d-flex flex-column align-items-center" style="font-size: 1.2rem;">
+        <div>Register on our website.</div>
+        <i class="fas fa-arrow-down text-primary my-2"></i>
+        <div>Wait for your profile to be approved by one of our caretakers.</div>
+        <i class="fas fa-arrow-down text-primary my-2"></i>
+        <div>Book a walking session.</div>
+        <div>(needs to be confirmed by a caretaker)</div>
+        <i class="fas fa-arrow-down text-primary my-2"></i>
+        <div>Arrive at the shelter <strong>5 minutes before your session</strong>.</div>
+    </div>
 
     <!-- Caretakers List -->
     <h3 class="mt-5 text-primary">Meet Our Caretakers</h3>
-    <div class="row">
+    <div class="row justify-content-center">
         {% for caretaker in caretakers %}
         <div class="col-md-4 mb-4">
             <div class="card text-center h-100">

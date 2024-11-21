@@ -1,5 +1,4 @@
 {% extends 'caretaker/dashboard_caretaker_base.html' %}
-
 {% block content %}
 <div class="container">
         <h3>Animals</h3>
@@ -13,7 +12,7 @@
                     <select class="form-group col-md-2" name="species">
                         <option value="">All Species</option>
                         {% for specie in species %}
-                        <option value="{{specie}}">{{specie.capitalize()}}</option>
+                        <option value="{{specie.value}}">{{specie.value}}</option>
                         {% endfor %}
                     </select>
                     <div class="form-group col-md-1">
@@ -49,6 +48,7 @@
 
                         <a href="{{ url_for('routes.animals_edit_page', animal_id=animal.id) }}" class="btn btn-info btn-md" >Edit</a>
                         <a href="{{ url_for('routes.animal_schedules_page', animal_id=animal.id) }}" class="btn btn-info btn-md">Schedules</a>
+                        <a href="{{ url_for('routes.animal_request_page', animal_id=animal.id) }}" class="btn btn-info btn-md">Medical</a>
 
                     </div>
                 </div>

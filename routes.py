@@ -1,13 +1,17 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+from datetime import date
+
+from flask import Blueprint, render_template, request, redirect, url_for, flash, session
 from flask_login import login_user, logout_user, login_required, current_user
 from __init__ import db
-from api.api_animals import get_animals, get_animal, add_animal, edit_animal, delete_animal, get_animal_photos
-from api.api_schedules import get_animal_schedules, get_schedule, delete_schedule, edit_schedule, create_schedule, \
-    create_multiple_schedules, reserve_schedule, get_incoming_animal_schedules
+from api.api_animals import *
+from api.api_requests import filter_request, get_request, delete_request, edit_request, create_request
+from api.api_schedules import *
 from forms import edit_schedules
 from forms.add_schedule import AddSchedule
 from forms.edit_animal import EditAnimalForm
+from forms.edit_request import EditRequest
 from forms.edit_schedules import EditSchedules
+from models.enums.animal_species import Species
 from forms.add_examination import AddExaminationForm
 from models.user import User, Admin, Caretaker, Volunteer, Vet
 from models.animal import Animal
@@ -21,6 +25,7 @@ from api.api_users import *
 from api.api_requests import *
 from api.api_examinations import *
 from models.enums.schedule_state import ScheduleState
+from utils.decorators import role_required
 
 routes = Blueprint('routes', __name__)
 
@@ -28,7 +33,7 @@ routes = Blueprint('routes', __name__)
 
 @routes.route('/')
 def home_page():
-    caretakers = get_caretakers()
+    caretakers = filter_users({'role': 'caretaker'})
     animals = get_animal_photos()
     return render_template('public/home.html', caretakers=caretakers, animals=animals)
 
@@ -39,18 +44,15 @@ def animals_page():
     query = Animal.query
 
     name = request.args.get('name')
-    # age = request.args.get('age')
     species = request.args.get('species')
 
     if name:
         query = query.filter(Animal.name.ilike(name))
-    # if age:
-    #     query = query.filter_by(age=age)
     if species:
         query = query.filter_by(species=species)
 
     animals = query.all()
-    return render_template('animals.html', animals=animals)
+    return render_template('public/animals.html', animals=animals)
 
 
 # Route: Animal Detail View
@@ -65,9 +67,12 @@ def animal_detail(animal_id):
 
 
 @routes.route('/schedules/reserve/<int:schedule_id>', methods=['POST'])
+@role_required('volunteer')
+@login_required
 def reserve_schedule_view(schedule_id):
-    if not current_user.is_authenticated or current_user.role != 'volunteer' or not current_user.verified:
-        return redirect(url_for('routes.login'))
+    if not current_user.verified:
+        flash("You aren't verified yet.", "warning")
+        return redirect(url_for('routes.login_page'))
     
     success = reserve_schedule(schedule_id, current_user.id)
     if success:
@@ -77,19 +82,55 @@ def reserve_schedule_view(schedule_id):
 
 
 @routes.route('/schedules/cancel/<int:schedule_id>', methods=['POST'])
-def cancel_schedule_view(schedule_id):
-    if not current_user.is_authenticated or current_user.role != 'volunteer' or not current_user.verified:
-        return redirect(url_for('routes.login'))
+@role_required('volunteer')
+@login_required
+def cancel_schedule_view_animal(schedule_id):
+    if not current_user.verified:
+        flash("You aren't verified yet.", "warning")
+        return redirect(url_for('routes.home_page'))
 
-    # Fetch the schedule and ensure the current user is the one who reserved it
-    schedule = WalkSchedule.query.get(schedule_id)
-    if schedule and schedule.volunteer_id == current_user.id:
-        schedule.state = ScheduleState.FREE.value
-        schedule.volunteer_id = None
-        db.session.commit()
+    success = cancel_volunteer_schedule(schedule_id, current_user.id)
+    if success:
+        flash("Schedule canceled successfully.", "success")
         return redirect(request.referrer or url_for('routes.animals_page'))
+    
+    flash("Error canceling reservation. Ensure you are the one who reserved it.", "danger")
+    return redirect(url_for('routes.animals_page'))
 
-    return "Error canceling reservation. Ensure you are the one who reserved it.", 400
+#################################################
+#              DASHBOARD VOLUNTEER              #
+#################################################
+
+@routes.route('/dashboard_volunteer')
+@role_required('volunteer')
+@login_required
+def dashboard_volunteer_page(): 
+    closest_schedule = get_closest_schedule(current_user.id)
+    past_schedules = get_past_schedules(current_user.id)
+    future_schedules = get_future_schedules(current_user.id)
+
+    return render_template('volunteer/dashboard_volunteer.html', 
+                           closest_schedule=closest_schedule,
+                           past_schedules=past_schedules, 
+                           future_schedules=future_schedules)
+
+    
+@routes.route('/schedules/cancel/<int:schedule_id>', methods=['POST'])
+@role_required('volunteer')
+@login_required
+def cancel_schedule_view(schedule_id):
+    if not current_user.verified:
+        flash("You aren't verified yet.", "warning")
+        return redirect(url_for('routes.home_page'))
+
+    success = cancel_volunteer_schedule(schedule_id, current_user.id)
+    if success:
+        flash('Schedule has been canceled successfully.', 'success')
+    else:
+        flash("Error canceling reservation. Ensure you are the one who reserved it.", "danger")
+
+    return redirect(url_for('routes.dashboard_volunteer_page'))
+
 
 
 
@@ -170,6 +211,7 @@ def register_page():
 @routes.route('/logout')
 def logout_page():
     logout_user() # flask_login builtin
+    session.clear()  # Prevents cache exploitation
     flash('You have been logged out', 'info')
     return redirect(url_for('routes.home_page'))
 
@@ -180,6 +222,8 @@ def logout_page():
 
 ################ BASIC DASHBOARD ################
 @routes.route('/dashboard_admin')
+@role_required('admin')
+@login_required
 def dashboard_admin_page():
     # users = get_users()
 
@@ -207,6 +251,8 @@ def dashboard_admin_page():
 
 ################ EDIT USER ################
 @routes.route('/dashboard_admin/edit_user/<int:user_id>', methods=['GET', 'POST'])
+@role_required('admin')
+@login_required
 def update_user_page(user_id):    
     user = get_user(user_id)        
     form = EditUserForm(obj=user)
@@ -251,6 +297,8 @@ def update_user_page(user_id):
 
 # TODO: Creating Examinations
 @routes.route('/dashboard_vet')
+@role_required('vet')
+@login_required
 def dashboard_vet_page():    
     confirmed_filter = request.args.get('confirmed')
 
@@ -268,7 +316,10 @@ def dashboard_vet_page():
     return render_template('dashboard_vet.html', vet_requests=vet_requests, vet_examinations=vet_examinations)
 
 
+
 @routes.route('/dashboard_vet/request_detail/<int:request_id>', methods=['GET', 'POST'])
+@role_required('vet')
+@login_required
 def request_detail_page(request_id):
     specific_request = get_request(request_id)
 
@@ -331,6 +382,7 @@ def animal_health_records_detail_page(animal_id):
 #######################################################
 
 @routes.route('/dashboard_caretaker', methods=['GET', 'POST'])
+@role_required('caretaker')
 @login_required
 def dashboard_caretaker_page():
 
@@ -347,19 +399,17 @@ def dashboard_caretaker_page():
     return render_template('caretaker/verify_users.html', users=users)
 
 @routes.route('/caretaker/animals', methods=['GET'])
+@role_required('caretaker')
 @login_required
 def animals_caretaker_page():
     filters = dict()
     filters['name'] = request.args.get('name') or None
     filters['species'] = request.args.get('species') or None
-
     animals = get_animals(filters)
-    species = set()
-    for animal in animals:
-        species.add(animal.species)
-    return render_template('caretaker/animals.html', animals=animals, species=species)
+    return render_template('caretaker/animals.html', animals=animals, species=Species)
 
 @routes.route('/caretaker/animals/add', methods=['GET', 'POST'])
+@role_required('caretaker')
 @login_required
 def animals_add_page():
     edit = {
@@ -370,17 +420,13 @@ def animals_add_page():
 
     #POST
     if form.validate_on_submit():
-        # Delete button
-        if form.delete.data:
-            return redirect(url_for('routes.animals_caretaker_page'))
-
-        # Save button
         data = {
             'name': form.name.data,
             'species': form.species.data,
             'weight': form.weight.data,
             'birth_date': form.birth_date.data,
-            'photo': form.photo.data
+            'photo': form.photo.data,
+            'description': form.description.data,
         }
 
         try:
@@ -394,6 +440,7 @@ def animals_add_page():
     return render_template('caretaker/edit_animal.html', edit = edit, form=form)
 
 @routes.route('/caretaker/animals/edit/<int:animal_id>', methods=['GET', 'POST'])
+@role_required('caretaker')
 @login_required
 def animals_edit_page(animal_id):
     edit = {
@@ -421,7 +468,8 @@ def animals_edit_page(animal_id):
             'species': form.species.data,
             'weight': form.weight.data,
             'birth_date': form.birth_date.data,
-            'photo': form.photo.data
+            'photo': form.photo.data,
+            'description': form.description.data,
         }
 
         try:
@@ -435,6 +483,7 @@ def animals_edit_page(animal_id):
     return render_template('caretaker/edit_animal.html', edit = edit, form=form, animal_id=animal_id)
 
 @routes.route('/caretaker/animals/<int:animal_id>/schedules', methods=['GET', 'POST'])
+@role_required('caretaker')
 @login_required
 def animal_schedules_page(animal_id):
     #POST
@@ -448,13 +497,18 @@ def animal_schedules_page(animal_id):
         return redirect(url_for('routes.animal_schedules_page', animal_id=animal_id))
 
     #GET
-    schedules = get_animal_schedules(animal_id)
-    return render_template('caretaker/schedules.html', schedules=schedules, animal_id=animal_id)
+    filters = dict()
+    filters['animal_id'] = animal_id
+    filters['state'] = request.args.get('state') or None
+    if request.args.get('old') is None: filters['date'] = date.today()
+    schedules = get_schedules(filters)
+    return render_template('caretaker/schedules.html', schedules=schedules, animal_id=animal_id, ScheduleState=ScheduleState)
 
-@routes.route('/caretaker/schedules/edit/<int:schedule_id>', methods=['GET', 'POST'])
+@routes.route('/caretaker/schedules/edit/<int:id>', methods=['GET', 'POST'])
+@role_required('caretaker')
 @login_required
-def schedules_edit_page(schedule_id):
-    schedule = get_schedule(schedule_id)
+def schedules_edit_page(id):
+    schedule = get_schedule(id)
     form = EditSchedules(obj=schedule)
 
     # POST
@@ -462,7 +516,7 @@ def schedules_edit_page(schedule_id):
         # Delete button
         if form.delete.data:
             try:
-                delete_schedule(schedule_id)
+                delete_schedule(id)
                 flash(f"Schedule has been deleted successfully", 'success')
             except Exception as e:
                 flash(f"Error deleting schedule: {str(e)}", "danger")
@@ -476,9 +530,11 @@ def schedules_edit_page(schedule_id):
             'end_time': form.end_time.data,
             'state': form.state.data,
         }
+        #delete volunteer is switching to FREE state
+        if form.state.data != ScheduleState.FREE.value: data['volunteer_id'] = schedule.volunteer_id
 
         try:
-            edit_schedule(schedule_id, data)
+            edit_schedule(id, data)
             flash(f"Schedule has been updated successfully", 'success')
         except Exception as e:
             flash(f"Error updating schedule: {str(e)}", "danger")
@@ -486,26 +542,30 @@ def schedules_edit_page(schedule_id):
         return redirect(url_for('routes.animal_schedules_page', animal_id=schedule.animal_id))
 
     #GET
-    return render_template('caretaker/edit_schedules.html', form=form, schedule=schedule)
+    edit = {
+        'title': 'Edit',
+        'route': 'routes.schedules_edit_page',
+        'id': schedule.id,
+        'animal_id': schedule.animal_id,
+    }
+    return render_template('caretaker/edit_schedule.html', form=form, edit=edit)
 
-@routes.route('/caretaker/animal/<int:animal_id>/add', methods=['GET', 'POST'])
+@routes.route('/caretaker/animal/<int:id>/schedules/add', methods=['GET', 'POST'])
+@role_required('caretaker')
 @login_required
-def schedules_add_page(animal_id):
+def schedules_add_page(id):
     form = AddSchedule()
 
     #POST
     if form.validate_on_submit():
-        #DELETE
-        if form.delete.data:
-            return redirect(url_for('routes.animal_schedules_page', animal_id=animal_id))
-
+        print('kek')
         #SAVE
         data = {
             'date': form.date.data,
             'start_time': form.start_time.data,
             'end_time': form.end_time.data,
             'state': form.state.data,
-            'animal_id': animal_id,
+            'animal_id': id,
             'caretaker_id': current_user.id,
             'interval': form.interval.data,
             'count': form.count.data,
@@ -521,18 +581,106 @@ def schedules_add_page(animal_id):
         except Exception as e:
             flash(f"Error creating schedule: {str(e)}", "danger")
             print(str(e))
-        return redirect(url_for('routes.animal_schedules_page', animal_id=animal_id))
+        return redirect(url_for('routes.animal_schedules_page', animal_id=id))
 
     #GET
-    return render_template('caretaker/add_schedule.html', form=form, animal_id=animal_id)
+    edit = {
+        'title': 'Add',
+        'route': 'routes.schedules_add_page',
+        'id': id,
+        'animal_id': id,
+    }
+    return render_template('caretaker/edit_schedule.html', form=form, edit=edit)
 
-#################################################
-#              DASHBOARD VOLUNTEER              #
-#################################################
+@routes.route('/caretaker/animals/<int:animal_id>/requests', methods=['GET', 'POST'])
+@role_required('caretaker')
+@login_required
+def animal_request_page(animal_id):
 
-@routes.route('/dashboard_volunteer')
-def dashboard_volunteer_page():
-    animals = Animal.query.all()
+    #POST
+    if request.method == 'POST':
+        request_id = request.form.get('request_id')
+        print(request_id)
+        try:
+            delete_request(request_id)
+            flash(f"Request has been deleted successfully", 'success')
+        except Exception as e:
+            flash(f"Error deleting request: {str(e)}", "danger")
 
-    return render_template('dashboard_volunteer.html', animals=animals)
+    #GET
+    filters = dict()
+    filters['animal_id'] = animal_id
+    filters['confirmed'] = False
+    requests = filter_request(filters)
 
+    return render_template('caretaker/requests.html', requests = requests, animal_id=animal_id)
+
+@routes.route('/caretaker/request/<int:id>/edit', methods=['GET', 'POST'])
+@role_required('caretaker')
+@login_required
+def edit_request_page(id):
+    request = get_request(id)
+    form = EditRequest(obj=request)
+
+    #POST
+    if form.validate_on_submit():
+        #DELETE
+        if form.delete.data:
+            try:
+                delete_request(id)
+                flash(f"Request has been deleted successfully", 'success')
+            except Exception as e:
+                flash(f"Error deleting request: {str(e)}", "danger")
+            return redirect(url_for('routes.animal_request_page', animal_id=request.animal_id))
+
+        #SAVE
+        data = {
+            'title': form.title.data,
+            'description': form.description.data,
+        }
+        try:
+            edit_request(request.id, data)
+            flash(f"Request has been updated successfully", 'success')
+        except Exception as e:
+            flash(f"Error updating request: {str(e)}", "danger")
+        return redirect(url_for('routes.animal_request_page', animal_id=request.animal_id))
+
+    #GET
+    edit = {
+        'title': 'Edit',
+        'route': 'routes.edit_request_page',
+        'id': id,
+        'animal_id': request.animal_id,
+    }
+    return render_template('caretaker/edit_request.html', form=form, edit=edit, request_id=id)
+
+@routes.route('/caretaker/animal/<int:id>/request/add', methods=['GET', 'POST'])
+@role_required('caretaker')
+@login_required
+def add_request_page(id):
+    form = EditRequest()
+
+    #POST
+    if form.validate_on_submit():
+        data = {
+            'title': form.title.data,
+            'description': form.description.data,
+            'id': id,
+            'animal_id': id,
+            'caretaker_id': current_user.id,
+        }
+        try:
+            create_request(data)
+            flash(f"Request has been created successfully", 'success')
+        except Exception as e:
+            flash(f"Error creating request: {str(e)}", "danger")
+        return redirect(url_for('routes.animal_request_page', animal_id=id))
+
+    #GET
+    edit = {
+        'title': 'Add',
+        'route': 'routes.add_request_page',
+        'id': id,
+        'animal_id': id,
+    }
+    return render_template('caretaker/edit_request.html', form=form, edit=edit)

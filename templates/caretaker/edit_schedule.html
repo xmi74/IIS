@@ -1,0 +1,54 @@
+{% extends 'caretaker/dashboard_caretaker_base.html' %}
+
+{% block content %}
+<h3>{{ edit.title }} Schedule</h3>
+<form method="POST" action="{{ url_for(edit.route, id=edit.id) }}" class="px-5">
+    {{ form.hidden_tag() }}
+    <div class="form-group">
+        {{ form.date.label }} {{form.date(clss="form-control") }}
+        {% for error in form.date.errors %}
+            <span class="rounded bg-danger p-1"> {{ error }}</span>
+        {% endfor %}
+    </div>
+    <div class="form-group">
+        {{ form.start_time.label }} {{ form.start_time(class="form-control") }}
+    </div>
+    <div class="form-group">
+        {{ form.end_time.label }} {{ form.end_time(class="form-control") }}
+        {% for error in form.end_time.errors %}
+            <span class="rounded bg-danger p-1"> {{ error }}</span>
+        {% endfor %}
+    </div>
+
+    <!--  When Creating only FREE state is allowed  -->
+    {% if edit.title == 'Edit' %}
+        <div class="form-group">
+            {{ form.state.label }} {{ form.state(class="form-control") }}
+        </div>
+
+    <!--  Optional multiple schedule creation  -->
+    {% elif edit.title == 'Add' %}
+        <div class="form-group row">
+            <div class="col-2">
+                {{ form.repeat.label }} {{ form.repeat(class="form-control") }}
+            </div>
+            <div class="col-5">
+                {{ form.interval.label }} {{ form.interval(class="form-control") }}
+            </div>
+            <div class="col-5">
+                {{ form.count.label }} {{ form.count(class="form-control") }}
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="form-group">
+        {{ form.submit(class="btn btn-primary") }}
+        <a href="{{ url_for('routes.animal_schedules_page', animal_id=edit.animal_id) }}" class="btn btn-secondary">Cancel</a>
+
+        <!--   Delete only if editing existing schedule     -->
+        {% if edit.title == 'Edit' %}
+            {{ form.delete(class="btn btn-danger") }}
+        {% endif %}
+    </div>
+    </form>
+{% endblock %}

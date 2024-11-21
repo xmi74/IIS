@@ -1,3 +1,7 @@
+from datetime import datetime
+
+from flask import request
+
 from api import api
 from models.request import Request
 from __init__ import db
@@ -11,13 +15,36 @@ def get_request(request_id):
     return Request.query.get_or_404(request_id)
 
 # FORM?
-def create_request():
-    pass
+def create_request(data):
+    request = Request(
+        title=data.get('title'),
+        description=data.get('description'),
+        created_at=datetime.now(),
+        animal_id=data.get('animal_id'),
+        caretaker_id=data.get('caretaker_id'),
+    )
+
+    try:
+        db.session.add(request)
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        raise e
+
+    return request
+
+
+#DELETE
+def delete_request(request_id):
+    request = get_request(request_id)
+    db.session.delete(request)
+    db.session.commit()
 
 # EDIT
 def edit_request(request_id, data):
     request = Request.query.get_or_404(request_id)
 
+    request.title = data.get("title", request.title)
     request.description = data.get('description', request.description)
     request.caretaker_id = data.get('caretaker_id', request.caretaker_id)
     request.animal_id = data.get('animal_id', request.animal_id)
@@ -38,10 +65,9 @@ def filter_request(filters):
     query = Request.query
 
     if 'confirmed' in filters and filters['confirmed']:
-        if filters['confirmed'] == 'true':
-            query = query.filter[Request.confirmed.is_(True)]
-        elif filters['confirmed'] == 'false':
-            query = query.filter(Request.confirmed.is_(False))
+        query = query.filter[Request.confirmed.is_(eval(filters['confirmed']))]
+    if 'animal_id' in filters and filters['animal_id']:
+        query = query.filter(Request.animal_id == filters['animal_id'])
 
     return query.all()
 

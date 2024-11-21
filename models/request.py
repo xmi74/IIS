@@ -5,6 +5,7 @@ from sqlalchemy.orm import relationship
 class Request(db.Model):
     __tablename__ = 'requests'
     id = db.Column(db.Integer(), primary_key=True)
+    title = db.Column(db.String(80), nullable=False)
     description = db.Column(db.String(255), nullable=True)
     created_at = db.Column(db.DateTime(), nullable=False, default=datetime.now)
     confirmed = db.Column(db.Boolean(), nullable=False, default=False)
