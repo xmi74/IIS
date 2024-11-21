@@ -36,8 +36,10 @@ def seed_data(db):
 
     # Vytvoření záznamů o zdravotních prohlídkách
     vaccination1 = Vaccination(date=datetime(2024, 10, 6, 12, 0), description='Rabies vaccination', type='vaccination', animal_id=animal1.id, vet_id=vet1.id, vaccination_type=VaccinationType.RABIES.value)
-    checkup1 = PreventiveCheckUp(date=datetime(2024, 10, 6, 15, 0), description='General health checkup', type='checkup', animal_id=animal2.id, vet_id=vet1.id)
-    db.session.add_all([vaccination1, checkup1])
+    vaccination2 = Vaccination(date=datetime(2024, 10, 6, 12, 0), description='Distemper vaccination', type='vaccination', animal_id=animal1.id, vet_id=vet1.id, vaccination_type=VaccinationType.DISTEMPER.value)
+    vaccination3 = Vaccination(date=datetime(2024, 10, 6, 12, 0), description='Parvovirus vaccination', type='vaccination', animal_id=animal2.id, vet_id=vet1.id, vaccination_type=VaccinationType.PARVOVIRUS.value)
+    checkup1 = PreventiveCheckUp(date=datetime(2024, 10, 6, 15, 0), description='General health checkup', type='preventive_checkup', animal_id=animal2.id, vet_id=vet1.id)
+    db.session.add_all([vaccination1, vaccination2, vaccination3, checkup1])
     db.session.commit()
 
     request1 = Request(

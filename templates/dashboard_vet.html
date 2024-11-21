@@ -18,47 +18,101 @@ Vet Dashboard
 
 {% block body %}
 <div class="container">    
-    <h3 class="text-center mt-4">Existing Users</h3>
-
-    <!-- Filtering -->
-     <form method="GET" action="{{ url_for('routes.dashboard_vet_page') }}" class="mb-4">
-        <div class="form-row">
-            <div class="form-group col-md-2">
-                <input type="text" name="confirmed" class="form-control" placeholder="">
-            </div>            
-            <div class="form-group col-md-1">
-                <button type="submit" class="btn btn-primary">Filter</button>
-            </div>
+    <div class="row">
+        <div class="col-2 bg-dark">
+            <ul class="nav flex-column">
+                <li class="nav-item"><a class="nav-link"  href="{{url_for('routes.dashboard_vet_page')}}">Requests</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{url_for('routes.dashboard_vet_page')}}">Examinations</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{url_for('routes.animal_health_records_page')}}">Health Records</a></li>
+            </ul>
         </div>
-     </form>
 
-    <div class="table-responsive">
-        <table class="table table-dark table-striped">
-            <!-- Table Header -->
-            <thead>
-                <tr>
-                    <th scope="col">ID</th>
-                    <th scope="col">Created At</th>                    
-                    <th scope="col">Animal ID</th>
-                    <th scope="col">Caretaker ID</th>
-                    <th scope="col">Description</th>
-                    <th scope="col">Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Iterate through requests and display each one as a row -->
-                {% for request in vet_requests %}
-                <tr>
-                    <td>{{ request.id }}</td>
-                    <td>{{ request.created_at }}</td>
-                    <td>{{ request.animal_id }}</td>
-                    <td>{{ request.caretaker_id }}</td>
-                    <td>...</td>
-                    <td><a href="{{ url_for('routes.request_detail_page') }}" class="btn btn-info btn-sm">View All</a></td>                    
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        <div class="col text-center">
+            {% block content %}
+            {% endblock %}
+        </div>
+    </div>
+
+
+    <div class="container">
+        <h3 class="text-center mt-4">Requests</h3>
+
+        <!-- Filtering -->
+        <form method="GET" action="{{ url_for('routes.dashboard_vet_page') }}" class="mb-4">
+            <div class="form-row">
+                <div class="form-group col-md-2">
+                    <select name="confirmed" class="form-control">
+                        <option value="" selected>Show All</option>
+                        <option value="true">Show Confirmed</option>
+                        <option value="false">Show Unconfirmed</option>
+                    </select>
+                </div>
+                <div class="form-group col-md-1">
+                    <button type="submit" class="btn btn-primary">Filter</button>
+                </div>
+            </div>
+        </form>
+
+        <div class="table-responsive">
+            <table class="table table-dark table-striped">
+                <!-- Table Header -->
+                <thead>
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">Created At</th>                    
+                        <th scope="col">Animal ID</th>
+                        <th scope="col">Caretaker ID</th>
+                        <th scope="col">Confirmed</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for request in vet_requests %}
+                    <tr>
+                        <td>{{ request.id }}</td>
+                        <td>{{ request.created_at }}</td>
+                        <td>{{ request.animal_id }}</td>
+                        <td>{{ request.caretaker_id }}</td>
+                        <!-- TODO: Make confirmed checkbox -->                     
+                        <td>
+                            {% if request.confirmed %}
+                                <i class="fas fa-check text-success"></i>
+                            {% else %}
+                                <i class="fas fa-times text-danger"></i>
+                            {% endif %}
+                        </td>
+                        <td><a href="{{ url_for('routes.request_detail_page', request_id=request.id) }}" class="btn btn-info btn-sm">View Details</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <h3 class="text-center mt-4">My Examinations</h3>
+        <div class="table-responsive">
+            <table class="table table-dark table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">Date</th>
+                        <th scope="col">Type</th>
+                        <th scope="col">Animal ID</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for examination in vet_examinations %}
+                        <tr>
+                            <td>{{ examination.id }}</td>
+                            <td>{{ examination.date }}</td>
+                            <td>{{ examination.type }}</td>
+                            <td>{{ examination.animal_id }}</td>
+                            <td><a href="{{ url_for('routes.examination_detail_page', examination_id=examination.id) }}" class="btn btn-info btn-sm">View Details</a></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 {% endblock %}

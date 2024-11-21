@@ -8,6 +8,7 @@ from forms import edit_schedules
 from forms.add_schedule import AddSchedule
 from forms.edit_animal import EditAnimalForm
 from forms.edit_schedules import EditSchedules
+from forms.add_examination import AddExaminationForm
 from models.user import User, Admin, Caretaker, Volunteer, Vet
 from models.animal import Animal
 from models.examination import Examination, PreventiveCheckUp, Vaccination
@@ -17,6 +18,8 @@ from forms.register import RegistrationForm
 from forms.login import LoginForm
 from forms.edit_user import EditUserForm
 from api.api_users import *
+from api.api_requests import *
+from api.api_examinations import *
 from models.enums.schedule_state import ScheduleState
 
 routes = Blueprint('routes', __name__)
@@ -246,18 +249,82 @@ def update_user_page(user_id):
 #                 DASHBOARD VET                 #
 #################################################
 
+# TODO: Creating Examinations
 @routes.route('/dashboard_vet')
-def dashboard_vet_page():
-    vet_requests = get_requests_by_vet(current_user.id)
+def dashboard_vet_page():    
+    confirmed_filter = request.args.get('confirmed')
 
-    return render_template('dashboard_vet.html', vet_requests=vet_requests)
+    if confirmed_filter == "true":
+        confirmed_filter = True
+    elif confirmed_filter == "false":
+        confirmed_filter = False
+    else:
+        confirmed_filter = None
 
-@routes.route('/dashboard_vet/request_detail')
-def request_detail_page():
-    return render_template('request_detail.html')
+    vet_requests = get_requests_by_vet(current_user.id, confirmed_filter)
+
+    vet_examinations = get_examinations_by_vet(current_user.id)
+
+    return render_template('dashboard_vet.html', vet_requests=vet_requests, vet_examinations=vet_examinations)
 
 
+@routes.route('/dashboard_vet/request_detail/<int:request_id>', methods=['GET', 'POST'])
+def request_detail_page(request_id):
+    specific_request = get_request(request_id)
 
+    if request.method == 'POST':
+        try:
+            edit_request_confirmed(request_id, True)
+            flash(f"Request {request_id} has been marked as confirmed.", "success")
+            return redirect(url_for('routes.request_detail_page', request_id=request_id))
+        except Exception as e:
+            flash(f"Error marking request as complete: {str(e)}", "danger")
+
+    form = AddExaminationForm()
+
+    if form.validate_on_submit():
+        data = {
+            'date': form.date.data,
+            'type': form.type.data,
+            'description': form.description.data,
+            'vet_id': current_user.id,
+            'animal_id': specific_request.animal_id
+        }
+        try:
+            create_examination(data)
+            flash("Examination succesfully created", "success")
+        except Exception as e:
+            flash(f"Error creating examination: {str(e)}", "danger")
+        
+    
+    return render_template('request_detail.html', specific_request=specific_request, form=form)
+
+@routes.route('/dashboard_vet/examination_detail/<int:examination_id>', methods=['GET', 'POST'])
+def examination_detail_page(examination_id):
+    specific_examination = get_examination(examination_id)
+
+    return render_template('examination_detail.html', specific_examination=specific_examination)
+
+
+@routes.route('/dashboard_vet/animal_hr', methods=['GET'])
+def animal_health_records_page():
+    animals = get_animals(filters=None)
+
+    animals_hrecords_count = [
+        {
+            'animal': animal,
+            'health_records_count': len(animal.examinations)  # Predpokladáme vzťah examinations
+        }
+        for animal in animals
+    ]
+    
+    return render_template('animal_hr.html', animals_hrecords_count=animals_hrecords_count)
+
+@routes.route('/dashboard_vet/animal_hr/<int:animal_id>', methods=['GET'])
+def animal_health_records_detail_page(animal_id):
+    health_records = get_examinations_by_animal(animal_id)
+
+    return render_template('animal_hr_detail.html', health_records=health_records)
 
 #######################################################
 #                 DASHBOARD CARETAKER                 #

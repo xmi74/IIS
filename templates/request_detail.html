@@ -1,1 +1,84 @@
 {% extends 'base.html' %}
+
+{% block title %}
+Request Detail
+{% endblock %}
+
+{% block navtitle %}
+Request Detail
+{% endblock %}
+
+{% block body %}
+<div class="containter mt-4 ml-4 mr-4">
+    <!-- Showing request -->
+    <h3>Request Detail</h3>
+
+    {% if not specific_request.confirmed %}
+    <form class="" method="POST" action="{{ url_for('routes.request_detail_page', request_id=specific_request.id) }}">
+        <button class="btn btn-success mb-3">Mark As Confirmed</button>
+    </form>    
+    {% endif %}
+
+    <div class="card bg-dark">
+        <div class="card-body">
+            <p class="card-title"><strong>Request ID:</strong> {{ specific_request.id }}</p>
+            <p class="card-text"><strong>Created At:</strong> {{ specific_request.created_at }}</p>
+            <p class="card-text"><strong>Subject Animal:</strong> {{ specific_request.animal_id }}</p>
+            <p class="card-text"><strong>From (Caretaker ID):</strong> {{ specific_request.caretaker_id }}</p>
+            <!-- Confirmed = Yes/No instead of True/False ? -->
+            <p class="card-text"><strong>Confirmed:</strong> {{ specific_request.confirmed }}</p> 
+            <p class="border-bottom border-bottom-2 border-white"></p>
+            <p class="card-text"><strong>Description:</strong></p> 
+            <p class="card-text">{{ specific_request.description }}</p>
+        </div>
+    </div>
+
+    <div class="d-flex align-items-center mt-2">
+        <a href="{{ url_for('routes.dashboard_vet_page') }}" class="btn btn-secondary mr-2">Back to Dashboard</a>
+        <!-- Button for showing create examination form -->
+        {% if not specific_request.confirmed %}
+            <button class="btn btn-info" id="showForm">Create Examination</button>
+        {% endif %}
+    </div>
+
+    <!-- Planning Examination -->    
+    {% if not specific_request.confirmed %}
+        <div id="exForm" class="mt-5" style="display: none;">
+            <h3>Plan Examination</h3>
+                <form method="POST">
+                    {{ form.hidden_tag() }}
+                    <div class="form-group">
+                        {{ form.date.label }} {{ form.date(class="form-control") }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.type.label }} {{ form.type(class="form-control") }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.vaccination_type.label }} {{ form.vaccination_type(class="form-control") }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.description.label }} {{ form.description(class="form-control") }}
+                    </div>
+                    <button type="submit" class="btn btn-primary"> {{ form.submit.label }}</button>
+                </form>
+        </div>
+    {% endif %}
+</div>
+
+<!-- Script to make Create Examination button dynamically show create form -->
+<script>
+    document.getElementById('showForm').addEventListener('click', 
+    function() {
+        var form = document.getElementById('exForm');
+        if (form.style.display === 'none') 
+        {
+            form.style.display = 'block';
+        }
+        else
+        {
+            form.style.display = 'none';
+        }
+    });
+</script>
+
+{% endblock %}
