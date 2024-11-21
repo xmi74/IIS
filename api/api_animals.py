@@ -6,6 +6,9 @@ from __init__ import db
 
 #READ ALL
 def get_animals(filters=None):
+    if filters is None:
+        filters = {}
+        
     query = Animal.query
 
     if 'name' in filters and filters['name'] is not None:

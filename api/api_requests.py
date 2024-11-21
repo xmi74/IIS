@@ -72,5 +72,11 @@ def filter_request(filters):
     return query.all()
 
 # FILTER ONLY REQUESTS BELONGING TO GIVEN VET
-def get_requests_by_vet(vet_id):
-    return Request.query.filter_by(vet_id=vet_id).all()
+def get_requests_by_vet(vet_id, confirmed_filter=None):
+    query = Request.query.filter_by(vet_id=vet_id)
+
+    if confirmed_filter is not None:
+        query = query.filter(Request.confirmed == confirmed_filter)
+
+    return query.all()
+

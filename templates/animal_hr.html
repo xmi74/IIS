@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Animals
+{% endblock %}
+
+{% block navtitle %}
+Animals
+{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <!-- Animal Name -->
+    <h3 class="text-center">Animals</h3> 
+    <div class="table-responsive">
+        <table class="table table-dark table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Species</th>
+                    <th scope="col">Birth Date</th>
+                    <th scope="col">Number of HR</th>
+                    <th scope="col">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for record in animals_hrecords_count %}
+                <tr>
+                    <td>{{ record.animal.id }}</td>
+                    <td>{{ record.animal.name }}</td>
+                    <td>{{ record.animal.species }}</td>
+                    <td>{{ record.animal.birth_date }}</td>
+                    <td>#{{ record.health_records_count }}</td>
+                    <td>
+                        <a href="{{ url_for('routes.animal_health_records_detail_page', animal_id=record.animal.id) }}" class="btn btn-info btn-sm">View All Health Records</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <a href="{{ url_for('routes.dashboard_vet_page') }}" class="btn btn-secondary">Back to Dashboard</a>
+</div>
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Examination Detail
+{% endblock %}
+
+{% block navtitle %}
+Examination Detail
+{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <h3 class="text-center">Examination Detail</h3>
+    <div class="card bg-dark">
+        <div class="card-body">
+            <p><strong>Examination ID:</strong> {{ specific_examination.id }}</p>
+            <p><strong>Date:</strong> {{ specific_examination.date }}</p>
+            <p><strong>Type:</strong> 
+                {% if specific_examination.type == 'vaccination' %}
+                    Vaccination
+                {% elif specific_examination.type == 'preventive_checkup' %}
+                    Preventive Check-Up
+                {% else %}
+                    Examination
+                {% endif %}
+            </p>
+            <p><strong>Animal ID:</strong> {{ specific_examination.animal_id }}</p>
+            <p><strong>Vet ID:</strong> {{ specific_examination.vet_id }}</p>
+            <p><strong>Description:</strong> {{ specific_examination.description or "No description available." }}</p>
+            {% if specific_examination.type == 'vaccination' %}
+                <p><strong>Vaccination Type:</strong> {{ specific_examination.vaccination_type }}</p>
+            {% endif %}
+        </div>
+    </div>
+    <a href="{{ url_for('routes.dashboard_vet_page') }}" class="btn btn-secondary mt-3">Back to Dashboard</a>
+</div>
+
+{% endblock %}
