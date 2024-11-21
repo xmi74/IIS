@@ -431,10 +431,9 @@ def animal_schedules_page(animal_id):
 
     #GET
     filters = dict()
-    filters['animal'] = animal_id
+    filters['animal_id'] = animal_id
     filters['state'] = request.args.get('state') or None
-    if request.args.get('old') is None:
-        filters['date'] = date.today()
+    if request.args.get('old') is None: filters['date'] = date.today()
     schedules = get_schedules(filters)
     return render_template('caretaker/schedules.html', schedules=schedules, animal_id=animal_id, ScheduleState=ScheduleState)
 
