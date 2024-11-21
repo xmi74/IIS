@@ -10,19 +10,28 @@
     
         <form method="GET" action="{{ url_for('routes.animals_page') }}">
             <div class="form-row">
+                <!-- Filter by Name -->
                 <div class="form-group col-md-2">
                     <input type="text" name="name" class="form-control" placeholder="Filter by Name">
                 </div>
-                <select class="form-group col-md-2" name="species">
-                    <option value="">All Species</option>
-                    <option value="Dog">Dog</option>
-                    <option value="Cat">Cat</option>
-                </select>
+        
+                <!-- Filter by Species -->
+                <div class="form-group col-md-2">
+                    <select name="species" class="form-control">
+                        <option value="">All Species</option>
+                        {% for species in Species %}
+                        <option value="{{ species.value }}">{{ species.value }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+        
+                <!-- Submit Button -->
                 <div class="form-group col-md-1">
                     <button type="submit" class="btn btn-primary">Filter</button>
                 </div>
             </div>
         </form>
+        
 
         <div class="row">
             {% for animal in animals %}

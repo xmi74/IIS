@@ -22,6 +22,7 @@ from forms.login import LoginForm
 from forms.edit_user import EditUserForm
 from api.api_users import *
 from models.enums.schedule_state import ScheduleState
+from models.enums.animal_species import Species
 from utils.decorators import role_required
 
 routes = Blueprint('routes', __name__)
@@ -46,10 +47,10 @@ def animals_page():
     if name:
         query = query.filter(Animal.name.ilike(name))
     if species:
-        query = query.filter_by(species=species)
+        query = query.filter(Animal.species == species)
 
     animals = query.all()
-    return render_template('public/animals.html', animals=animals)
+    return render_template('public/animals.html', animals=animals, Species=Species)
 
 
 # Route: Animal Detail View
