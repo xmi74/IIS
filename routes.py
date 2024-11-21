@@ -29,7 +29,7 @@ routes = Blueprint('routes', __name__)
 
 @routes.route('/')
 def home_page():
-    caretakers = get_caretakers()
+    caretakers = filter_users({'role': 'caretaker'})
     animals = get_animal_photos()
     return render_template('public/home.html', caretakers=caretakers, animals=animals)
 
