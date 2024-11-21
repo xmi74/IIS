@@ -1,3 +1,5 @@
+from datetime import date
+
 from flask_wtf import FlaskForm
 from wtforms.fields.choices import SelectField
 from wtforms.fields.datetime import DateField, TimeField
@@ -9,7 +11,7 @@ from models.enums.schedule_state import ScheduleState
 
 
 class EditSchedules(FlaskForm):
-    date = DateField('Date', validators=[DataRequired(), ScheduleDate()])
+    date = DateField('Date', validators=[DataRequired(), ScheduleDate()], default=date.today)
     start_time = TimeField('Start Time', validators=[DataRequired()])
     end_time = TimeField('End Time', validators=[DataRequired(), ScheduleTime()])
     state = SelectField('State',

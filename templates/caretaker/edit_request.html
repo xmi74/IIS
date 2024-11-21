@@ -1,0 +1,19 @@
+{% extends 'caretaker/dashboard_caretaker_base.html' %}
+
+{% block content %}
+<h3>{{edit.title}} Request</h3>
+<form method="POST" action="{{ url_for(edit.route, request_id=request_id, animal_id=edit.animal_id) }}">
+    {{ form.hidden_tag() }}
+    <div class="form-group">
+        {{ form.title.label }} {{ form.title(class="form-control") }}
+    </div>
+    <div class="form-group">
+        {{ form.description.label }} {{ form.description(class="form-control") }}
+    </div>
+    <div class="form-group">
+        {{ form.submit(class="btn btn-primary") }}
+        <a href="{{ url_for('routes.animal_med_page', animal_id=edit.animal_id) }}" class="btn btn-secondary">Cancel</a>
+        {{ form.delete(class="btn btn-danger") }}
+    </div>
+    </form>
+{% endblock %}
