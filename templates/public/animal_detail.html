@@ -26,7 +26,7 @@
     </div>
 
     <!-- Walk Schedules -->
-    <h3 class="mt-5">Walk Schedules</h3>
+    <h3 class="mt-5">Upcoming Walk Schedules</h3>
     <table class="table table-hover mt-3">
         <thead>
             <tr>
@@ -65,7 +65,7 @@
                     </form>
                     {% elif schedule.volunteer_id == current_user.id %}
                     <!-- Cancel Button -->
-                    <form action="{{ url_for('routes.cancel_schedule_view', schedule_id=schedule.id) }}" method="POST" style="display: inline;">
+                    <form action="{{ url_for('routes.cancel_schedule_view_animal', schedule_id=schedule.id) }}" method="POST" style="display: inline;">
                         <button type="submit" class="btn btn-danger">Cancel</button>
                     </form>
                     {% else %}
