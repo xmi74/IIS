@@ -37,6 +37,14 @@ def create_app():
 
         if app.config.get('SAMPLE_DATA', True):  # True = Seed data
             seed_data(db)
+            
+    @app.after_request
+    def add_cache_control_headers(response):
+        response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, public, max-age=0'
+        response.headers['Pragma'] = 'no-cache'
+        response.headers['Expires'] = '0'
+        return response
+
 
     # user_loader callback for flask_login
     @login_manager.user_loader

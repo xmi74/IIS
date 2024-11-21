@@ -1,6 +1,6 @@
 from datetime import date
 
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+from flask import Blueprint, render_template, request, redirect, url_for, flash, session
 from flask_login import login_user, logout_user, login_required, current_user
 from __init__ import db
 from api.api_animals import *
@@ -207,6 +207,7 @@ def register_page():
 @routes.route('/logout')
 def logout_page():
     logout_user() # flask_login builtin
+    session.clear()  # Prevents cache exploitation
     flash('You have been logged out', 'info')
     return redirect(url_for('routes.home_page'))
 
