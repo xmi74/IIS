@@ -2,7 +2,7 @@
 
 {% block content %}
 <h3>{{edit.title}} Request</h3>
-<form method="POST" action="{{ url_for(edit.route, request_id=request_id, animal_id=edit.animal_id) }}">
+<form method="POST" action="{{ url_for(edit.route, id=edit.id) }}">
     {{ form.hidden_tag() }}
     <div class="form-group">
         {{ form.title.label }} {{ form.title(class="form-control") }}
@@ -12,8 +12,10 @@
     </div>
     <div class="form-group">
         {{ form.submit(class="btn btn-primary") }}
-        <a href="{{ url_for('routes.animal_med_page', animal_id=edit.animal_id) }}" class="btn btn-secondary">Cancel</a>
-        {{ form.delete(class="btn btn-danger") }}
+        <a href="{{ url_for('routes.animal_request_page', animal_id=edit.animal_id) }}" class="btn btn-secondary">Cancel</a>
+        {% if edit.title == 'Edit' %}
+            {{ form.delete(class="btn btn-danger") }}
+        {% endif %}
     </div>
     </form>
 {% endblock %}

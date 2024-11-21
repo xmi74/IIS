@@ -6,10 +6,6 @@
 <div class="row">
     <form method="GET" action="{{ url_for('routes.animal_schedules_page', animal_id=animal_id) }}" class="col-11">
         <div class="form-row">
-            <div class="form-group col-md-2">
-                <input type="text" name="name" class="form-control" placeholder="Filter by Name">
-            </div>
-
             <div class="form-group form-check form-check-inline col-md-2">
                 <label for="old" class=" form-check-label">Old</label>
                 <input type="checkbox" class="form-control form-check-input" name="old" id="old">
@@ -28,7 +24,7 @@
     </form>
 
     <div class="col-1 my-2">
-        <a href="{{ url_for('routes.schedules_add_page' , animal_id=animal_id) }}" class="btn btn-success ">Add</a>
+        <a href="{{ url_for('routes.schedules_add_page' , id=animal_id) }}" class="btn btn-success ">Add</a>
     </div>
 </div>
 
@@ -50,10 +46,10 @@
                 <td>{{ schedule.start_time }}</td>
                 <td>{{ schedule.end_time }}</td>
                 <td>{{ schedule.state }}</td>
-                <td>{{ schedule.volunteer }}</td>
+                <td>{{ schedule.volunteer.login }}</td>
                 <td class="row mr-1">
                     <div class="col">
-                        <a href="{{ url_for('routes.schedules_edit_page', schedule_id=schedule.id) }}" class="btn btn-info btn-md" >Edit</a>
+                        <a href="{{ url_for('routes.schedules_edit_page', id=schedule.id) }}" class="btn btn-info btn-md" >Edit</a>
                     </div>
 
                     <div class="col">
