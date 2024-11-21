@@ -1,4 +1,4 @@
-from datetime import datetime, time, date
+from datetime import datetime, time, date, timedelta
 
 from models.enums.schedule_state import ScheduleState
 from models.user import Admin, Vet, Caretaker, Volunteer
@@ -20,7 +20,7 @@ def seed_data(db):
     admin1 = Admin(login='admin1', first_name='John', last_name='Doe', password='1234', role='admin', email='admin1@example.com')
     vet1 = Vet(login='vet1', first_name='James', last_name='Smith', password='1234', role='vet', email='vet1@example.com')
     caretaker1 = Caretaker(login='caretaker1', first_name='Robert', last_name='Adams', password ='1234', role='caretaker', email='caretaker1@example.com')
-    volunteer1 = Volunteer(login='volunteer1', first_name='Teresa', last_name='Gilbert', password ='1234', role='volunteer', email='volunteer1@example.com')
+    volunteer1 = Volunteer(login='volunteer1', first_name='Teresa', last_name='Gilbert', password ='1234', role='volunteer', email='volunteer1@example.com', verified=True)
 
     # Přidání uživatelů do session
     db.session.add_all([admin1, vet1, caretaker1, volunteer1])
@@ -58,7 +58,7 @@ def seed_data(db):
 
     # Vytvoření rozvrhu pro procházky
     schedule1 = WalkSchedule(
-        date= date(2024, 10, 6),
+        date= date(2024, 12, 12),
         start_time=time( 12, 0),
         end_time=time(13, 0),
         description='Morning walk',
@@ -66,16 +66,34 @@ def seed_data(db):
         animal_id=animal1.id,
         caretaker_id=caretaker1.id)
     schedule2 = WalkSchedule(
-        date=date(2024, 10, 7),
+        date=date(2024, 12, 12),
         start_time=time(12, 0),
         end_time=time(13, 0),
         description='Evening walk',
         state=ScheduleState.FREE.value,
         animal_id=animal2.id,
         caretaker_id=caretaker1.id)
+    schedule3 = WalkSchedule(
+        date=date(2024, 10, 10),
+        start_time=time(12, 0),
+        end_time=time(13, 0),
+        description='Evening walk',
+        state=ScheduleState.COMPLETED.value,
+        animal_id=animal2.id,
+        caretaker_id=caretaker1.id,
+        volunteer_id=volunteer1.id)
+    schedule4 = WalkSchedule(
+        date=datetime.now().date(),
+        start_time=(datetime.now() - timedelta(minutes=30)).time(),
+        end_time=(datetime.now() + timedelta(minutes=30)).time(),
+        description='Walk',
+        state=ScheduleState.IN_PROGRESS.value,
+        animal_id=animal2.id,
+        caretaker_id=caretaker1.id,
+        volunteer_id=volunteer1.id)
 
     # Přidání rozvrhu do session
-    db.session.add_all([schedule1, schedule2])
+    db.session.add_all([schedule1, schedule2, schedule3, schedule4])
     db.session.commit()
 
     # Vytvoření záznamu o nasazení dat

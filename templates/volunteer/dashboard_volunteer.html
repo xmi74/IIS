@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Volunteer Dashboard
+{% endblock %}
+
+{% block body %}
+<div class="container mt-4 text-white">
+    <h1 class="text-center text-primary">Volunteer Dashboard</h1>
+
+    <!-- Display Verification State -->
+    <div class="text-center mb-4">
+        {% if current_user.verified %}
+        <span class="badge bg-success" style="font-size: 1.2rem;">Verified</span>
+        {% else %}
+        <span class="badge bg-warning text-dark" style="font-size: 1.2rem;">Not Verified</span>
+        <p class="mt-2 text-muted">
+            Your profile is awaiting caretaker approval. You will not be able to reserve walks until verified.
+        </p>
+        {% endif %}
+    </div>
+
+    <!-- Closest/Ongoing Schedule -->
+    {% if closest_schedule %}
+    <div class="card mb-4 bg-dark text-white">
+        <div class="card-body text-center">
+            <h3 class="card-title text-success">Closest Reservation</h3>
+            <p>
+                <strong>Animal:</strong> {{ closest_schedule.animal.name }} ({{ closest_schedule.animal.species }})<br>
+                <strong>State:</strong> 
+                {% if closest_schedule.state == 'Confirmed' %}
+                    <span class="text-primary">Confirmed</span>
+                {% elif closest_schedule.state == 'Reserved' %}
+                    <span class="text-warning">Reserved</span>
+                {% else %}
+                    <span>{{ closest_schedule.state }}</span>
+                {% endif %}
+            </p>
+            <p>
+                <strong>Start:</strong> {{ closest_schedule.start_time.strftime('%H:%M') }}<br>
+                <strong>End:</strong> {{ closest_schedule.end_time.strftime('%H:%M') }}<br>
+                {% if closest_schedule.state == 'Confirmed' %}
+                <strong>Approved by Caretaker:</strong> {{ closest_schedule.caretaker.first_name }} {{ closest_schedule.caretaker.last_name }}
+                {% endif %}
+            </p>
+        </div>
+    </div>
+    {% else %}
+    <div class="alert alert-info text-center text-dark">No upcoming reservations.</div>
+    {% endif %}
+
+    <!-- Future Schedules -->
+    <h3 class="text-primary mt-5">Future Reservations</h3>
+    <table class="table text-white">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Animal</th>
+                <th>State</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for schedule in future_schedules %}
+            <tr>
+                <td>{{ schedule.date.strftime('%d.%m.%Y') }}</td>
+                <td>{{ schedule.start_time.strftime('%H:%M') }} - {{ schedule.end_time.strftime('%H:%M') }}</td>
+                <td>{{ schedule.animal.name }} ({{ schedule.animal.species }})</td>
+                <td>
+                    {% if schedule.state == 'Confirmed' %}
+                        <span class="text-primary">Confirmed</span>
+                    {% elif schedule.state == 'Reserved' %}
+                        <span class="text-warning">Reserved</span>
+                    {% else %}
+                        {{ schedule.state }}
+                    {% endif %}
+                </td>
+                <td>
+                    {% if schedule.state != 'In Progress' and schedule.state != 'Completed' %}
+                    <form action="{{ url_for('routes.cancel_schedule_view', schedule_id=schedule.id) }}" method="POST" style="display: inline;">
+                        <button type="submit" class="btn btn-danger btn-sm">Cancel</button>
+                    </form>
+                    {% else %}
+                    <span class="text-muted">N/A</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Past Schedules -->
+    <h3 class="text-primary mt-5">Past Reservations</h3>
+    <table class="table text-white">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Animal</th>
+                <th>State</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for schedule in past_schedules %}
+            <tr>
+                <td>{{ schedule.date.strftime('%d.%m.%Y') }}</td>
+                <td>{{ schedule.start_time.strftime('%H:%M') }} - {{ schedule.end_time.strftime('%H:%M') }}</td>
+                <td>{{ schedule.animal.name }} ({{ schedule.animal.species }})</td>
+                <td>{{ schedule.state }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

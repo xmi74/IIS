@@ -3,9 +3,8 @@ from datetime import date
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_user, logout_user, login_required, current_user
 from __init__ import db
-from api.api_animals import get_animals, get_animal, add_animal, edit_animal, delete_animal, get_animal_photos
-from api.api_schedules import get_schedule, delete_schedule, edit_schedule, create_schedule, \
-    create_multiple_schedules, reserve_schedule, get_incoming_animal_schedules, get_schedules
+from api.api_animals import *
+from api.api_schedules import *
 from forms import edit_schedules
 from forms.add_schedule import AddSchedule
 from forms.edit_animal import EditAnimalForm
@@ -63,8 +62,11 @@ def animal_detail(animal_id):
 
 
 @routes.route('/schedules/reserve/<int:schedule_id>', methods=['POST'])
+@role_required('volunteer')
+@login_required
 def reserve_schedule_view(schedule_id):
-    if not current_user.is_authenticated or current_user.role != 'volunteer' or not current_user.verified:
+    if not current_user.verified:
+        flash("You aren't verified yet.", "warning")
         return redirect(url_for('routes.login_page'))
     
     success = reserve_schedule(schedule_id, current_user.id)
@@ -75,19 +77,20 @@ def reserve_schedule_view(schedule_id):
 
 
 @routes.route('/schedules/cancel/<int:schedule_id>', methods=['POST'])
-def cancel_schedule_view(schedule_id):
-    if not current_user.is_authenticated or current_user.role != 'volunteer' or not current_user.verified:
-        return redirect(url_for('routes.login_page'))
+@role_required('volunteer')
+@login_required
+def cancel_schedule_view_animal(schedule_id):
+    if not current_user.verified:
+        flash("You aren't verified yet.", "warning")
+        return redirect(url_for('routes.home_page'))
 
-    # Fetch the schedule and ensure the current user is the one who reserved it
-    schedule = WalkSchedule.query.get(schedule_id)
-    if schedule and schedule.volunteer_id == current_user.id:
-        schedule.state = ScheduleState.FREE.value
-        schedule.volunteer_id = None
-        db.session.commit()
+    success = cancel_volunteer_schedule(schedule_id, current_user.id)
+    if success:
+        flash("Schedule canceled successfully.", "success")
         return redirect(request.referrer or url_for('routes.animals_page'))
-
-    return "Error canceling reservation. Ensure you are the one who reserved it.", 400
+    
+    flash("Error canceling reservation. Ensure you are the one who reserved it.", "danger")
+    return redirect(url_for('routes.animals_page'))
 
 #################################################
 #              DASHBOARD VOLUNTEER              #
@@ -97,7 +100,32 @@ def cancel_schedule_view(schedule_id):
 @role_required('volunteer')
 @login_required
 def dashboard_volunteer_page(): 
-    return render_template('volunteer/dashboard_volunteer.html')
+    closest_schedule = get_closest_schedule(current_user.id)
+    past_schedules = get_past_schedules(current_user.id)
+    future_schedules = get_future_schedules(current_user.id)
+
+    return render_template('volunteer/dashboard_volunteer.html', 
+                           closest_schedule=closest_schedule,
+                           past_schedules=past_schedules, 
+                           future_schedules=future_schedules)
+
+    
+@routes.route('/schedules/cancel/<int:schedule_id>', methods=['POST'])
+@role_required('volunteer')
+@login_required
+def cancel_schedule_view(schedule_id):
+    if not current_user.verified:
+        flash("You aren't verified yet.", "warning")
+        return redirect(url_for('routes.home_page'))
+
+    success = cancel_volunteer_schedule(schedule_id, current_user.id)
+    if success:
+        flash('Schedule has been canceled successfully.', 'success')
+    else:
+        flash("Error canceling reservation. Ensure you are the one who reserved it.", "danger")
+
+    return redirect(url_for('routes.dashboard_volunteer_page'))
+
 
 
 

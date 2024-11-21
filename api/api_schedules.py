@@ -1,4 +1,4 @@
-from datetime import timedelta
+from datetime import timedelta, date, datetime
 
 from __init__ import db
 from models.walk_schedule import WalkSchedule
@@ -29,9 +29,21 @@ def get_schedules(filters=None):
 
 #READ SCHEDULES WITCH STATE FREE OR RESERVED FOR ONE ANIMAL
 def get_incoming_animal_schedules(animal_id):
+    now = datetime.now()
     return WalkSchedule.query.filter(
         WalkSchedule.animal_id == animal_id,
-        WalkSchedule.state.in_([ScheduleState.FREE.value, ScheduleState.RESERVED.value, ScheduleState.CONFIRMED.value])
+        db.or_(
+            WalkSchedule.date > now.date(),  # Future dates
+            db.and_(
+                WalkSchedule.date == now.date(),  # Today's schedules
+                WalkSchedule.start_time > now.time()  # Future times only
+            )
+        ),
+        WalkSchedule.state.in_([
+            ScheduleState.FREE.value,
+            ScheduleState.RESERVED.value,
+            ScheduleState.CONFIRMED.value
+        ])
     ).order_by(WalkSchedule.date).all()
 
 #DELETE
@@ -88,6 +100,49 @@ def reserve_schedule(schedule_id, user_id):
     if schedule and schedule.state == ScheduleState.FREE.value:
         schedule.state = ScheduleState.RESERVED.value
         schedule.volunteer_id = user_id
+        db.session.commit()
+        return True
+    return False
+
+def get_volunteer_schedules(volunteer_id):
+    return WalkSchedule.query.filter_by(volunteer_id=volunteer_id).order_by(WalkSchedule.date, WalkSchedule.start_time).all()
+
+def get_closest_schedule(volunteer_id):
+    schedules = get_volunteer_schedules(volunteer_id)
+    now = datetime.now()
+
+    for schedule in schedules:
+        start_datetime = datetime.combine(schedule.date, schedule.start_time)
+        end_datetime = datetime.combine(schedule.date, schedule.end_time)
+
+        if start_datetime <= now <= end_datetime:
+            return schedule  # Ongoing schedule
+        elif start_datetime > now:
+            return schedule  # Nearest upcoming schedule
+
+    return None  # No ongoing or upcoming schedules
+
+def get_past_schedules(volunteer_id):
+    now = datetime.now()
+    schedules = get_volunteer_schedules(volunteer_id)
+    return [
+        s for s in schedules
+        if datetime.combine(s.date, s.end_time) < now
+    ]
+
+def get_future_schedules(volunteer_id):
+    now = datetime.now()
+    schedules = get_volunteer_schedules(volunteer_id)
+    return [
+        s for s in schedules
+        if datetime.combine(s.date, s.start_time) > now
+    ]
+
+def cancel_volunteer_schedule(schedule_id, volunteer_id):
+    schedule = WalkSchedule.query.get(schedule_id)
+    if schedule and schedule.volunteer_id == volunteer_id and (schedule.state == ScheduleState.RESERVED.value or schedule.state == ScheduleState.CONFIRMED.value):
+        schedule.state = ScheduleState.FREE.value
+        schedule.volunteer_id = None
         db.session.commit()
         return True
     return False
