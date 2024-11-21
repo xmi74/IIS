@@ -123,6 +123,28 @@
         }, 2000); // The message will disappear after 2 seconds
     </script>
 
+    <!-- Script for idle timeout and logout -->
+    {% if current_user.is_authenticated %}
+    <script>
+        let idleTimeout; // Timer to track inactivity
+
+        const resetTimer = () => {
+            clearTimeout(idleTimeout);
+            idleTimeout = setTimeout(() => {
+                alert("No activity in last hour.");
+                window.location.href = '/logout';
+            }, 3600000); // 3 600 000ms = 60 minutes
+        };
+
+        // Reset the timer on user activity
+        ['mousemove', 'keydown', 'mousedown', 'touchstart'].forEach(event => {
+            document.addEventListener(event, resetTimer, { passive: true });
+        });
+
+        resetTimer();
+    </script>
+    {% endif %}
+
   </body>
   <style>    
     body 
