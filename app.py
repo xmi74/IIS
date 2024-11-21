@@ -13,7 +13,7 @@ def create_app():
     app.config['SECRET_KEY'] = 'bf59e2d6497318f7fc560703'
     
     # Timeout configuration
-    app.config['PERMANENT_SESSION_LIFETIME'] = 5  # seconds
+    app.config['PERMANENT_SESSION_LIFETIME'] = 7200  # seconds
 
     # Initialize extensions
     db.init_app(app)
