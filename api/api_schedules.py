@@ -12,7 +12,6 @@ def get_schedule(schedule_id):
 #READ ALL MAY FILTER
 def get_schedules(filters=None):
     query = WalkSchedule.query
-
     if 'date' in filters and filters['date'] is not None:
         query = query.filter(WalkSchedule.date >= filters['date'])
     if 'start_time' in filters and filters['start_time'] is not None:
