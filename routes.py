@@ -11,6 +11,7 @@ from forms.add_schedule import AddSchedule
 from forms.edit_animal import EditAnimalForm
 from forms.edit_request import EditRequest
 from forms.edit_schedules import EditSchedules
+from forms.create_user import CreateUserForm
 from models.enums.animal_species import Species
 from forms.add_examination import AddExaminationForm
 from models.user import User, Admin, Caretaker, Volunteer, Vet
@@ -250,6 +251,29 @@ def dashboard_admin_page():
 
     return render_template('dashboard_admin.html', users=users, role_format=role_format)
 
+@routes.route('/admin/create_user', methods=['GET', 'POST'])
+@role_required('admin')
+@login_required
+def admin_create_user():
+    form = CreateUserForm()
+    if form.validate_on_submit():
+        new_user = User(
+            login=form.login.data,
+            first_name=form.first_name.data,
+            last_name=form.last_name.data,
+            email=form.email.data,
+            role=form.role.data,
+            password=form.password.data  # Hash
+        )
+        # Save the new user
+        db.session.add(new_user)
+        db.session.commit()
+        flash("User successfully created!", "success")
+        return redirect(url_for('routes.dashboard_admin_page'))
+
+    return render_template('admin/admin_create_user.html', form=form)
+
+
 ################ EDIT USER ################
 @routes.route('/dashboard_admin/edit_user/<int:user_id>', methods=['GET', 'POST'])
 @role_required('admin')
@@ -487,6 +511,8 @@ def animals_edit_page(animal_id):
 @role_required('caretaker')
 @login_required
 def animal_schedules_page(animal_id):
+    
+    animal = get_animal(animal_id)
     #POST
     if request.method == 'POST':
         schedule_id = request.form.get('schedule_id')
@@ -503,7 +529,7 @@ def animal_schedules_page(animal_id):
     filters['state'] = request.args.get('state') or None
     if request.args.get('old') is None: filters['date'] = date.today()
     schedules = get_schedules(filters)
-    return render_template('caretaker/schedules.html', schedules=schedules, animal_id=animal_id, ScheduleState=ScheduleState)
+    return render_template('caretaker/schedules.html', schedules=schedules, animal_id=animal_id, animal_name=animal.name, ScheduleState=ScheduleState)
 
 @routes.route('/caretaker/schedules/edit/<int:id>', methods=['GET', 'POST'])
 @role_required('caretaker')
@@ -598,6 +624,8 @@ def schedules_add_page(id):
 @login_required
 def animal_request_page(animal_id):
 
+    animal = get_animal(animal_id)
+    
     #POST
     if request.method == 'POST':
         request_id = request.form.get('request_id')
@@ -614,7 +642,7 @@ def animal_request_page(animal_id):
     filters['confirmed'] = False
     requests = filter_request(filters)
 
-    return render_template('caretaker/requests.html', requests = requests, animal_id=animal_id)
+    return render_template('caretaker/requests.html', requests = requests, animal_name=animal.name, animal_id=animal_id)
 
 @routes.route('/caretaker/request/<int:id>/edit', methods=['GET', 'POST'])
 @role_required('caretaker')
@@ -685,3 +713,62 @@ def add_request_page(id):
         'animal_id': id,
     }
     return render_template('caretaker/edit_request.html', form=form, edit=edit)
+
+
+
+@routes.route('/caretaker/confirm_reservations', methods=['GET', 'POST'])
+@role_required('caretaker')
+@login_required
+def confirm_reservations_page():
+    now = datetime.now()
+    fifteen_minutes = timedelta(minutes=15)
+    five_minutes = timedelta(minutes=5)
+
+    # Fetch schedules for the caretaker
+    pending_schedules = WalkSchedule.query.filter_by(state=ScheduleState.RESERVED.value).all()
+    ready_for_in_progress = WalkSchedule.query.filter(
+        WalkSchedule.state == ScheduleState.CONFIRMED.value,
+        WalkSchedule.start_time <= (now + five_minutes).time(),
+        WalkSchedule.start_time >= (now - fifteen_minutes).time()
+    ).all()
+    in_progress_schedules = WalkSchedule.query.filter_by(state=ScheduleState.IN_PROGRESS.value).all()
+
+    return render_template(
+        'caretaker/confirm_reservations.html',
+        pending_schedules=pending_schedules,
+        ready_for_in_progress=ready_for_in_progress,
+        in_progress_schedules=in_progress_schedules
+    )
+
+@routes.route('/schedule/confirm/<int:schedule_id>', methods=['POST'])
+@role_required('caretaker')
+@login_required
+def confirm_schedule(schedule_id):
+    schedule = WalkSchedule.query.get_or_404(schedule_id)
+    if schedule.state == ScheduleState.RESERVED.value:
+        schedule.state = ScheduleState.CONFIRMED.value
+        db.session.commit()
+        flash("Schedule confirmed successfully!", "success")
+    return redirect(url_for('routes.confirm_reservations_page'))
+
+@routes.route('/schedule/start/<int:schedule_id>', methods=['POST'])
+@role_required('caretaker')
+@login_required
+def start_schedule(schedule_id):
+    schedule = WalkSchedule.query.get_or_404(schedule_id)
+    if schedule.state == ScheduleState.CONFIRMED.value:
+        schedule.state = ScheduleState.IN_PROGRESS.value
+        db.session.commit()
+        flash("Schedule started successfully!", "success")
+    return redirect(url_for('routes.confirm_reservations_page'))
+
+@routes.route('/schedule/complete/<int:schedule_id>', methods=['POST'])
+@role_required('caretaker')
+@login_required
+def complete_schedule(schedule_id):
+    schedule = WalkSchedule.query.get_or_404(schedule_id)
+    if schedule.state == ScheduleState.IN_PROGRESS.value:
+        schedule.state = ScheduleState.COMPLETED.value
+        db.session.commit()
+        flash("Schedule completed successfully!", "success")
+    return redirect(url_for('routes.confirm_reservations_page'))
