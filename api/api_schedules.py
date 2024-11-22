@@ -1,4 +1,5 @@
 from datetime import timedelta, date, datetime
+from sqlalchemy import or_, and_
 
 from __init__ import db
 from models.walk_schedule import WalkSchedule
@@ -22,6 +23,16 @@ def get_schedules(filters=None):
         query = query.filter(WalkSchedule.animal_id == filters['animal_id'])
     if 'state' in filters and filters['state'] is not None:
         query = query.filter(WalkSchedule.state == filters['state'])
+    if 'upcoming' in filters and filters['upcoming'] is True:
+        query = query.filter(
+            or_(
+                WalkSchedule.date > date.today(),
+                and_(
+                    WalkSchedule.date == date.today(),
+                    WalkSchedule.end_time >= datetime.now().time()
+                )
+            )
+        )
 
     query = query.order_by(WalkSchedule.date, WalkSchedule.start_time)
     return query.all()

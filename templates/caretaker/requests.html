@@ -2,9 +2,25 @@
 
 {% block content %}
 <h3>Medical Requests for {{ animal_name }}</h3>
-<div class="col-1 my-2">
-    <a href="{{ url_for('routes.add_request_page' , id=animal_id) }}" class="btn btn-success ">Add</a>
+
+<div class="row">
+    <form method="GET" action="{{ url_for('routes.animal_request_page', animal_id=animal_id) }}" class="col-11">
+        <div class="form-row">
+            <div class="form-group form-check form-check-inline col-md-2">
+                <label for="confirmed" class="form-check-label">Show All</label>
+                <input type="checkbox" class="form-control form-check-input" name="confirmed" id="confirmed">
+            </div>
+            <div class="form-group col-md-1">
+                <button type="submit" class="btn btn-primary">Filter</button>
+            </div>
+        </div>
+    </form>
+
+    <div class="col-1 my-2">
+        <a href="{{ url_for('routes.add_request_page' , id=animal_id) }}" class="btn btn-success ">Add</a>
+    </div>
 </div>
+
 <table class="table table-hover table-dark table-striped">
     <thead>
         <tr>
@@ -22,29 +38,30 @@
                 <td>{{ request.description[:20]+'...' or 'No description'}}</td>
                 <td>{{ request.created_at }}</td>
                 {% if request.confirmed %}
-                <td>Confirmed</td>
+                    <td>Confirmed</td>
+                    <td class="row mr-1"></td>
                 {% else %}
-                <td>Not Confirmed</td>
+                    <td>Not Confirmed</td>
+
+                    <td class="row mr-1">
+                        <div class="col">
+                            <a href="{{ url_for('routes.edit_request_page', id=request.id) }}" class="btn btn-info btn-md" >Edit</a>
+                        </div>
+
+                        <div class="col">
+                            <form method="post">
+                                <input type="hidden" name="request_id" value="{{request.id}}">
+                                <button class="btn btn-danger btn-outline"
+                                        type="submit"
+                                        name="delete"
+                                        value="True"
+                                >
+                                    Delete
+                                </button>
+                            </form>
+                        </div>
+                    </td>
                 {% endif %}
-                <td class="row mr-1">
-                    <div class="col">
-                        <a href="{{ url_for('routes.edit_request_page', id=request.id) }}" class="btn btn-info btn-md" >Edit</a>
-                    </div>
-
-                    <div class="col">
-                        <form method="post">
-                            <input type="hidden" name="request_id" value="{{request.id}}">
-                            <button class="btn btn-danger btn-outline"
-                                    type="submit"
-                                    name="delete"
-                                    value="True"
-                            >
-                                Delete
-                            </button>
-                        </form>
-                    </div>
-
-                </td>
             </tr>
         {% endfor %}
     </tbody>

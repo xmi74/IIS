@@ -64,8 +64,8 @@ def edit_request_confirmed(request_id, new_status):
 def filter_request(filters):
     query = Request.query
 
-    if 'confirmed' in filters and filters['confirmed']:
-        query = query.filter[Request.confirmed.is_(eval(filters['confirmed']))]
+    if 'confirmed' in filters and filters['confirmed'] is not None:
+        query = query.filter(Request.confirmed.is_(False))
     if 'animal_id' in filters and filters['animal_id']:
         query = query.filter(Request.animal_id == filters['animal_id'])
 

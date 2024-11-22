@@ -1,3 +1,4 @@
+import datetime
 from datetime import date
 
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session
@@ -611,8 +612,9 @@ def animal_schedules_page(animal_id):
     filters = dict()
     filters['animal_id'] = animal_id
     filters['state'] = request.args.get('state') or None
-    if request.args.get('old') is None: filters['date'] = date.today()
+    if request.args.get('old') is None: filters['upcoming'] = True
     schedules = get_schedules(filters)
+    # schedules = get_incoming_animal_schedules(animal_id)
     return render_template('caretaker/schedules.html', schedules=schedules, animal_id=animal_id, animal_name=animal.name, ScheduleState=ScheduleState)
 
 @routes.route('/caretaker/schedules/edit/<int:id>', methods=['GET', 'POST'])
@@ -707,7 +709,6 @@ def schedules_add_page(id):
 @role_required('caretaker')
 @login_required
 def animal_request_page(animal_id):
-
     animal = get_animal(animal_id)
     
     #POST
@@ -723,7 +724,7 @@ def animal_request_page(animal_id):
     #GET
     filters = dict()
     filters['animal_id'] = animal_id
-    filters['confirmed'] = False
+    if request.args.get('confirmed') is None: filters['confirmed'] = False
     requests = filter_request(filters)
 
     return render_template('caretaker/requests.html', requests = requests, animal_name=animal.name, animal_id=animal_id)

@@ -10,10 +10,11 @@ from forms.validators.custom_validators import OptionalMandatory
 
 
 class AddSchedule(EditSchedules):
-    repeat = BooleanField('Repeat', default=False, validators=[OptionalMandatory()])
+    repeat = BooleanField('Repeat', default=False)
     interval = SelectField('Interval',
                            choices=[
                                ('day', 'Day'),
                                ('week', 'Week')
-                           ])
-    count = IntegerField('Count', default=1, validators=[NumberRange(min=1, max=31)])
+                           ],
+                           validators=[OptionalMandatory()])
+    count = IntegerField('Count', default=1, validators=[NumberRange(min=1, max=31), OptionalMandatory()])
