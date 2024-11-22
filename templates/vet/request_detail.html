@@ -34,51 +34,39 @@ Request Detail
         </div>
     </div>
 
-    <!-- Action Buttons -->
-    <div class="d-flex justify-content-center mt-4">
-        <!-- Back Button -->
-        <a href="{{ url_for('routes.dashboard_vet_page') }}" class="btn btn-secondary mr-3">Back</a>
-
-        <!-- Choose Date for Examination -->
-        <button class="btn btn-success mr-3" id="showDateForm">Choose Date for Examination</button>
-
-        <!-- Show Full Form -->
-        <button class="btn btn-info" id="showFullForm">Show Full Form</button>
+    <div class="d-flex align-items-center mt-2">
+        <a href="{{ url_for('routes.dashboard_vet_page') }}" class="btn btn-secondary mr-2">Back to Dashboard</a>
+        <!-- Button for showing create examination form -->
+        {% if not specific_request.confirmed %}
+            <button class="btn btn-info" id="showForm">Create Examination</button>
+        {% endif %}
     </div>
 
-    <!-- Simple Date Form -->
-    <div id="dateForm" class="mt-5 text-center mx-auto" style="max-width: 600px; display: none;">
-        <h4>Choose Date for Examination</h4>
-        <form method="POST" action="{{ url_for('routes.request_detail_page', request_id=specific_request.id) }}">
-            {{ form.hidden_tag() }}
-            <div class="form-group">
-                {{ form.date.label }} {{ form.date(class="form-control", id="simpleDate") }}
-            </div>
-            <input type="hidden" name="confirm" value="true">
-            <button type="submit" class="btn btn-primary">Confirm & Create Examination</button>
-        </form>
-    </div>
-
-    <!-- Full Examination Form -->
-    <div id="fullForm" class="mt-5 text-center mx-auto" style="max-width: 600px; display: none;">
-        <h4>Create Examination</h4>
-        <form method="POST" action="{{ url_for('routes.create_examination_page') }}">
-            {{ form.hidden_tag() }}
-            <div class="form-group">
-                {{ form.date.label }} {{ form.date(class="form-control", id="fullDate") }}
-            </div>
-            <div class="form-group">
-                {{ form.type.label }} {{ form.type(class="form-control") }}
-            </div>
-            <div class="form-group">
-                {{ form.vaccination_type.label }} {{ form.vaccination_type(class="form-control") }}
-            </div>
-            <div class="form-group">
-                {{ form.description.label }} {{ form.description(class="form-control") }}
-            </div>
-            <button type="submit" class="btn btn-primary">Confirm & Create Examination</button>
-        </form>
-    </div>
+    <!-- Planning Examination -->    
+    {% if not specific_request.confirmed %}
+        <div id="exForm" class="mt-5" style="display: none;">
+            <h3>New Examination</h3>
+            <form method="POST">
+                {{ form.hidden_tag() }}
+                <div class="form-group">
+                    {{ form.animal_id.label }} {{ form.animal_id(class="form-control") }}
+                </div>
+                <div class="form-group">
+                    {{ form.date.label }} {{ form.date(class="form-control") }}
+                </div>
+                <div class="form-group">
+                    {{ form.type.label }} {{ form.type(class="form-control") }}
+                </div>
+                <div class="form-group">
+                    {{ form.vaccination_type.label }} {{ form.vaccination_type(class="form-control") }}
+                </div>
+                <div class="form-group">
+                    {{ form.description.label }} {{ form.description(class="form-control") }}
+                </div>
+                <button type="submit" class="btn btn-primary"> {{ form.submit.label }}</button>
+            </form>
+        </div>
+    {% endif %}
 </div>
 
 <!-- JavaScript to Toggle Forms and Prefill Date -->

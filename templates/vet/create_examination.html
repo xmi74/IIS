@@ -15,18 +15,12 @@ Create Examination
         <div class="card-body">
             <form method="POST">
                 {{ form.hidden_tag() }}
-                <div class="form-group">
-                    {{ form.date.label }} {{ form.date(class="form-control") }}
-                </div>
-                <div class="form-group">
-                    {{ form.type.label }} {{ form.type(class="form-control") }}
-                </div>
-                <div class="form-group">
-                    {{ form.vaccination_type.label }} {{ form.vaccination_type(class="form-control") }}
-                </div>
-                <div class="form-group">
-                    {{ form.description.label }} {{ form.description(class="form-control") }}
-                </div>
+                <div class="form-group">{{ form.animal_id.label }} {{ form.animal_id(class="form-control") }}</div>
+                <div class="form-group">{{ form.date.label }} {{ form.date(class="form-control") }}</div>
+                <div class="form-group">{{ form.type.label }} {{ form.type(class="form-control") }}</div>
+                <div class="form-group">{{ form.vaccination_type.label }} {{ form.vaccination_type(class="form-control") }}</div>
+                <div class="form-group">{{ form.description.label }} {{ form.description(class="form-control") }}</div>
+                
                 <div class="d-flex">
                     <button type="submit" class="btn btn-primary mr-3">{{ form.submit.label }}</button>
                     <a href="{{ url_for('routes.vets_examinations_page') }}" class="btn btn-secondary">Cancel</a>
