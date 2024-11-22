@@ -1,7 +1,7 @@
 {% extends 'caretaker/dashboard_caretaker_base.html' %}
 
 {% block content %}
-<h3>Medical Requests</h3>
+<h3>Medical Requests for {{ animal_name }}</h3>
 <div class="col-1 my-2">
     <a href="{{ url_for('routes.add_request_page' , id=animal_id) }}" class="btn btn-success ">Add</a>
 </div>
@@ -12,7 +12,7 @@
             <th scope="col">Description</th>
             <th scope="col">Created</th>
             <th scope="col">State</th>
-            <th scope="col">Option</th>
+            <th scope="col">Options</th>
         </tr>
     </thead>
     <tbody>

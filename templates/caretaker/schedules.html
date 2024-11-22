@@ -1,7 +1,7 @@
 {% extends 'caretaker/dashboard_caretaker_base.html' %}
 
 {% block content %}
-<h3>Schedules</h3>
+<h3>Schedules for {{ animal_name }}</h3>
 
 <div class="row">
     <form method="GET" action="{{ url_for('routes.animal_schedules_page', animal_id=animal_id) }}" class="col-11">
@@ -36,7 +36,7 @@
             <th scope="col">End</th>
             <th scope="col">State</th>
             <th scope="col">Volunteer</th>
-            <th scope="col">Option</th>
+            <th scope="col">Options</th>
         </tr>
     </thead>
     <tbody>
@@ -46,7 +46,13 @@
                 <td>{{ schedule.start_time }}</td>
                 <td>{{ schedule.end_time }}</td>
                 <td>{{ schedule.state }}</td>
-                <td>{{ schedule.volunteer.login }}</td>
+                <td>
+                    {% if schedule.volunteer %}
+                        {{ schedule.volunteer.first_name }} {{ schedule.volunteer.last_name }} ({{ schedule.volunteer.login }})
+                    {% else %}
+                        <span class="text-muted">N/A</span>
+                    {% endif %}
+                </td>
                 <td class="row mr-1">
                     <div class="col">
                         <a href="{{ url_for('routes.schedules_edit_page', id=schedule.id) }}" class="btn btn-info btn-md" >Edit</a>
