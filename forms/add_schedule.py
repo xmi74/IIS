@@ -17,4 +17,4 @@ class AddSchedule(EditSchedules):
                                ('week', 'Week')
                            ],
                            validators=[OptionalMandatory()])
-    count = IntegerField('Count', default=1, validators=[NumberRange(min=1, max=31), OptionalMandatory()])
+    count = IntegerField('Duplicate Count', default=1, validators=[NumberRange(min=1, max=31), OptionalMandatory()])

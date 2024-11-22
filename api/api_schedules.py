@@ -80,7 +80,7 @@ def create_schedule(schedule):
 #CREATE MULTIPLE
 def create_multiple_schedules(data):
     schedule_date = data.get('date')
-    for count in range(data.get('count')):
+    for count in range(data.get('count') + 1):
         if data.get('interval') == 'day':
             data['date'] = schedule_date + timedelta(days=count)
         elif data.get('interval') == 'week':
