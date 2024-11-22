@@ -40,3 +40,10 @@ def get_examinations_by_vet(vet_id):
 
 def get_examinations_by_animal(animal_id):
     return Examination.query.filter_by(animal_id=animal_id).all()
+
+def delete_examination(examination_id):
+    examination = Examination.query.get_or_404(examination_id)
+
+    db.session.delete(examination)
+    db.session.commit()
+    return examination

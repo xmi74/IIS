@@ -320,7 +320,6 @@ def update_user_page(user_id):
 #                 DASHBOARD VET                 #
 #################################################
 
-# TODO: Creating Examinations
 @routes.route('/dashboard_vet')
 @role_required('vet')
 @login_required
@@ -338,6 +337,7 @@ def dashboard_vet_page():
 
     return render_template('dashboard_vet.html', vet_requests=vet_requests)
 
+################ REQUEST SECTION ################
 
 @routes.route('/dashboard_vet/request_detail/<int:request_id>', methods=['GET', 'POST'])
 @role_required('vet')
@@ -372,6 +372,8 @@ def request_detail_page(request_id):
     
     return render_template('request_detail.html', specific_request=specific_request, form=form)
 
+
+################ EXAMINATIONS SECTION ################
 
 @routes.route('/dashboard_vet/vets_examinations', methods=['GET', 'POST'])
 @role_required('vet')
@@ -415,6 +417,19 @@ def create_examination_page():
 
     return render_template('create_examination.html', form=form)
 
+@routes.route('/dashboard_vet/delete_examination/<int:examination_id>', methods=['POST'])
+@role_required('vet')
+@login_required
+def delete_examination_page(examination_id):
+    try:
+        delete_examination(examination_id)
+        flash("Examination successfully deleted.", "success")
+    except Exception as e:
+        flash(f"Error deleting examination: {str(e)}", "danger")
+
+    return redirect(url_for('routes.dashboard_vet_page'))
+
+
 @routes.route('/dashboard_vet/edit_examination/<int:examination_id>', methods=['GET', 'POST'])
 @role_required('vet')
 @login_required
@@ -445,6 +460,7 @@ def edit_examination_page(examination_id):
 
     return render_template('edit_examination.html', form=form, examination=examination)
 
+################ HEALTH RECORDS SECTION ################
 
 @routes.route('/dashboard_vet/animal_hr', methods=['GET'])
 @role_required('vet')
