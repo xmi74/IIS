@@ -393,7 +393,7 @@ def examination_detail_page(examination_id):
     return render_template('examination_detail.html', specific_examination=specific_examination)
 
 
-@routes.route('/dashboard_vet/create_examination')
+@routes.route('/dashboard_vet/create_examination', methods=['GET', 'POST'])
 @role_required('vet')
 @login_required
 def create_examination_page():
@@ -401,6 +401,7 @@ def create_examination_page():
 
     if form.validate_on_submit():
         data = {
+            'animal_id': form.animal_id.data,
             'date': form.date.data,
             'type': form.type.data,
             'vaccination_type': form.vaccination_type.data if form.type.data == 'vaccination' else None,
@@ -411,9 +412,13 @@ def create_examination_page():
         try:
             create_examination(data) 
             flash("Examination successfully created.", "success")
-            return redirect(url_for('routes.dashboard_vet_page'))
+            return redirect(url_for('routes.vets_examinations_page'))
         except Exception as e:
             flash(f"Error creating examination: {str(e)}", "danger")
+    else:
+        for field, errors in form.errors.items():
+            for error in errors:
+                flash(f"Error in {field}: {error}", "danger")
 
     return render_template('create_examination.html', form=form)
 
@@ -427,7 +432,7 @@ def delete_examination_page(examination_id):
     except Exception as e:
         flash(f"Error deleting examination: {str(e)}", "danger")
 
-    return redirect(url_for('routes.dashboard_vet_page'))
+    return redirect(url_for('routes.vets_examinations_page'))
 
 
 @routes.route('/dashboard_vet/edit_examination/<int:examination_id>', methods=['GET', 'POST'])
@@ -437,7 +442,7 @@ def edit_examination_page(examination_id):
     examination = get_examination(examination_id)
     if not examination:
         flash(f"Examination with ID {examination_id} not found.", "danger")
-        return redirect(url_for('routes.dashboard_vet_page'))
+        return redirect(url_for('routes.vets_examinations_page'))
 
     form = AddExaminationForm(obj=examination)
 
@@ -454,7 +459,7 @@ def edit_examination_page(examination_id):
         try:
             db.session.commit()
             flash("Examination successfully updated.", "success")
-            return redirect(url_for('routes.dashboard_vet_page'))
+            return redirect(url_for('routes.vets_examinations_page'))
         except Exception as e:
             flash(f"Error updating examination: {str(e)}", "danger")
 

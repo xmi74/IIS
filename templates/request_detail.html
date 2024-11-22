@@ -48,6 +48,9 @@ Request Detail
             <form method="POST">
                 {{ form.hidden_tag() }}
                 <div class="form-group">
+                    {{ form.animal_id.label }} {{ form.animal_id(class="form-control") }}
+                </div>
+                <div class="form-group">
                     {{ form.date.label }} {{ form.date(class="form-control") }}
                 </div>
                 <div class="form-group">
