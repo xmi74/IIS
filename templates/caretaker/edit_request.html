@@ -4,12 +4,19 @@
 <h3>{{edit.title}} Request</h3>
 <form method="POST" action="{{ url_for(edit.route, id=edit.id) }}">
     {{ form.hidden_tag() }}
-    <div class="form-group">
-        {{ form.title.label }} {{ form.title(class="form-control") }}
+
+    <!-- Dynamically render form fields -->
+    {% for field in form %}
+        {% if field.type != "HiddenField" and field.name not in ['submit', 'delete'] and field.name not in ['csrf_token'] %}
+            {% include '_form_field.html' %}
+        {% endif %}
+    {% endfor %}
+    
+    <!-- Required field label -->
+    <div class="form-group text-muted" style="font-size: 0.9rem;">
+        <span class="text-danger">*</span> = Required field
     </div>
-    <div class="form-group">
-        {{ form.description.label }} {{ form.description(class="form-control") }}
-    </div>
+
     <div class="form-group">
         {{ form.submit(class="btn btn-primary") }}
         <a href="{{ url_for('routes.animal_request_page', animal_id=edit.animal_id) }}" class="btn btn-secondary">Cancel</a>

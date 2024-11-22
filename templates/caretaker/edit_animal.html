@@ -1,30 +1,23 @@
 {% extends 'caretaker/dashboard_caretaker_base.html' %}
 
 {% block content %}
-<h3>{{edit.title}} Animal</h3>
+<h3>{{ edit.title }} Animal</h3>
 <form method="POST" action="{{ url_for(edit.route, animal_id=animal_id) }}">
     {{ form.hidden_tag() }}
-    <div class="form-group">
-        {{ form.name.label }} {{ form.name(class="form-control") }}
+    
+    <!-- Dynamical rendering of form fields -->
+    {% for field in form %}
+        {% if field.type != "HiddenField" and field.name not in ['submit', 'delete'] and field.name not in ['csrf_token'] %}
+            {% include '_form_field.html' %}
+        {% endif %}
+    {% endfor %}
+
+    <!-- Required field label -->
+    <div class="form-group text-muted" style="font-size: 0.9rem;">
+        <span class="text-danger">*</span> = Required field
     </div>
-    <div class="form-group">
-        {{ form.species.label }} {{ form.species(class="form-control") }}
-    </div>
-    <div class="form-group">
-        {{ form.weight.label }} {{ form.weight(class="form-control") }}
-    </div>
-    <div class="form-group">
-        {{ form.birth_date.label }} {{ form.birth_date(class="form-control") }}
-        {% for error in form.birth_date.errors %}
-            <span class="rounded bg-danger p-1"> {{ error }}</span>
-        {% endfor %}
-    </div>
-    <div class="form-group">
-        {{ form.photo.label }} {{ form.photo(class="form-control") }}
-    </div>
-    <div class="form-group">
-        {{ form.description.label }} {{ form.description(class="form-control") }}
-    </div>
+
+    <!-- Submit and Cancel buttons -->
     <div class="form-group">
         {{ form.submit(class="btn btn-primary") }}
         <a href="{{ url_for('routes.animals_caretaker_page') }}" class="btn btn-secondary">Cancel</a>
@@ -32,5 +25,5 @@
             {{ form.delete(class="btn btn-danger") }}
         {% endif %}
     </div>
-    </form>
+</form>
 {% endblock %}

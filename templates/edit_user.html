@@ -10,24 +10,22 @@ Edit user
 
 {% block body %}
 <div class="container mt-4">
-    <h3>Edit User: {{ user.login }}</h3>
+    <h3>Edit User: {{ user.first_name }} {{ user.last_name }} ({{ user.login }})</h3>
     <form method="POST" action="{{ url_for('routes.update_user_page', user_id=user.id) }}">
         {{ form.hidden_tag() }}
-        <div class="form-group">
-            {{ form.login.label }} {{ form.login(class="form-control") }}
+
+        <!-- Dynamically render form fields -->
+        {% for field in form %}
+            {% if field.type != "HiddenField" and field.name not in ['submit', 'delete', 'cancel'] and field.name not in ['csrf_token'] %}
+                {% include '_form_field.html' %}
+            {% endif %}
+        {% endfor %}
+
+        <!-- Required field label -->
+        <div class="form-group text-muted" style="font-size: 0.9rem;">
+            <span class="text-danger">*</span> = Required field
         </div>
-        <div class="form-group">
-            {{ form.first_name.label }} {{ form.first_name(class="form-control") }}
-        </div>
-        <div class="form-group">
-            {{ form.last_name.label }} {{ form.last_name(class="form-control") }}
-        </div>
-        <div class="form-group">
-            {{ form.email.label }} {{ form.email(class="form-control") }}
-        </div>
-        <div class="form-group">
-            {{ form.role.label }} {{ form.role(class="form-control") }}
-        </div>
+
         <div class="form-group">
             {{ form.submit(class="btn btn-primary") }}
             {{ form.cancel(class="btn btn-secondary") }}

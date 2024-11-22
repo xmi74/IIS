@@ -11,6 +11,10 @@ Admin Dashboard
 {% block body %}
 <div class="container">    
     <h3 class="text-center mt-4">Existing Users</h3>
+    
+    <div class="mb-4 text-right">
+        <a href="{{ url_for('routes.admin_create_user') }}" class="btn btn-success">Create New User</a>
+    </div>
 
     <!-- Filtering -->
      <form method="GET" action="{{ url_for('routes.dashboard_admin_page') }}" class="mb-4">
