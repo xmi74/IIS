@@ -1,0 +1,107 @@
+{% extends 'caretaker/dashboard_caretaker_base.html' %}
+
+{% block content %}
+<h3>Confirm Reservations</h3>
+
+<div class="container mt-4">
+
+    <!-- Pending Reservations Section -->
+    <div class="mb-5">
+        <h4>Pending Reservations</h4>
+        <table class="table table-hover table-dark table-striped">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Start Time</th>
+                    <th>End Time</th>
+                    <th>Animal</th>
+                    <th>Volunteer</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for schedule in pending_schedules %}
+                <tr>
+                    <td>{{ schedule.date.strftime('%d.%m.%Y') }}</td>
+                    <td>{{ schedule.start_time.strftime('%H:%M') }}</td>
+                    <td>{{ schedule.end_time.strftime('%H:%M') }}</td>
+                    <td>{{ schedule.animal.name }} ({{ schedule.animal.species }})</td>
+                    <td>{{ schedule.volunteer.first_name }} {{ schedule.volunteer.last_name }}</td>
+                    <td>
+                        <form method="POST" action="{{ url_for('routes.confirm_schedule', schedule_id=schedule.id) }}">
+                            <button type="submit" class="btn btn-success btn-sm">Confirm</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Ongoing Reservations Section -->
+    <div class="mb-5">
+        <h4>Start In-Progress Reservations</h4>
+        <table class="table table-hover table-dark table-striped">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Start Time</th>
+                    <th>End Time</th>
+                    <th>Animal</th>
+                    <th>Volunteer</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for schedule in ready_for_in_progress %}
+                <tr>
+                    <td>{{ schedule.date.strftime('%d.%m.%Y') }}</td>
+                    <td>{{ schedule.start_time.strftime('%H:%M') }}</td>
+                    <td>{{ schedule.end_time.strftime('%H:%M') }}</td>
+                    <td>{{ schedule.animal.name }} ({{ schedule.animal.species }})</td>
+                    <td>{{ schedule.volunteer.first_name }} {{ schedule.volunteer.last_name }}</td>
+                    <td>
+                        <form method="POST" action="{{ url_for('routes.start_schedule', schedule_id=schedule.id) }}">
+                            <button type="submit" class="btn btn-warning btn-sm">Start</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- In-Progress Reservations Section -->
+    <div class="mb-5">
+        <h4>Complete In-Progress Reservations</h4>
+        <table class="table table-hover table-dark table-striped">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Start Time</th>
+                    <th>End Time</th>
+                    <th>Animal</th>
+                    <th>Volunteer</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for schedule in in_progress_schedules %}
+                <tr>
+                    <td>{{ schedule.date.strftime('%d.%m.%Y') }}</td>
+                    <td>{{ schedule.start_time.strftime('%H:%M') }}</td>
+                    <td>{{ schedule.end_time.strftime('%H:%M') }}</td>
+                    <td>{{ schedule.animal.name }} ({{ schedule.animal.species }})</td>
+                    <td>{{ schedule.volunteer.first_name }} {{ schedule.volunteer.last_name }}</td>
+                    <td>
+                        <form method="POST" action="{{ url_for('routes.complete_schedule', schedule_id=schedule.id) }}">
+                            <button type="submit" class="btn btn-primary btn-sm">Complete</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
