@@ -44,23 +44,23 @@ Request Detail
     <!-- Planning Examination -->    
     {% if not specific_request.confirmed %}
         <div id="exForm" class="mt-5" style="display: none;">
-            <h3>Plan Examination</h3>
-                <form method="POST">
-                    {{ form.hidden_tag() }}
-                    <div class="form-group">
-                        {{ form.date.label }} {{ form.date(class="form-control") }}
-                    </div>
-                    <div class="form-group">
-                        {{ form.type.label }} {{ form.type(class="form-control") }}
-                    </div>
-                    <div class="form-group">
-                        {{ form.vaccination_type.label }} {{ form.vaccination_type(class="form-control") }}
-                    </div>
-                    <div class="form-group">
-                        {{ form.description.label }} {{ form.description(class="form-control") }}
-                    </div>
-                    <button type="submit" class="btn btn-primary"> {{ form.submit.label }}</button>
-                </form>
+            <h3>New Examination</h3>
+            <form method="POST">
+                {{ form.hidden_tag() }}
+                <div class="form-group">
+                    {{ form.date.label }} {{ form.date(class="form-control") }}
+                </div>
+                <div class="form-group">
+                    {{ form.type.label }} {{ form.type(class="form-control") }}
+                </div>
+                <div class="form-group">
+                    {{ form.vaccination_type.label }} {{ form.vaccination_type(class="form-control") }}
+                </div>
+                <div class="form-group">
+                    {{ form.description.label }} {{ form.description(class="form-control") }}
+                </div>
+                <button type="submit" class="btn btn-primary"> {{ form.submit.label }}</button>
+            </form>
         </div>
     {% endif %}
 </div>

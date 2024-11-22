@@ -373,7 +373,7 @@ def request_detail_page(request_id):
     return render_template('request_detail.html', specific_request=specific_request, form=form)
 
 
-@routes.route('/dashboard_vet/vets_examinations/', methods=['GET', 'POST'])
+@routes.route('/dashboard_vet/vets_examinations', methods=['GET', 'POST'])
 @role_required('vet')
 @login_required
 def vets_examinations_page():
@@ -389,6 +389,61 @@ def examination_detail_page(examination_id):
     specific_examination = get_examination(examination_id)    
 
     return render_template('examination_detail.html', specific_examination=specific_examination)
+
+
+@routes.route('/dashboard_vet/create_examination')
+@role_required('vet')
+@login_required
+def create_examination_page():
+    form = AddExaminationForm()
+
+    if form.validate_on_submit():
+        data = {
+            'date': form.date.data,
+            'type': form.type.data,
+            'vaccination_type': form.vaccination_type.data if form.type.data == 'vaccination' else None,
+            'description': form.description.data,
+            'vet_id': current_user.id
+        }
+
+        try:
+            create_examination(data) 
+            flash("Examination successfully created.", "success")
+            return redirect(url_for('routes.dashboard_vet_page'))
+        except Exception as e:
+            flash(f"Error creating examination: {str(e)}", "danger")
+
+    return render_template('create_examination.html', form=form)
+
+@routes.route('/dashboard_vet/edit_examination/<int:examination_id>', methods=['GET', 'POST'])
+@role_required('vet')
+@login_required
+def edit_examination_page(examination_id):
+    examination = get_examination(examination_id)
+    if not examination:
+        flash(f"Examination with ID {examination_id} not found.", "danger")
+        return redirect(url_for('routes.dashboard_vet_page'))
+
+    form = AddExaminationForm(obj=examination)
+
+    if examination.type != 'vaccination':
+        form.vaccination_type.data = None
+
+    if form.validate_on_submit():
+        examination.date = form.date.data
+        examination.type = form.type.data
+        examination.description = form.description.data
+        if form.type.data == 'vaccination':
+            examination.vaccination_type = form.vaccination_type.data
+
+        try:
+            db.session.commit()
+            flash("Examination successfully updated.", "success")
+            return redirect(url_for('routes.dashboard_vet_page'))
+        except Exception as e:
+            flash(f"Error updating examination: {str(e)}", "danger")
+
+    return render_template('edit_examination.html', form=form, examination=examination)
 
 
 @routes.route('/dashboard_vet/animal_hr', methods=['GET'])
