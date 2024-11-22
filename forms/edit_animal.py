@@ -15,8 +15,8 @@ class EditAnimalForm(FlaskForm):
                           validators=[DataRequired()],
                           choices=[data.value for data in Species]
                           )
-    weight = IntegerField('Weight', validators=[ Optional(),NumberRange(min=0)], default=None)
     birth_date = DateField('Birth Date', validators=[DataRequired(), Birthday()])
+    weight = IntegerField('Weight', validators=[ Optional(),NumberRange(min=0)], default=None)
     photo = URLField('Photo', validators=[Optional(), URL()])
     description = TextAreaField('Description', validators=[Optional(), Length(min=0, max=500)], default='No description')
 
