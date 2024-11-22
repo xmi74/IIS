@@ -336,10 +336,7 @@ def dashboard_vet_page():
 
     vet_requests = get_requests_by_vet(current_user.id, confirmed_filter)
 
-    vet_examinations = get_examinations_by_vet(current_user.id)
-
-    return render_template('dashboard_vet.html', vet_requests=vet_requests, vet_examinations=vet_examinations)
-
+    return render_template('dashboard_vet.html', vet_requests=vet_requests)
 
 
 @routes.route('/dashboard_vet/request_detail/<int:request_id>', methods=['GET', 'POST'])
@@ -375,14 +372,28 @@ def request_detail_page(request_id):
     
     return render_template('request_detail.html', specific_request=specific_request, form=form)
 
-@routes.route('/dashboard_vet/examination_detail/<int:examination_id>', methods=['GET', 'POST'])
+
+@routes.route('/dashboard_vet/vets_examinations/', methods=['GET', 'POST'])
+@role_required('vet')
+@login_required
+def vets_examinations_page():
+    vet_examinations = get_examinations_by_vet(current_user.id)
+
+    return render_template('vets_examinations.html', vet_examinations=vet_examinations)
+
+
+@routes.route('/dashboard_vet/vets_examinations/<int:examination_id>', methods=['GET', 'POST'])
+@role_required('vet')
+@login_required
 def examination_detail_page(examination_id):
-    specific_examination = get_examination(examination_id)
+    specific_examination = get_examination(examination_id)    
 
     return render_template('examination_detail.html', specific_examination=specific_examination)
 
 
 @routes.route('/dashboard_vet/animal_hr', methods=['GET'])
+@role_required('vet')
+@login_required
 def animal_health_records_page():
     animals = get_animals(filters=None)
 
@@ -397,6 +408,8 @@ def animal_health_records_page():
     return render_template('animal_hr.html', animals_hrecords_count=animals_hrecords_count)
 
 @routes.route('/dashboard_vet/animal_hr/<int:animal_id>', methods=['GET'])
+@role_required('vet')
+@login_required
 def animal_health_records_detail_page(animal_id):
     health_records = get_examinations_by_animal(animal_id)
 
