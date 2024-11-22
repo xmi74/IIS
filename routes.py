@@ -1,3 +1,4 @@
+import datetime
 from datetime import date
 
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session
@@ -247,9 +248,7 @@ def dashboard_admin_page():
         "volunteer": "Volunteer"
     }
 
-    ################ ADDING USERS ?? ################
-
-    return render_template('dashboard_admin.html', users=users, role_format=role_format)
+    return render_template('admin/dashboard_admin.html', users=users, role_format=role_format)
 
 @routes.route('/admin/create_user', methods=['GET', 'POST'])
 @role_required('admin')
@@ -313,7 +312,7 @@ def update_user_page(user_id):
             flash(f"Error updating user: {str(e)}", "danger")
         return redirect(url_for('routes.dashboard_admin_page'))
     
-    return render_template('edit_user.html', form=form, user=user)        
+    return render_template('admin/edit_user.html', form=form, user=user)        
 
 
 #################################################
@@ -335,7 +334,7 @@ def dashboard_vet_page():
 
     vet_requests = get_requests_by_vet(current_user.id, confirmed_filter)
 
-    return render_template('dashboard_vet.html', vet_requests=vet_requests)
+    return render_template('vet/dashboard_vet.html', vet_requests=vet_requests)
 
 ################ REQUEST SECTION ################
 
@@ -370,7 +369,7 @@ def request_detail_page(request_id):
             flash(f"Error creating examination: {str(e)}", "danger")
         
     
-    return render_template('request_detail.html', specific_request=specific_request, form=form)
+    return render_template('vet/request_detail.html', specific_request=specific_request, form=form)
 
 
 ################ EXAMINATIONS SECTION ################
@@ -381,7 +380,7 @@ def request_detail_page(request_id):
 def vets_examinations_page():
     vet_examinations = get_examinations_by_vet(current_user.id)
 
-    return render_template('vets_examinations.html', vet_examinations=vet_examinations)
+    return render_template('vet/vets_examinations.html', vet_examinations=vet_examinations)
 
 
 @routes.route('/dashboard_vet/vets_examinations/<int:examination_id>', methods=['GET', 'POST'])
@@ -390,7 +389,7 @@ def vets_examinations_page():
 def examination_detail_page(examination_id):
     specific_examination = get_examination(examination_id)    
 
-    return render_template('examination_detail.html', specific_examination=specific_examination)
+    return render_template('vet/examination_detail.html', specific_examination=specific_examination)
 
 
 @routes.route('/dashboard_vet/create_examination', methods=['GET', 'POST'])
@@ -420,7 +419,7 @@ def create_examination_page():
             for error in errors:
                 flash(f"Error in {field}: {error}", "danger")
 
-    return render_template('create_examination.html', form=form)
+    return render_template('vet/create_examination.html', form=form)
 
 @routes.route('/dashboard_vet/delete_examination/<int:examination_id>', methods=['POST'])
 @role_required('vet')
@@ -463,7 +462,7 @@ def edit_examination_page(examination_id):
         except Exception as e:
             flash(f"Error updating examination: {str(e)}", "danger")
 
-    return render_template('edit_examination.html', form=form, examination=examination)
+    return render_template('vet/edit_examination.html', form=form, examination=examination)
 
 ################ HEALTH RECORDS SECTION ################
 
@@ -481,7 +480,7 @@ def animal_health_records_page():
         for animal in animals
     ]
     
-    return render_template('animal_hr.html', animals_hrecords_count=animals_hrecords_count)
+    return render_template('vet/animal_hr.html', animals_hrecords_count=animals_hrecords_count)
 
 @routes.route('/dashboard_vet/animal_hr/<int:animal_id>', methods=['GET'])
 @role_required('vet')
@@ -489,7 +488,7 @@ def animal_health_records_page():
 def animal_health_records_detail_page(animal_id):
     health_records = get_examinations_by_animal(animal_id)
 
-    return render_template('animal_hr_detail.html', health_records=health_records)
+    return render_template('vet/animal_hr_detail.html', health_records=health_records)
 
 #######################################################
 #                 DASHBOARD CARETAKER                 #
@@ -616,8 +615,9 @@ def animal_schedules_page(animal_id):
     filters = dict()
     filters['animal_id'] = animal_id
     filters['state'] = request.args.get('state') or None
-    if request.args.get('old') is None: filters['date'] = date.today()
+    if request.args.get('old') is None: filters['upcoming'] = True
     schedules = get_schedules(filters)
+    # schedules = get_incoming_animal_schedules(animal_id)
     return render_template('caretaker/schedules.html', schedules=schedules, animal_id=animal_id, animal_name=animal.name, ScheduleState=ScheduleState)
 
 @routes.route('/caretaker/schedules/edit/<int:id>', methods=['GET', 'POST'])
@@ -674,7 +674,6 @@ def schedules_add_page(id):
 
     #POST
     if form.validate_on_submit():
-        print('kek')
         #SAVE
         data = {
             'date': form.date.data,
@@ -712,7 +711,6 @@ def schedules_add_page(id):
 @role_required('caretaker')
 @login_required
 def animal_request_page(animal_id):
-
     animal = get_animal(animal_id)
     
     #POST
@@ -728,7 +726,7 @@ def animal_request_page(animal_id):
     #GET
     filters = dict()
     filters['animal_id'] = animal_id
-    filters['confirmed'] = False
+    if request.args.get('confirmed') is None: filters['confirmed'] = False
     requests = filter_request(filters)
 
     return render_template('caretaker/requests.html', requests = requests, animal_name=animal.name, animal_id=animal_id)

@@ -8,6 +8,7 @@
     <!-- Pending Reservations Section -->
     <div class="mb-5">
         <h4>Pending Reservations</h4>
+        <p class="text-muted">Reservations that are awaiting confirmation from you.</p>
         <table class="table table-hover table-dark table-striped">
             <thead>
                 <tr>
@@ -20,27 +21,34 @@
                 </tr>
             </thead>
             <tbody>
-                {% for schedule in pending_schedules %}
-                <tr>
-                    <td>{{ schedule.date.strftime('%d.%m.%Y') }}</td>
-                    <td>{{ schedule.start_time.strftime('%H:%M') }}</td>
-                    <td>{{ schedule.end_time.strftime('%H:%M') }}</td>
-                    <td>{{ schedule.animal.name }} ({{ schedule.animal.species }})</td>
-                    <td>{{ schedule.volunteer.first_name }} {{ schedule.volunteer.last_name }}</td>
-                    <td>
-                        <form method="POST" action="{{ url_for('routes.confirm_schedule', schedule_id=schedule.id) }}">
-                            <button type="submit" class="btn btn-success btn-sm">Confirm</button>
-                        </form>
-                    </td>
-                </tr>
-                {% endfor %}
+                {% if pending_schedules %}
+                    {% for schedule in pending_schedules %}
+                    <tr>
+                        <td>{{ schedule.date.strftime('%d.%m.%Y') }}</td>
+                        <td>{{ schedule.start_time.strftime('%H:%M') }}</td>
+                        <td>{{ schedule.end_time.strftime('%H:%M') }}</td>
+                        <td>{{ schedule.animal.name }} ({{ schedule.animal.species }})</td>
+                        <td>{{ schedule.volunteer.first_name }} {{ schedule.volunteer.last_name }}</td>
+                        <td>
+                            <form method="POST" action="{{ url_for('routes.confirm_schedule', schedule_id=schedule.id) }}">
+                                <button type="submit" class="btn btn-success btn-sm">Confirm</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center text-muted">No pending reservations available.</td>
+                    </tr>
+                {% endif %}
             </tbody>
         </table>
     </div>
 
     <!-- Ongoing Reservations Section -->
     <div class="mb-5">
-        <h4>Start In-Progress Reservations</h4>
+        <h4>Start Reservations</h4>
+        <p class="text-muted">Reservations that are about to start within the next 15 minutes.</p>
         <table class="table table-hover table-dark table-striped">
             <thead>
                 <tr>
@@ -53,27 +61,34 @@
                 </tr>
             </thead>
             <tbody>
-                {% for schedule in ready_for_in_progress %}
-                <tr>
-                    <td>{{ schedule.date.strftime('%d.%m.%Y') }}</td>
-                    <td>{{ schedule.start_time.strftime('%H:%M') }}</td>
-                    <td>{{ schedule.end_time.strftime('%H:%M') }}</td>
-                    <td>{{ schedule.animal.name }} ({{ schedule.animal.species }})</td>
-                    <td>{{ schedule.volunteer.first_name }} {{ schedule.volunteer.last_name }}</td>
-                    <td>
-                        <form method="POST" action="{{ url_for('routes.start_schedule', schedule_id=schedule.id) }}">
-                            <button type="submit" class="btn btn-warning btn-sm">Start</button>
-                        </form>
-                    </td>
-                </tr>
-                {% endfor %}
+                {% if ready_for_in_progress %}
+                    {% for schedule in ready_for_in_progress %}
+                    <tr>
+                        <td>{{ schedule.date.strftime('%d.%m.%Y') }}</td>
+                        <td>{{ schedule.start_time.strftime('%H:%M') }}</td>
+                        <td>{{ schedule.end_time.strftime('%H:%M') }}</td>
+                        <td>{{ schedule.animal.name }} ({{ schedule.animal.species }})</td>
+                        <td>{{ schedule.volunteer.first_name }} {{ schedule.volunteer.last_name }}</td>
+                        <td>
+                            <form method="POST" action="{{ url_for('routes.start_schedule', schedule_id=schedule.id) }}">
+                                <button type="submit" class="btn btn-warning btn-sm">Start</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center text-muted">No reservations ready to start.</td>
+                    </tr>
+                {% endif %}
             </tbody>
         </table>
     </div>
 
     <!-- In-Progress Reservations Section -->
     <div class="mb-5">
-        <h4>Complete In-Progress Reservations</h4>
+        <h4>Complete Reservations</h4>
+        <p class="text-muted">Reservations that are awaiting returnal of an animal.</p>
         <table class="table table-hover table-dark table-striped">
             <thead>
                 <tr>
@@ -86,20 +101,26 @@
                 </tr>
             </thead>
             <tbody>
-                {% for schedule in in_progress_schedules %}
-                <tr>
-                    <td>{{ schedule.date.strftime('%d.%m.%Y') }}</td>
-                    <td>{{ schedule.start_time.strftime('%H:%M') }}</td>
-                    <td>{{ schedule.end_time.strftime('%H:%M') }}</td>
-                    <td>{{ schedule.animal.name }} ({{ schedule.animal.species }})</td>
-                    <td>{{ schedule.volunteer.first_name }} {{ schedule.volunteer.last_name }}</td>
-                    <td>
-                        <form method="POST" action="{{ url_for('routes.complete_schedule', schedule_id=schedule.id) }}">
-                            <button type="submit" class="btn btn-primary btn-sm">Complete</button>
-                        </form>
-                    </td>
-                </tr>
-                {% endfor %}
+                {% if in_progress_schedules %}
+                    {% for schedule in in_progress_schedules %}
+                    <tr>
+                        <td>{{ schedule.date.strftime('%d.%m.%Y') }}</td>
+                        <td>{{ schedule.start_time.strftime('%H:%M') }}</td>
+                        <td>{{ schedule.end_time.strftime('%H:%M') }}</td>
+                        <td>{{ schedule.animal.name }} ({{ schedule.animal.species }})</td>
+                        <td>{{ schedule.volunteer.first_name }} {{ schedule.volunteer.last_name }}</td>
+                        <td>
+                            <form method="POST" action="{{ url_for('routes.complete_schedule', schedule_id=schedule.id) }}">
+                                <button type="submit" class="btn btn-primary btn-sm">Complete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center text-muted">No in-progress reservations available.</td>
+                    </tr>
+                {% endif %}
             </tbody>
         </table>
     </div>

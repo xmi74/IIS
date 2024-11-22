@@ -44,14 +44,14 @@ def seed_data(db):
     db.session.commit()
 
     request1 = Request(
-        title='preventive',
+        title='Preventive CheckUp',
         description="Animal needs a preventive checkup",
         caretaker_id=caretaker1.id,
         animal_id=animal1.id,
         vet_id=vet1.id)
     
     request2 = Request(
-        title='ticks',
+        title='Examination',
         description="Animal needs to get checked for ticks",
         caretaker_id=caretaker1.id,
         animal_id=animal2.id,
