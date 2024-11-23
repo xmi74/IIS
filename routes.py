@@ -29,6 +29,7 @@ from api.api_examinations import *
 from models.enums.schedule_state import ScheduleState
 from models.enums.animal_species import Species
 from utils.decorators import role_required
+from models.enums.vaccination_type import VaccinationType
 
 routes = Blueprint('routes', __name__)
 
@@ -372,7 +373,9 @@ def request_detail_page(request_id):
                            specific_request=specific_request, 
                            animals=animals,
                            form=form, 
-                           now=now)
+                           now=now,
+                           VaccinationType=VaccinationType,
+                           )
 
 
 ################ EXAMINATIONS SECTION ################
