@@ -345,17 +345,21 @@ def request_detail_page(request_id):
     specific_request = get_request(request_id)
 
     form = AddExaminationForm()
+    
+    # Populate the form animal choices
+    animals = get_animals(filters=None)
+    form.animal_id.choices = [(animal.id, f"ID: {animal.id} | {animal.name} | {animal.species}") for animal in animals]
 
     if form.validate_on_submit():
         data = {
+            'animal_id': form.animal_id.data,
             'date': form.date.data,
             'type': form.type.data,
             'description': form.description.data,
             'vet_id': current_user.id,
-            'animal_id': specific_request.animal_id
+            'vaccination_type': form.vaccination_type.data,
         }
         try:
-            print(f"Data received: {data}")
             edit_request_confirmed(request_id, True)
             create_examination(data)
             flash("Request confirmed and examination created.", "success")
@@ -364,7 +368,11 @@ def request_detail_page(request_id):
             flash(f"Error confirming and creating examination: {str(e)}", "danger")
         
     now = datetime.now()
-    return render_template('vet/request_detail.html', specific_request=specific_request, form=form, now=now)
+    return render_template('vet/request_detail.html', 
+                           specific_request=specific_request, 
+                           animals=animals,
+                           form=form, 
+                           now=now)
 
 
 ################ EXAMINATIONS SECTION ################
