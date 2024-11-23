@@ -59,3 +59,11 @@ class OptionalMandatory(object):
     def __call__(self, form, field):
         if field.data is None and form.repeat.data in True:
             raise ValidationError(self.message)
+
+
+"""
+Validator for only allowing characters of alphabet in input field
+"""
+def OnlyAlphabets(form, field):
+    if not field.data.isalpha():
+        raise ValidationError("This field accepts only alphabetic characters.")
