@@ -8,7 +8,7 @@ git clone https://github.com/xmi74/IIS.git
 
 ## Krok 2: Vytvorenie virtualneho prostredia
 ```
-pyhon3 -m venv venv
+python3 -m venv venv
 ```
 
 ## Krok 3: Aktivacia virtualneho prostredia (Linux/macOS)
