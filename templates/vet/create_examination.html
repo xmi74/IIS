@@ -15,10 +15,14 @@ Create Examination
         <div class="card-body">
             <form method="POST">
                 {{ form.hidden_tag() }}
-                <div class="form-group">{{ form.animal_id.label }} {{ form.animal_id(class="form-control") }}</div>
-                <div class="form-group">{{ form.date.label }} {{ form.date(class="form-control") }}</div>
-                <div class="form-group">{{ form.type.label }} {{ form.type(class="form-control") }}</div>
-                <div class="form-group">{{ form.vaccination_type.label }} {{ form.vaccination_type(class="form-control") }}</div>
+                <div class="form-group">{{ form.animal_id.label }} <span class="text-danger">*</span> {{ form.animal_id(class="form-control") }}</div>
+                <div class="form-group">{{ form.date.label }} <span class="text-danger">*</span> {{ form.date(class="form-control") }}</div>
+                <div class="form-group">{{ form.type.label }} <span class="text-danger">*</span> {{ form.type(class="form-control", id="typeSelect") }}</div>
+
+                <div class="form-group" id="vaccinationTypeGroup" style="display:none">
+                    {{ form.vaccination_type.label }} <span class="text-danger">*</span> {{ form.vaccination_type(class="form-control") }}
+                </div>
+
                 <div class="form-group">{{ form.description.label }} {{ form.description(class="form-control") }}</div>
                 
                 <div class="d-flex">
@@ -29,4 +33,20 @@ Create Examination
         </div>
     </div>
 </div>
+
+<!-- Script to make sure vaccination type input isnt shown if type of examination isnt vaccination -->
+<script>
+    document.getElementById('typeSelect').addEventListener('change', function() {
+        var typeValue = this.value;
+        var vaccinationTypeGroup = document.getElementById('vaccinationTypeGroup');
+        if (typeValue === 'vaccination') {
+            vaccinationTypeGroup.style.display = 'block';
+        } else {
+            vaccinationTypeGroup.style.display = 'none';
+        }
+    });
+
+    document.getElementById('typeSelect').dispatchEvent(new Event('change'));
+</script>
+
 {% endblock %}

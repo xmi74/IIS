@@ -12,6 +12,7 @@ from forms.add_schedule import AddSchedule
 from forms.edit_animal import EditAnimalForm
 from forms.edit_request import EditRequest
 from forms.edit_schedules import EditSchedules
+from forms.edit_examination import EditExaminationForm
 from forms.create_user import CreateUserForm
 from models.enums.animal_species import Species
 from forms.add_examination import AddExaminationForm
@@ -347,7 +348,6 @@ def request_detail_page(request_id):
 
     form = AddExaminationForm()
     
-    # Populate the form animal choices
     animals = get_animals(filters=None)
     form.animal_id.choices = [(animal.id, f"ID: {animal.id} | {animal.name} | {animal.species}") for animal in animals]
 
@@ -436,24 +436,47 @@ def edit_examination_page(examination_id):
         flash(f"Examination with ID {examination_id} not found.", "danger")
         return redirect(url_for('routes.vets_examinations_page'))
 
-    form = AddExaminationForm(obj=examination)
+    form = EditExaminationForm(obj=examination)
 
-    if examination.type != 'vaccination':
-        form.vaccination_type.data = None
+    animals = get_animals(filters=None) 
+    form.animal_id.choices = [(animal.id, f"ID: {animal.id} | {animal.name} | {animal.species}") for animal in animals]
+
+    # if examination.type == 'vaccination' and examination.vaccination_type in [v.name for v in VaccinationType]:
+    #     form.vaccination_type.data = examination.vaccination_type
+    # else:
+    #     form.vaccination_type.data = None
+
 
     if form.validate_on_submit():
-        examination.date = form.date.data
-        examination.type = form.type.data
-        examination.description = form.description.data
-        if form.type.data == 'vaccination':
-            examination.vaccination_type = form.vaccination_type.data
+        action = request.form.get('action')
+        # Delete button
+        if action == 'delete':
+            try:
+                delete_examination(examination_id)
+                flash(f"Examination successfully deleted", "success")
+                return redirect(url_for('routes.vets_examinations_page'))
+            except Exception as e:
+                flash(f"Error deleting examination: {str(e)}", "danger")
 
-        try:
-            db.session.commit()
-            flash("Examination successfully updated.", "success")
-            return redirect(url_for('routes.vets_examinations_page'))
-        except Exception as e:
-            flash(f"Error updating examination: {str(e)}", "danger")
+        # Submit button
+        elif action == 'submit':
+            examination.animal_id = form.animal_id.data
+            examination.date = form.date.data
+            examination.type = form.type.data
+            examination.description = form.description.data
+            examination.vaccination_type = form.vaccination_type.data if form.type.data == 'vaccination' else None
+            
+            # if form.type.data == 'vaccination':
+            #     examination.vaccination_type = form.vaccination_type.data
+            # else:
+            #     examination.vaccination_type = None
+
+            try:
+                db.session.commit()
+                flash("Examination successfully updated", "success")
+                return redirect(url_for('routes.vets_examinations_page'))
+            except Exception as e:
+                flash(f"Error updating examination: {str(e)}", "danger")
 
     return render_template('vet/edit_examination.html', form=form, examination=examination)
 

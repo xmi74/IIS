@@ -1,11 +1,11 @@
 {% extends 'base.html' %}
 
 {% block title %}
-Vet Dashboard
+Vet’s Dashboard
 {% endblock %}
 
 {% block navtitle %}
-Vet Dashboard
+Vet’s Dashboard
 {% endblock %}
 
 {% block body %}
@@ -15,7 +15,7 @@ Vet Dashboard
         <nav class="col-md-2 d-md-block bg-dark sidebar border-top">
             <div class="p-3">
                 <ul class="nav flex-column">
-                    <li class="nav-item"><a class="nav-link text-white" href="{{ url_for('routes.dashboard_vet_page') }}">Requests</a></li>
+                    <li class="nav-item active"><a class="nav-link text-white" href="{{ url_for('routes.dashboard_vet_page') }}">Requests</a></li>
                     <li class="nav-item"><a class="nav-link text-white" href="{{ url_for('routes.vets_examinations_page') }}">Examinations</a></li>
                     <li class="nav-item"><a class="nav-link text-white" href="{{ url_for('routes.animal_health_records_page') }}">Health Records</a></li>
                 </ul>
