@@ -20,11 +20,12 @@ def seed_data(db):
     # Vytvoření uživatelů (specializované třídy User)
     admin1 = Admin(login='admin1', first_name='John', last_name='Doe', password='1234', role='admin', email='admin1@example.com')
     vet1 = Vet(login='vet1', first_name='James', last_name='Smith', password='1234', role='vet', email='vet1@example.com')
+    vet2 = Vet(login='vet2', first_name='Gordon', last_name='Ramsay', password='1234', role='vet', email='vet2@example.com')
     caretaker1 = Caretaker(login='caretaker1', first_name='Robert', last_name='Adams', password ='1234', role='caretaker', email='caretaker1@example.com')
     volunteer1 = Volunteer(login='volunteer1', first_name='Teresa', last_name='Gilbert', password ='1234', role='volunteer', email='volunteer1@example.com', verified=True)
 
     # Přidání uživatelů do session
-    db.session.add_all([admin1, vet1, caretaker1, volunteer1])
+    db.session.add_all([admin1, vet1, vet2, caretaker1, volunteer1])
     db.session.commit()
 
     # Vytvoření zvířat a přiřazení ke konkrétnímu pečovateli
