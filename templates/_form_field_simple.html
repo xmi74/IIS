@@ -1,0 +1,10 @@
+<div class="form-group">
+    {{ field.label }}
+    {% if field.flags.required %}
+        <span class="text-danger">*</span>
+    {% endif %}
+    {{ field(class="form-control") }}
+    {% for error in field.errors %}
+        <span class="rounded bg-danger p-1"> {{ error }}</span>
+    {% endfor %}
+</div>

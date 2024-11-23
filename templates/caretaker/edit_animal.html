@@ -8,7 +8,7 @@
     <!-- Dynamical rendering of form fields -->
     {% for field in form %}
         {% if field.type != "HiddenField" and field.name not in ['submit', 'delete'] and field.name not in ['csrf_token'] %}
-            {% include '_form_field.html' %}
+            {% include '_form_field_simple.html' %}
         {% endif %}
     {% endfor %}
 
