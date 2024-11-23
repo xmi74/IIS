@@ -7,7 +7,7 @@ class Examination(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     date = db.Column(db.DateTime(), nullable=False)
     description = db.Column(db.String(255), nullable=True)
-    type = db.Column(db.String(50))     # ENUM
+    type = db.Column(db.String(50))
 
     animal_id = db.Column(db.Integer(), db.ForeignKey('animals.id', ondelete="CASCADE"), nullable=False)
     vet_id = db.Column(db.Integer(), db.ForeignKey('users.id', ondelete="CASCADE"), nullable=False)

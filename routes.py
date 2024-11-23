@@ -441,12 +441,6 @@ def edit_examination_page(examination_id):
     animals = get_animals(filters=None) 
     form.animal_id.choices = [(animal.id, f"ID: {animal.id} | {animal.name} | {animal.species}") for animal in animals]
 
-    # if examination.type == 'vaccination' and examination.vaccination_type in [v.name for v in VaccinationType]:
-    #     form.vaccination_type.data = examination.vaccination_type
-    # else:
-    #     form.vaccination_type.data = None
-
-
     if form.validate_on_submit():
         action = request.form.get('action')
         # Delete button
@@ -466,11 +460,6 @@ def edit_examination_page(examination_id):
             examination.description = form.description.data
             examination.vaccination_type = form.vaccination_type.data if form.type.data == 'vaccination' else None
             
-            # if form.type.data == 'vaccination':
-            #     examination.vaccination_type = form.vaccination_type.data
-            # else:
-            #     examination.vaccination_type = None
-
             try:
                 db.session.commit()
                 flash("Examination successfully updated", "success")
