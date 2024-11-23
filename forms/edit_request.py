@@ -5,6 +5,7 @@ from wtforms.validators import Length, DataRequired, Optional
 
 
 class EditRequest(FlaskForm):
+    vet_id = SelectField('Assigned Vet', coerce=int, validators=[DataRequired()], choices=[])
     title = SelectField(
         'Title',
         choices=[

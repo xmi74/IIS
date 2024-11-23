@@ -17,6 +17,7 @@ def get_request(request_id):
 # FORM?
 def create_request(data):
     request = Request(
+        vet_id=data.get('vet_id'),
         title=data.get('title'),
         description=data.get('description'),
         created_at=datetime.now(),

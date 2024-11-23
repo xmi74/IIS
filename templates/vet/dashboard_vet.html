@@ -47,6 +47,7 @@ Vet Dashboard
                     <thead>
                         <tr>
                             <th>Created</th>
+                            <th>Title</th>
                             <th>Animal</th>
                             <th>Caretaker</th>
                             <th>Confirmed</th>
@@ -57,6 +58,7 @@ Vet Dashboard
                         {% for request in vet_requests %}
                         <tr>
                             <td>{{ request.created_at }}</td>
+                            <td>{{ request.title }}</td>
                             <td>{{ request.animal.name }} ({{ request.animal.species }})</td>
                             <td>{{ request.caretaker.first_name }} {{ request.caretaker.last_name }}</td>
                             <td>

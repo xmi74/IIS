@@ -732,7 +732,6 @@ def animal_request_page(animal_id):
     #GET
     filters = dict()
     filters['animal_id'] = animal_id
-    if request.args.get('confirmed') is None: filters['confirmed'] = False
     requests = filter_request(filters)
 
     return render_template('caretaker/requests.html', requests = requests, animal_name=animal.name, animal_id=animal_id)
@@ -743,6 +742,12 @@ def animal_request_page(animal_id):
 def edit_request_page(id):
     request = get_request(id)
     form = EditRequest(obj=request)
+    
+    # Populate vet_id choices
+    filters = dict()
+    filters['role'] = 'vet'
+    vets = filter_users(filters)
+    form.vet_id.choices = [(vet.id, f"{vet.first_name} {vet.last_name}") for vet in vets]
 
     #POST
     if form.validate_on_submit():
@@ -757,6 +762,7 @@ def edit_request_page(id):
 
         #SAVE
         data = {
+            'vet_id': form.vet_id.data,
             'title': form.title.data,
             'description': form.description.data,
         }
@@ -781,10 +787,17 @@ def edit_request_page(id):
 @login_required
 def add_request_page(id):
     form = EditRequest()
+    
+    # Populate vet_id choices
+    filters = dict()
+    filters['role'] = 'vet'
+    vets = filter_users(filters)
+    form.vet_id.choices = [(vet.id, f"{vet.first_name} {vet.last_name}") for vet in vets]
 
     #POST
     if form.validate_on_submit():
         data = {
+            'vet_id': form.vet_id.data,
             'title': form.title.data,
             'description': form.description.data,
             'id': id,
