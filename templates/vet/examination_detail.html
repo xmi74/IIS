@@ -33,8 +33,8 @@ Examination Detail
                     Examination
                 {% endif %}
             </p>
-            <p><strong>Animal ID:</strong> {{ specific_examination.animal_id }}</p>
-            <p><strong>Vet ID:</strong> {{ specific_examination.vet_id }}</p>
+            <p><strong>Animal:</strong> {{ specific_examination.animal.name }} ({{ specific_examination.animal.species }})</p>
+            <p><strong>Vet:</strong> {{ specific_examination.vet.first_name }} {{ specific_examination.vet.last_name }}</p>
             <p><strong>Description:</strong> {{ specific_examination.description or "No description available." }}</p>
             {% if specific_examination.type == 'vaccination' %}
                 <p><strong>Vaccination Type:</strong> {{ specific_examination.vaccination_type }}</p>

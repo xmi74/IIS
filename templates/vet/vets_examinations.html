@@ -51,7 +51,7 @@ Vet Dashboard
                                     Examination
                                 {% endif %}
                             </td>
-                            <td>{{ examination.animal_id }}</td>
+                            <td>{{ examination.animal.name }} ({{ examination.animal.species }})</td>
                             <td>
                                 <a href="{{ url_for('routes.examination_detail_page', examination_id=examination.id) }}" class="btn btn-info btn-sm">View Details</a>
                                 <a href="{{ url_for('routes.edit_examination_page', examination_id=examination.id) }}" class="btn btn-info btn-sm">Edit</a>
