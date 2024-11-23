@@ -16,7 +16,7 @@
         {% block title %}
 
         {% endblock %}
-    </title>
+    </title> 
 
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='./img/dogpaw.svg') }}">
 
@@ -59,10 +59,10 @@
                                               {% elif current_user.role == 'vet' %} {{ url_for('routes.dashboard_vet_page') }}
                                               {% elif current_user.role == 'volunteer' %} {{ url_for('routes.dashboard_volunteer_page') }}
                                               {% endif %}">
-                    <b>{{ current_user.login }}</b></a>
+                    <b><i class="fas fa-user"></i> {{ current_user.login }}</b></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('routes.logout_page') }}">Logout</a>
+                    <a class="nav-link" href="{{ url_for('routes.logout_page') }}"><i class="fas fa-sign-out-alt"></i> Logout</a>
                 </li>
             </ul>
             {% else %}
