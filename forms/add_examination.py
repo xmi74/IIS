@@ -4,7 +4,7 @@ from wtforms.validators import DataRequired, Optional
 from models.enums.vaccination_type import VaccinationType
 
 class AddExaminationForm(FlaskForm):
-    animal_id = StringField('Animal ID', validators=[DataRequired()])
+    animal_id = SelectField('Animal ID', coerce=int, validators=[DataRequired()], choices=[])
     date = DateTimeLocalField('Date and Time', format='%Y-%m-%dT%H:%M', validators=[DataRequired()]) # format?
     type = SelectField('Type', 
                        choices=[('examination', 'Examination'), ('vaccination', 'Vaccination'), ('preventive_checkup', 'Preventive CheckUp')], 

@@ -398,6 +398,9 @@ def examination_detail_page(examination_id):
 def create_examination_page():
     form = AddExaminationForm()
 
+    animals = get_animals(filters=None) 
+    form.animal_id.choices = [(animal.id, f"ID: {animal.id} | {animal.name} | {animal.species}") for animal in animals]
+
     if form.validate_on_submit():
         data = {
             'animal_id': form.animal_id.data,
@@ -414,24 +417,8 @@ def create_examination_page():
             return redirect(url_for('routes.vets_examinations_page'))
         except Exception as e:
             flash(f"Error creating examination: {str(e)}", "danger")
-    else:
-        for field, errors in form.errors.items():
-            for error in errors:
-                flash(f"Error in {field}: {error}", "danger")
 
     return render_template('vet/create_examination.html', form=form)
-
-@routes.route('/dashboard_vet/delete_examination/<int:examination_id>', methods=['POST'])
-@role_required('vet')
-@login_required
-def delete_examination_page(examination_id):
-    try:
-        delete_examination(examination_id)
-        flash("Examination successfully deleted.", "success")
-    except Exception as e:
-        flash(f"Error deleting examination: {str(e)}", "danger")
-
-    return redirect(url_for('routes.vets_examinations_page'))
 
 
 @routes.route('/dashboard_vet/edit_examination/<int:examination_id>', methods=['GET', 'POST'])
@@ -463,6 +450,19 @@ def edit_examination_page(examination_id):
             flash(f"Error updating examination: {str(e)}", "danger")
 
     return render_template('vet/edit_examination.html', form=form, examination=examination)
+
+
+@routes.route('/dashboard_vet/delete_examination/<int:examination_id>', methods=['POST'])
+@role_required('vet')
+@login_required
+def delete_examination_page(examination_id):
+    try:
+        delete_examination(examination_id)
+        flash("Examination successfully deleted.", "success")
+    except Exception as e:
+        flash(f"Error deleting examination: {str(e)}", "danger")
+
+    return redirect(url_for('routes.vets_examinations_page'))
 
 ################ HEALTH RECORDS SECTION ################
 
