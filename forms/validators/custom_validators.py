@@ -40,7 +40,7 @@ start has to be before end
 class ScheduleTime(object):
     def __init__(self, message=None):
         if not message:
-            message = 'Schedule End Time cannot be earlier than Star Time'
+            message = 'Schedule End Time cannot be earlier than Start Time'
         self.message = message
 
     def __call__(self, form, field):
