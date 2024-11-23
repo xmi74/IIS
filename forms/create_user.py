@@ -1,12 +1,13 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, EmailField, PasswordField, SelectField, SubmitField
 from wtforms.validators import DataRequired, Length, Email, EqualTo
+from forms.validators.custom_validators import OnlyAlphabets
 
 class CreateUserForm(FlaskForm):
     # Common Fields
     login = StringField('Login', validators=[DataRequired(), Length(min=2, max=20)])
-    first_name = StringField('First Name', validators=[DataRequired(), Length(min=1, max=30)])
-    last_name = StringField('Last Name', validators=[DataRequired(), Length(min=1, max=30)])
+    first_name = StringField('First Name', validators=[DataRequired(), OnlyAlphabets, Length(min=1, max=30)])
+    last_name = StringField('Last Name', validators=[DataRequired(), OnlyAlphabets, Length(min=1, max=30)])
     email = EmailField('Email', validators=[DataRequired(), Email()])
     
     # Password Fields
