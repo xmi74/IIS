@@ -30,7 +30,6 @@ Animals
                 <table class="table table-dark table-striped">
                     <thead>
                         <tr>
-                            <th scope="col">ID</th>
                             <th scope="col">Name</th>
                             <th scope="col">Species</th>
                             <th scope="col">Birth Date</th>
@@ -41,7 +40,6 @@ Animals
                     <tbody>
                         {% for record in animals_hrecords_count %}
                         <tr>
-                            <td>{{ record.animal.id }}</td>
                             <td>{{ record.animal.name }}</td>
                             <td>{{ record.animal.species }}</td>
                             <td>{{ record.animal.birth_date }}</td>

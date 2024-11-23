@@ -30,7 +30,6 @@ Vet Dashboard
                 <table class="table table-dark table-striped">
                     <thead>
                         <tr>
-                            <th>ID</th>
                             <th>Date</th>
                             <th>Type</th>
                             <th>Animal ID</th>
@@ -40,7 +39,6 @@ Vet Dashboard
                     <tbody>
                         {% for examination in vet_examinations %}
                         <tr>
-                            <td>{{ examination.id }}</td>
                             <td>{{ examination.date }}</td>
                             <td>
                                 {% if examination.type == 'vaccination' %}
