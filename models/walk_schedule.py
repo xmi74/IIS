@@ -10,7 +10,7 @@ class WalkSchedule(db.Model):
     start_time = db.Column(db.Time(), nullable=False)
     end_time = db.Column(db.Time(), nullable=False)
     description = db.Column(db.String(255), nullable=True)
-    state = db.Column(db.String(20), nullable=False, default=ScheduleState.FREE.value) # ENUM
+    state = db.Column(db.String(20), nullable=False, default=ScheduleState.FREE.value) 
 
     animal_id = db.Column(db.Integer(), db.ForeignKey('animals.id', ondelete="CASCADE"), nullable=False)
     caretaker_id = db.Column(db.Integer(), db.ForeignKey('users.id', ondelete="CASCADE"), nullable=False)

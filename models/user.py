@@ -11,13 +11,13 @@ class User(db.Model, UserMixin):
     last_name  = db.Column(db.String(50), nullable=False)
     email      = db.Column(db.String(50), nullable=False)
     password_hash = db.Column(db.String(100), nullable=False)
-    role       = db.Column(db.String(20), nullable=False) # Enum
+    role       = db.Column(db.String(20), nullable=False)
     verified   = db.Column(db.Boolean(), default=False)  # Specified for volunteer
 
 
     __mapper_args__ = {
         'polymorphic_identity': 'user',
-        'polymorphic_on': role      # Defines type of subclass
+        'polymorphic_on': role
     }
 
     # Getter for password
