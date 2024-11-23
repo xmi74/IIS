@@ -34,61 +34,92 @@ Request Detail
         </div>
     </div>
 
-    <div class="d-flex align-items-center mt-2">
-        <a href="{{ url_for('routes.dashboard_vet_page') }}" class="btn btn-secondary mr-2">Back to Dashboard</a>
-        <!-- Button for showing create examination form -->
-        {% if not specific_request.confirmed %}
-            <button class="btn btn-info" id="showForm">Create Examination</button>
-        {% endif %}
+    <!-- Action Buttons -->
+    <div class="d-flex justify-content-center mt-4">
+        <a href="{{ url_for('routes.dashboard_vet_page') }}" class="btn btn-secondary">Back</a>
+        <button class="btn btn-info ml-3" id="toggleExaminationForm">Create Examination for Request</button>
     </div>
 
-    <!-- Planning Examination -->    
-    {% if not specific_request.confirmed %}
-        <div id="exForm" class="mt-5" style="display: none;">
-            <h3>New Examination</h3>
-            <form method="POST">
-                {{ form.hidden_tag() }}
-                <div class="form-group">
-                    {{ form.animal_id.label }} {{ form.animal_id(class="form-control") }}
-                </div>
-                <div class="form-group">
-                    {{ form.date.label }} {{ form.date(class="form-control") }}
-                </div>
-                <div class="form-group">
-                    {{ form.type.label }} {{ form.type(class="form-control") }}
-                </div>
-                <div class="form-group">
-                    {{ form.vaccination_type.label }} {{ form.vaccination_type(class="form-control") }}
-                </div>
-                <div class="form-group">
-                    {{ form.description.label }} {{ form.description(class="form-control") }}
-                </div>
-                <button type="submit" class="btn btn-primary"> {{ form.submit.label }}</button>
-            </form>
-        </div>
-    {% endif %}
+    <!-- Examination Form -->
+    <div id="examinationForm" class="mt-5 text-center mx-auto" style="max-width: 600px; display: none;">
+        <h4>Create Examination</h4>
+        <form method="POST" action="{{ url_for('routes.request_detail_page', request_id=specific_request.id) }}">
+            {{ form.hidden_tag() }}
+
+            <!-- Animal ID -->
+            <div class="form-group">
+                <label for="animal_id">Animal ID <span class="text-danger">*</span></label>
+                <input type="text" name="animal_id" class="form-control" value="{{ specific_request.animal.id }}" readonly>
+            </div>
+
+            <!-- Date and Time -->
+            <div class="form-group">
+                <label for="date">Date and Time <span class="text-danger">*</span></label>
+                <input type="datetime-local" name="date" class="form-control" value="{{ now.strftime('%Y-%m-%dT%H:%M') }}">
+            </div>
+
+            <!-- Type -->
+            <div class="form-group">
+                <label for="type">Type <span class="text-danger">*</span></label>
+                <select name="type" class="form-control" id="typeField">
+                    <option value="examination" {% if specific_request.title == 'Examination' %}selected{% endif %}>Examination</option>
+                    <option value="vaccination" {% if specific_request.title == 'Vaccination' %}selected{% endif %}>Vaccination</option>
+                    <option value="preventive_checkup" {% if specific_request.title == 'Preventive CheckUp' %}selected{% endif %}>Preventive CheckUp</option>
+                </select>
+            </div>
+
+            <!-- Vaccination Type -->
+            <div class="form-group" id="vaccinationField" style="display: none;">
+                <label for="vaccination_type">Vaccination Type <span class="text-danger">*</span></label>
+                <select name="vaccination_type" class="form-control">
+                    {% for vaccination in VaccinationType %}
+                    <option value="{{ vaccination.name }}">{{ vaccination.value }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Description -->
+            <div class="form-group">
+                <label for="description">Description</label>
+                <textarea name="description" class="form-control">{{ specific_request.description or '' }}</textarea>
+            </div>
+
+            <!-- Required field label -->
+            <div class="form-group text-muted" style="font-size: 0.9rem;">
+                <span class="text-danger">*</span> = Required field
+            </div>
+
+            <button type="submit" class="btn btn-primary">Confirm & Create Examination</button>
+        </form>
+    </div>
 </div>
 
-<!-- JavaScript to Toggle Forms and Prefill Date -->
+<!-- JavaScript to Toggle Form -->
 <script>
-    document.getElementById('showDateForm').addEventListener('click', function () {
-        document.getElementById('dateForm').style.display = 'block';
-        document.getElementById('fullForm').style.display = 'none';
-        prefillDate('simpleDate');
+    document.getElementById('toggleExaminationForm').addEventListener('click', function () {
+        const form = document.getElementById('examinationForm');
+        form.style.display = form.style.display === 'none' ? 'block' : 'none';
     });
 
-    document.getElementById('showFullForm').addEventListener('click', function () {
-        document.getElementById('fullForm').style.display = 'block';
-        document.getElementById('dateForm').style.display = 'none';
-        prefillDate('fullDate');
-    });
+    document.addEventListener('DOMContentLoaded', function () {
+        const typeField = document.getElementById('typeField');
+        const vaccinationField = document.getElementById('vaccinationField');
 
-    // Function to Prefill Date
-    function prefillDate(dateId) {
-        const now = new Date();
-        const formattedDate = now.toISOString().split('T')[0]; // Format: yyyy-MM-dd
-        document.getElementById(dateId).value = formattedDate;
-    }
+        // Function to toggle vaccination field visibility
+        const toggleVaccinationField = () => {
+            if (typeField.value === 'vaccination') {
+                vaccinationField.style.display = 'block';
+            } else {
+                vaccinationField.style.display = 'none';
+            }
+        };
+
+        // Attach event listener to typeField
+        typeField.addEventListener('change', toggleVaccinationField);
+
+        // Initial toggle based on prefilled value
+        toggleVaccinationField();
+    });
 </script>
 
 {% endblock %}

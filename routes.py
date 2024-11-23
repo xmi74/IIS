@@ -344,14 +344,6 @@ def dashboard_vet_page():
 def request_detail_page(request_id):
     specific_request = get_request(request_id)
 
-    if request.method == 'POST':
-        try:
-            edit_request_confirmed(request_id, True)
-            flash(f"Request {request_id} has been marked as confirmed.", "success")
-            return redirect(url_for('routes.request_detail_page', request_id=request_id))
-        except Exception as e:
-            flash(f"Error marking request as complete: {str(e)}", "danger")
-
     form = AddExaminationForm()
 
     if form.validate_on_submit():
@@ -363,13 +355,16 @@ def request_detail_page(request_id):
             'animal_id': specific_request.animal_id
         }
         try:
+            print(f"Data received: {data}")
+            edit_request_confirmed(request_id, True)
             create_examination(data)
-            flash("Examination succesfully created", "success")
+            flash("Request confirmed and examination created.", "success")
+            return redirect(url_for('routes.dashboard_vet_page'))
         except Exception as e:
-            flash(f"Error creating examination: {str(e)}", "danger")
+            flash(f"Error confirming and creating examination: {str(e)}", "danger")
         
-    
-    return render_template('vet/request_detail.html', specific_request=specific_request, form=form)
+    now = datetime.now()
+    return render_template('vet/request_detail.html', specific_request=specific_request, form=form, now=now)
 
 
 ################ EXAMINATIONS SECTION ################
