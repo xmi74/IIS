@@ -40,8 +40,8 @@ class Admin(User):
     }
 
 class Caretaker(User):
-    walk_schedules = relationship("WalkSchedule", back_populates="caretaker", foreign_keys="[WalkSchedule.caretaker_id]")
-    requests = relationship("Request", back_populates="caretaker", foreign_keys="[Request.caretaker_id]")  # Použitie reťazca pre vzťah
+    walk_schedules = relationship("WalkSchedule", back_populates="caretaker", foreign_keys="[WalkSchedule.caretaker_id]", cascade="all, delete")
+    requests = relationship("Request", back_populates="caretaker", foreign_keys="[Request.caretaker_id]", cascade="all, delete")  # Použitie reťazca pre vzťah
 
     __mapper_args__ = {
         'polymorphic_identity': 'caretaker'
@@ -49,10 +49,10 @@ class Caretaker(User):
 
 class Vet(User):
     # 1:N Examination, Overlaps = silencing same foreign key warning
-    examinations = relationship("Examination", back_populates="vet", overlaps="vaccinations") 
+    examinations = relationship("Examination", back_populates="vet", overlaps="vaccinations", cascade="all, delete") 
     # 1:N Vaccination, Overlaps = silencing same foreign key warning
-    vaccinations = relationship("Vaccination", back_populates="vet", overlaps="examinations")
-    requests = relationship("Request", back_populates="vet", foreign_keys="[Request.vet_id]")
+    vaccinations = relationship("Vaccination", back_populates="vet", overlaps="examinations", cascade="all, delete")
+    requests = relationship("Request", back_populates="vet", foreign_keys="[Request.vet_id]", cascade="all, delete")
 
     __mapper_args__ = {
         'polymorphic_identity': 'vet'
