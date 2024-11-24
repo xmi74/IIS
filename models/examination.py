@@ -25,7 +25,7 @@ class Examination(db.Model):
 class Vaccination(Examination):
     __tablename__ = 'vaccinations'
     id = db.Column(db.Integer(), db.ForeignKey('examinations.id'), primary_key=True)
-    vaccination_type = db.Column(db.String(50), nullable=False) # Enum for vaccination
+    vaccination_type = db.Column(db.String(50), nullable=True) # Enum for vaccination
 
     # 1:N Vaccination with Vet, Overlaps = silencing same foreign key warning
     vet = relationship("Vet", back_populates="vaccinations", overlaps="examinations") 

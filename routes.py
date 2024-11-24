@@ -458,7 +458,9 @@ def edit_examination_page(examination_id):
             examination.date = form.date.data
             examination.type = form.type.data
             examination.description = form.description.data
-            examination.vaccination_type = form.vaccination_type.data if form.type.data == 'vaccination' else None
+            examination.vaccination_type = form.vaccination_type.data if form.type.data == 'vaccination' else 'RABIES'
+            print("EXAMINATION: ",examination.vaccination_type)
+            print("FORM: ",form.vaccination_type.data)
             
             try:
                 db.session.commit()

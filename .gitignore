@@ -1,2 +1,8 @@
 __pycache__/
 *.py[cod]
+
+cloud-sql-proxy
+db_test.py
+er_diagram.py
+show_db.py
+app.yaml

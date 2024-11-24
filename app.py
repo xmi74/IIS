@@ -1,3 +1,4 @@
+import os
 from flask import Flask, session, flash, redirect, url_for
 from models.user import User
 from seed import seed_data
@@ -7,13 +8,30 @@ from __init__ import db, bcrypt, login_manager
 def create_app():
     app = Flask(__name__)
 
-    # Database config
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:password123@localhost/animal_shelter'
+    # Local database config
+    # app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:password123@localhost/animal_shelter'
+
+    # Connecting to online database
+    db_user = os.getenv('DB_USER', 'root') 
+    db_password = os.getenv('DB_PASSWORD', 'password123') 
+    db_name = os.getenv('DB_NAME', 'animal-shelter') 
+    cloud_sql_connection_name = os.getenv('CLOUD_SQL_CONNECTION_NAME')
+
+    # Konfigurácia pripojenia
+    if cloud_sql_connection_name:
+        # Pripojenie cez Unix socket pre App Engine Standard Environment
+        app.config['SQLALCHEMY_DATABASE_URI'] = (
+            f'mysql+pymysql://{db_user}:{db_password}@/{db_name}'
+            f'?unix_socket=/cloudsql/{cloud_sql_connection_name}'
+        )
+    else:
+        # Connecting to online database
+        db_host = os.getenv('DB_HOST', '34.116.182.73') 
+        app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://{db_user}:{db_password}@{db_host}/{db_name}'
+
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    app.config['SECRET_KEY'] = 'bf59e2d6497318f7fc560703'
-    
-    # Timeout configuration
-    app.config['PERMANENT_SESSION_LIFETIME'] = 7200  # seconds
+    app.config['SECRET_KEY'] = 'bf59e2d6497318f7fc560703'    
+    app.config['PERMANENT_SESSION_LIFETIME'] = 7200
 
     # Initialize extensions
     db.init_app(app)
@@ -27,9 +45,6 @@ def create_app():
     # Register blueprints
     from routes import routes
     app.register_blueprint(routes)
-    # Register API
-    from api import api
-    app.register_blueprint(api)
 
     # Create tables and seed data if necessary
     with app.app_context():
@@ -78,4 +93,4 @@ def create_app():
 app = create_app()    
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, host="0.0.0.0", port=8080)
