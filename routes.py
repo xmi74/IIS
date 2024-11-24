@@ -840,13 +840,12 @@ def add_request_page(id):
 def confirm_reservations_page():
     now = datetime.now()
     fifteen_minutes = timedelta(minutes=15)
-    five_minutes = timedelta(minutes=5)
 
     # Fetch schedules for the caretaker
     pending_schedules = WalkSchedule.query.filter_by(state=ScheduleState.RESERVED.value).all()
     ready_for_in_progress = WalkSchedule.query.filter(
         WalkSchedule.state == ScheduleState.CONFIRMED.value,
-        WalkSchedule.start_time <= (now + five_minutes).time(),
+        WalkSchedule.start_time <= (now + fifteen_minutes).time(),
         WalkSchedule.start_time >= (now - fifteen_minutes).time()
     ).all()
     in_progress_schedules = WalkSchedule.query.filter_by(state=ScheduleState.IN_PROGRESS.value).all()

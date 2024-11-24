@@ -14,6 +14,6 @@ class Animal(db.Model):
     description = db.Column(db.String(500), nullable=True)
     photo   = db.Column(db.String(255), nullable=True) # photo url / default='https://example.com'
 
-    walk_schedules = relationship("WalkSchedule", back_populates="animal")
-    examinations = relationship("Examination", back_populates="animal")
-    requests = relationship("Request", back_populates="animal")
+    walk_schedules = relationship("WalkSchedule", back_populates="animal", cascade="all, delete")
+    examinations = relationship("Examination", back_populates="animal", cascade="all, delete")
+    requests = relationship("Request", back_populates="animal", cascade="all, delete")
