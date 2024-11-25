@@ -10,7 +10,7 @@ class Request(db.Model):
     created_at = db.Column(db.DateTime(), nullable=False, default=datetime.now)
     confirmed = db.Column(db.Boolean(), nullable=False, default=False)
 
-    # Foregin Keys => Request is created for given vet to take care of it
+    # Request is created for given vet to take care of it
     caretaker_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete="CASCADE"), nullable=False)
     animal_id = db.Column(db.Integer(), db.ForeignKey('animals.id', ondelete="CASCADE"), nullable=False)
     vet_id = db.Column(db.Integer(), db.ForeignKey('users.id', ondelete="CASCADE"), nullable=True)

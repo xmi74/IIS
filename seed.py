@@ -14,7 +14,6 @@ def seed_data(db):
     # Checking metadata table to see, if data were olready seeded
     # Prevention of seeding new data with every refresh
     if Metadata.query.filter_by(name='seed_data').first():
-        # print("seed.py: Sample data already exist, skipping seeding")
         return
 
     # User seeds

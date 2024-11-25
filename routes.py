@@ -179,16 +179,12 @@ def login_page():
 def register_page():
     form = RegistrationForm()
 
-    print("Creating new user! ")
-
     if form.validate_on_submit():        
         login = form.login.data
         first_name = form.first_name.data
         last_name = form.last_name.data
         email = form.email.data
         password = form.password.data
-
-        print(f"Creating new user: {login}, {first_name}, {last_name}, {email}")
 
         # New User is automatically taken as volunteer
         new_user = Volunteer(login=login, 
@@ -459,8 +455,9 @@ def edit_examination_page(examination_id):
             examination.type = form.type.data
             examination.description = form.description.data
             examination.vaccination_type = form.vaccination_type.data if form.type.data == 'vaccination' else 'RABIES'
-            print("EXAMINATION: ",examination.vaccination_type)
-            print("FORM: ",form.vaccination_type.data)
+            # print("EXAMINATION: ",examination.vaccination_type)
+            # print("FORM: ",form.vaccination_type.data)
+            # print("FORM TYPE: ",form.type.data)
             
             try:
                 db.session.commit()
@@ -495,7 +492,7 @@ def animal_health_records_page():
     animals_hrecords_count = [
         {
             'animal': animal,
-            'health_records_count': len(animal.examinations)  # Predpokladáme vzťah examinations
+            'health_records_count': len(animal.examinations)  
         }
         for animal in animals
     ]
@@ -674,7 +671,6 @@ def schedules_edit_page(id):
             flash(f"Schedule has been updated successfully", 'success')
         except Exception as e:
             flash(f"Error updating schedule: {str(e)}", "danger")
-            print(str(e))
         return redirect(url_for('routes.animal_schedules_page', animal_id=schedule.animal_id))
 
     #GET
@@ -715,7 +711,6 @@ def schedules_add_page(id):
                 flash(f"Schedule has been created successfully", 'success')
         except Exception as e:
             flash(f"Error creating schedule: {str(e)}", "danger")
-            print(str(e))
         return redirect(url_for('routes.animal_schedules_page', animal_id=id))
 
     #GET
@@ -736,7 +731,6 @@ def animal_request_page(animal_id):
     #POST
     if request.method == 'POST':
         request_id = request.form.get('request_id')
-        print(request_id)
         try:
             delete_request(request_id)
             flash(f"Request has been deleted successfully", 'success')
