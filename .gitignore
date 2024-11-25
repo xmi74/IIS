@@ -5,4 +5,4 @@ cloud-sql-proxy
 db_test.py
 er_diagram.py
 show_db.py
-reset_data.py
+reset_database.py
