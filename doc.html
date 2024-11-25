@@ -38,7 +38,6 @@
 </dl>
 
 <h2>Uživatelé systému pro testování</h2>
-<p>Uveďte prosím existující zástupce <strong>všech rolí uživatelů</strong>.</p>
 <table>
 <tr><th>Login</th><th>Heslo</th><th>Role</th></tr>
 <tr><td>admin1</td><td>1234</td><td>Administrátor</td></tr>
@@ -47,11 +46,10 @@
 <tr><td>volunteer1</td><td>1234</td><td>Dobrovolník</td></tr>
 </table>
 
-<p>(Diagram případů užití není nutné vkládat, pokud IS implementuje role a případy užití definované zadáním.)</p> 
+<p>(Diagram prípadov použitia nebol vložený, keďže IS implementuje role a prípady použitia definované zadáním.)</p> 
 
 <h3>Video</h3>
-
-<p>Přiložte odkaz na komentované video demostrující použití informačního systému. Zaměřte se na případy užití definované zadáním (např. registrace uživatele, správa uživatelů a činnosti jednotlivých rolí). Video nahrajte například na VUT Google Drive, kde ho bude možné přímo spustit z odkazu.</p> 
+<a href="https://drive.google.com/file/d/1RFIqDRMcbvgJxGDBF33Cla2_Yu8Wtk7g/view?usp=drive_link">Odkaz na video demonštrujúce použitie informačného systému.</a>
 
 <h2>Implementace</h2>
 <!--<p>Stručná dokumentace k implementaci, která popisuje, které části projektu (např. PHP skripty) implementují jednotlivé případy použití.</p>-->
@@ -101,14 +99,9 @@
 
 <!--Zde vložte grafické schéma relační databáze (tabulek v databázi).-->
 <div>
-	<img src="doc_data/ERD.png" alt="ERD">
+	<img src="doc_data/ERD.png" alt="ERD" style="width: 70%; height: auto;">
 </div>
 <h2>Instalace</h2>
-
-Stručně popište: 
-<ul>
-<li><b>Postup inštalácie na server</b><br></li>
-<!--<li>softwarové požadavky (verze PHP apod.),</li>-->
 <li><b>Softwarové požiadavky</b><br>
 	1. Vytvorenie a inštalácia <strong>virtuálneho prostredia</strong>:<br>
 	<code>python3 -m venv venv</code><br>
@@ -123,7 +116,7 @@ Stručně popište:
 </li>
 <!--<li>jak rozbalit, konfigurovat, inicializovat databázi, ...</li>-->
 <li><b>Inicializácia a konfigurácia databáze</b><br>
-	Pre inicializáciu a vytvorenie MySQL databáze sú vytvorené skripty:
+	Je potreba mať nainštalovaný <b>MySQL server</b>. Pre inicializáciu a vytvorenie MySQL databáze sú vytvorené skripty:
 	<ul>
 		<li>
 			<code>create_db.py</code> vytvorí na <strong>localhost</strong> inštanciu databáze s názvom <strong>animal_shelter</strong> a užívateľa 
