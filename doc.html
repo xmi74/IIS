@@ -109,35 +109,53 @@
 	<code>source venv/bin/activate</code> (pre linux) <br>
 	<br>
 
+	V prípade nepoužitia virtuálneho prostreda je potrebné sa uistiť, že je možné používať nástroj <strong>pip</strong>
+	Príklad inštalácie nástroja pip na Ubuntu:
+	<code>sudo apt install python3-pip</code>
+	<br>
+
 	2. Zoznam softwarových balíkov potrebných pre spustenie je uvedený v súbore <strong>requirements.txt</strong>, 
 	ktorý bol vygenerovaný pomocou <code>pip freeze > requirements</code>.<br>
-	Tieto balíky je možné nainštalovať pomocou: <br><code>pip install -r requirements.txt</code>.
+	Tieto balíky je možné nainštalovať pomocou: <br>
+	<code>pip install -r requirements.txt</code>.
+	<br>
+	Celkový proces je spustenia projektu je takisto popísaný v README.md
 	<br><br>
 		
 </li>
 <!--<li>jak rozbalit, konfigurovat, inicializovat databázi, ...</li>-->
-<li><b>Inicializácia a konfigurácia databáze</b><br>
+<li><b>Inicializácia a konfigurácia databázy pri lokálnom spúšťaní</b><br>
 	Je potreba mať nainštalovaný <b>MySQL server</b>. Pre inicializáciu a vytvorenie MySQL databáze sú vytvorené skripty:
 	<ul>
 		<li>
-			<code>create_db.py</code> vytvorí na <strong>localhost</strong> inštanciu databáze s názvom <strong>animal_shelter</strong> a užívateľa 
-			s prístupovým menom <strong>root</strong> a heslom <strong>password123</strong>
+			<code>create_db.py</code> vytvorí na <strong>localhost</strong> inštanciu databáze s názvom <strong>animal_shelter</strong><br>
+			<strong>Skript po spustení žiada o vloženie prihlasovacích údajov (mena a hesla) od Vášho MySQL.</strong>
 		</li>
+		
 	</ul>
 	<ul>
 		<li>
 			<code>seed.py</code> <strong>vytvorí tabuľky</strong> na základe obsahu priečinka models a <strong>vloží</strong> do nich <strong>prednastavené dáta</strong>. 
-			Tento skript je volaný pri spustení hlavného súboru <strong>app.py</strong>, preto nie je potreba ho spúšťať samostatne
+			Tento skript je volaný pri spustení hlavného súboru <strong>app.py</strong>, preto nie je potreba ho spúšťať samostatne.<br>
+			<strong>Po spustení app.py je potrebné opätovné zadanie prihlasovacích údajov od MySQL.</strong>
 		</li>
 	</ul>
+
+	<br>
+	<ul>
 	<p><strong>Postup inicializácie:</strong></p>
-	<pre><code>python3 create_db.py</code></pre>
-	<pre><code>python3 app.py</code></pre>
+	<li><pre><code>python3 create_db.py</code></pre></li>
+	<pre><code>Enter your MySQL username: root</code></pre>
+	<code><pre>Enter your MySQL password: your_password</code></pre>
+	<li><pre><code>python3 app.py</code></pre></li>
+	<pre><code>Enter your MySQL username: root</code></pre>
+	<code><pre>Enter your MySQL password: your_password</code></pre>
+	</ul>
 </li>
 </ul>
 
 <h2>Známé problémy</h2>
-<p>V čase odovzdania neboli známe žiadne problémy.</p>
+<!-- <p>V čase odovzdania neboli známe žiadne problémy.</p> -->
 
 </body>
 </html>

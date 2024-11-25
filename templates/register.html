@@ -27,5 +27,9 @@ Register
             {{ form.submit(class_='btn btn-primary') }}
         </div>
     </form>
+
+    <p class="Text-center">Already have an account?
+        <a href="{{ url_for('routes.login_page') }}">Sign In</a>
+    </p>
 </div>
 {% endblock %}

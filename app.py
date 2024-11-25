@@ -10,9 +10,9 @@ def create_app():
     app = Flask(__name__)
 
     # Local database config
-    localdb_user = input("Enter your MySQL username: ")
-    localdb_password = getpass.getpass("Enter your MySQL password: ")
-    app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://{localdb_user}:{localdb_password}@localhost/animal_shelter'
+    # localdb_user = input("Enter your MySQL username: ")
+    # localdb_password = getpass.getpass("Enter your MySQL password: ")
+    # app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://{localdb_user}:{localdb_password}@localhost/animal_shelter'
 
     # # Database config for deployed app
     # db_user = os.getenv('DB_USER', 'root') 
