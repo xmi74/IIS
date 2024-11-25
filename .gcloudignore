@@ -19,3 +19,4 @@ __pycache__/
 /setup.cfg
 
 doc.html
+doc_data/ERD.png

@@ -1,4 +1,4 @@
-# Rozbehnutie projektu
+# Spustenie projektu
 
 ## Krok 1: Vytvorenie virtualneho prostredia
 ```
