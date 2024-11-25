@@ -9,6 +9,7 @@ from models.examination import Examination, Vaccination, PreventiveCheckUp
 from models.request import Request
 from models.enums.vaccination_type import VaccinationType
 from models.metadata import Metadata
+import pytz
 
 def seed_data(db):
     # Checking metadata table to see, if data were olready seeded
@@ -16,6 +17,8 @@ def seed_data(db):
     if Metadata.query.filter_by(name='seed_data').first():
         # print("seed.py: Sample data already exist, skipping seeding")
         return
+    
+    gmt_tz = pytz.timezone("GMT")
 
     # User seeds
     admin1 = Admin(login='admin1', first_name='John', last_name='Doe', password='1234', role='admin', email='admin1@example.com')
@@ -87,9 +90,9 @@ def seed_data(db):
         caretaker_id=caretaker1.id,
         volunteer_id=volunteer1.id)
     schedule4 = WalkSchedule(
-        date=datetime.now().date(),
-        start_time=(datetime.now() - timedelta(minutes=30)).time(),
-        end_time=(datetime.now() + timedelta(minutes=30)).time(),
+        date=datetime.now(gmt_tz).date(),
+        start_time=(datetime.now(gmt_tz) - timedelta(minutes=30)).time(),
+        end_time=(datetime.now(gmt_tz) + timedelta(minutes=30)).time(),
         description='Walk',
         state=ScheduleState.IN_PROGRESS.value,
         animal_id=animal2.id,

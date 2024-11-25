@@ -4,6 +4,7 @@ from sqlalchemy import or_, and_
 from __init__ import db
 from models.walk_schedule import WalkSchedule
 from models.enums.schedule_state import ScheduleState
+import pytz
 
 
 #READ ONE
@@ -12,6 +13,7 @@ def get_schedule(schedule_id):
 
 #READ ALL MAY FILTER
 def get_schedules(filters=None):
+    gmt_tz = pytz.timezone("GMT")
     query = WalkSchedule.query
     if 'date' in filters and filters['date'] is not None:
         query = query.filter(WalkSchedule.date >= filters['date'])
@@ -29,7 +31,7 @@ def get_schedules(filters=None):
                 WalkSchedule.date > date.today(),
                 and_(
                     WalkSchedule.date == date.today(),
-                    WalkSchedule.end_time >= datetime.now().time()
+                    WalkSchedule.end_time >= datetime.now(gmt_tz).time()
                 )
             )
         )
@@ -39,7 +41,8 @@ def get_schedules(filters=None):
 
 #READ SCHEDULES WITCH STATE FREE OR RESERVED FOR ONE ANIMAL
 def get_incoming_animal_schedules(animal_id):
-    now = datetime.now()
+    gmt_tz = pytz.timezone("GMT")
+    now = datetime.now(gmt_tz)
     return WalkSchedule.query.filter(
         WalkSchedule.animal_id == animal_id,
         db.or_(
@@ -120,7 +123,8 @@ def get_volunteer_schedules(volunteer_id):
 
 def get_closest_schedule(volunteer_id):
     schedules = get_volunteer_schedules(volunteer_id)
-    now = datetime.now()
+    gmt_tz = pytz.timezone("GMT")
+    now = datetime.now(gmt_tz)
 
     for schedule in schedules:
         start_datetime = datetime.combine(schedule.date, schedule.start_time)
@@ -134,7 +138,8 @@ def get_closest_schedule(volunteer_id):
     return None  # No ongoing or upcoming schedules
 
 def get_past_schedules(volunteer_id):
-    now = datetime.now()
+    gmt_tz = pytz.timezone("GMT")
+    now = datetime.now(gmt_tz)
     schedules = get_volunteer_schedules(volunteer_id)
     return [
         s for s in schedules
@@ -142,7 +147,8 @@ def get_past_schedules(volunteer_id):
     ]
 
 def get_future_schedules(volunteer_id):
-    now = datetime.now()
+    gmt_tz = pytz.timezone("GMT")
+    now = datetime.now(gmt_tz)
     schedules = get_volunteer_schedules(volunteer_id)
     return [
         s for s in schedules

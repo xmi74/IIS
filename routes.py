@@ -31,6 +31,7 @@ from models.enums.schedule_state import ScheduleState
 from models.enums.animal_species import Species
 from utils.decorators import role_required
 from models.enums.vaccination_type import VaccinationType
+import pytz
 
 routes = Blueprint('routes', __name__)
 
@@ -368,7 +369,8 @@ def request_detail_page(request_id):
         except Exception as e:
             flash(f"Error confirming and creating examination: {str(e)}", "danger")
         
-    now = datetime.now()
+    gmt_tz = pytz.timezone("GMT")
+    now = datetime.now(gmt_tz)
     return render_template('vet/request_detail.html', 
                            specific_request=specific_request, 
                            animals=animals,
@@ -840,7 +842,8 @@ def add_request_page(id):
 @role_required('caretaker')
 @login_required
 def confirm_reservations_page():
-    now = datetime.now()
+    gmt_tz = pytz.timezone("GMT")
+    now = datetime.now(gmt_tz)
     fifteen_minutes = timedelta(minutes=15)
 
     # Fetch schedules for the caretaker

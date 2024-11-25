@@ -3,6 +3,7 @@ from datetime import datetime
 from flask import request
 
 from api import api
+import pytz
 from models.request import Request
 from __init__ import db
 
@@ -16,11 +17,12 @@ def get_request(request_id):
 
 # FORM?
 def create_request(data):
+    gmt_tz = pytz.timezone("GMT")
     request = Request(
         vet_id=data.get('vet_id'),
         title=data.get('title'),
         description=data.get('description'),
-        created_at=datetime.now(),
+        created_at=datetime.now(gmt_tz),
         animal_id=data.get('animal_id'),
         caretaker_id=data.get('caretaker_id'),
     )
