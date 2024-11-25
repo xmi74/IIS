@@ -17,7 +17,7 @@ def get_request(request_id):
 
 # FORM?
 def create_request(data):
-    gmt_tz = pytz.timezone("GMT")
+    gmt_tz = pytz.timezone("Europe/Prague")
     request = Request(
         vet_id=data.get('vet_id'),
         title=data.get('title'),

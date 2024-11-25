@@ -17,7 +17,7 @@ def seed_data(db):
     if Metadata.query.filter_by(name='seed_data').first():
         return
     
-    gmt_tz = pytz.timezone("GMT")
+    gmt_tz = pytz.timezone("Europe/Prague")
 
     # User seeds
     admin1 = Admin(login='admin1', first_name='John', last_name='Doe', password='1234', role='admin', email='admin1@example.com')

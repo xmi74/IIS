@@ -13,7 +13,7 @@ def get_schedule(schedule_id):
 
 #READ ALL MAY FILTER
 def get_schedules(filters=None):
-    gmt_tz = pytz.timezone("GMT")
+    gmt_tz = pytz.timezone("Europe/Prague")
     query = WalkSchedule.query
     if 'date' in filters and filters['date'] is not None:
         query = query.filter(WalkSchedule.date >= filters['date'])
@@ -41,7 +41,7 @@ def get_schedules(filters=None):
 
 #READ SCHEDULES WITCH STATE FREE OR RESERVED FOR ONE ANIMAL
 def get_incoming_animal_schedules(animal_id):
-    gmt_tz = pytz.timezone("GMT")
+    gmt_tz = pytz.timezone("Europe/Prague")
     now = datetime.now(gmt_tz)
     return WalkSchedule.query.filter(
         WalkSchedule.animal_id == animal_id,
@@ -123,7 +123,7 @@ def get_volunteer_schedules(volunteer_id):
 
 def get_closest_schedule(volunteer_id):
     schedules = get_volunteer_schedules(volunteer_id)
-    gmt_tz = pytz.timezone("GMT")
+    gmt_tz = pytz.timezone("Europe/Prague")
     now = datetime.now(gmt_tz)
 
     for schedule in schedules:
@@ -138,7 +138,7 @@ def get_closest_schedule(volunteer_id):
     return None  # No ongoing or upcoming schedules
 
 def get_past_schedules(volunteer_id):
-    gmt_tz = pytz.timezone("GMT")
+    gmt_tz = pytz.timezone("Europe/Prague")
     now = datetime.now(gmt_tz)
     schedules = get_volunteer_schedules(volunteer_id)
     return [
@@ -147,7 +147,7 @@ def get_past_schedules(volunteer_id):
     ]
 
 def get_future_schedules(volunteer_id):
-    gmt_tz = pytz.timezone("GMT")
+    gmt_tz = pytz.timezone("Europe/Prague")
     now = datetime.now(gmt_tz)
     schedules = get_volunteer_schedules(volunteer_id)
     return [
