@@ -38,14 +38,6 @@ Admin Dashboard
                     <option value="vet" {% if request.args.get('role') == 'vet' %} selected {% endif %}>Vet</option>
                     <option value="volunteer" {% if request.args.get('role') == 'volunteer' %} selected {% endif %}>Volunteer</option>
             </select>
-            <!-- TODO: verification state -->
-            <!-- <select class="form-group col-md-2" name="role">
-                <option value="">Verification state</option>
-                <option value="">All</option>
-                <option value="admin" {% if request.args.get('verified') == 'verified' %} selected {% endif %}>Verified</option>
-                <option value="caretaker" {% if request.args.get('verified') == 'unverified' %} selected {% endif %}>Unverified</option>
-                
-            </select> -->
 
             <div class="form-group col-md-1">
                 <button type="submit" class="btn btn-primary">Filter</button>
