@@ -11,27 +11,28 @@ def create_app():
     # Local database config
     # app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:password123@localhost/animal_shelter'
 
-    # Connecting to online database
+    # Database config for deployed app
     db_user = os.getenv('DB_USER', 'root') 
     db_password = os.getenv('DB_PASSWORD', 'password123') 
     db_name = os.getenv('DB_NAME', 'animal-shelter') 
     cloud_sql_connection_name = os.getenv('CLOUD_SQL_CONNECTION_NAME')
-
-    # Konfigurácia pripojenia
-    if cloud_sql_connection_name:
-        # Pripojenie cez Unix socket pre App Engine Standard Environment
+    
+    if cloud_sql_connection_name:        
+        # Connecting to online database on Google Cloud through deployed app
         app.config['SQLALCHEMY_DATABASE_URI'] = (
             f'mysql+pymysql://{db_user}:{db_password}@/{db_name}'
             f'?unix_socket=/cloudsql/{cloud_sql_connection_name}'
         )
     else:
-        # Connecting to online database
+        # Connecting to online database on Google Cloud
         db_host = os.getenv('DB_HOST', '34.116.182.73') 
         app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://{db_user}:{db_password}@{db_host}/{db_name}'
 
+    # Shared parameters of database config
+    app.config['PERMANENT_SESSION_LIFETIME'] = 7200
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['SECRET_KEY'] = 'bf59e2d6497318f7fc560703'    
-    app.config['PERMANENT_SESSION_LIFETIME'] = 7200
+
 
     # Initialize extensions
     db.init_app(app)
