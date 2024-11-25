@@ -115,28 +115,38 @@
 		
 </li>
 <!--<li>jak rozbalit, konfigurovat, inicializovat databázi, ...</li>-->
-<li><b>Inicializácia a konfigurácia databáze</b><br>
+<li><b>Inicializácia a konfigurácia databázy pri lokálnom spúšťaní</b><br>
 	Je potreba mať nainštalovaný <b>MySQL server</b>. Pre inicializáciu a vytvorenie MySQL databáze sú vytvorené skripty:
 	<ul>
 		<li>
-			<code>create_db.py</code> vytvorí na <strong>localhost</strong> inštanciu databáze s názvom <strong>animal_shelter</strong> a užívateľa 
-			s prístupovým menom <strong>root</strong> a heslom <strong>password123</strong>
+			<code>create_db.py</code> vytvorí na <strong>localhost</strong> inštanciu databáze s názvom <strong>animal_shelter</strong><br>
+			<strong>Skript po spustení žiada o vloženie prihlasovacích údajov (mena a hesla) od Vášho MySQL.</strong>
 		</li>
+		
 	</ul>
 	<ul>
 		<li>
 			<code>seed.py</code> <strong>vytvorí tabuľky</strong> na základe obsahu priečinka models a <strong>vloží</strong> do nich <strong>prednastavené dáta</strong>. 
-			Tento skript je volaný pri spustení hlavného súboru <strong>app.py</strong>, preto nie je potreba ho spúšťať samostatne
+			Tento skript je volaný pri spustení hlavného súboru <strong>app.py</strong>, preto nie je potreba ho spúšťať samostatne.<br>
+			<strong>Po spustení app.py je potrebné opätovné zadanie prihlasovacích údajov od MySQL.</strong>
 		</li>
 	</ul>
+
+	<br>
+	<ul>
 	<p><strong>Postup inicializácie:</strong></p>
-	<pre><code>python3 create_db.py</code></pre>
-	<pre><code>python3 app.py</code></pre>
+	<li><pre><code>python3 create_db.py</code></pre></li>
+	<pre><code>Enter your MySQL username: root</code></pre>
+	<code><pre>Enter your MySQL password: your_password</code></pre>
+	<li><pre><code>python3 app.py</code></pre></li>
+	<pre><code>Enter your MySQL username: root</code></pre>
+	<code><pre>Enter your MySQL password: your_password</code></pre>
+	</ul>
 </li>
 </ul>
 
 <h2>Známé problémy</h2>
-<p>Zde popište, které body zadání nejsou implementovány a z jakého důvodu. Např. &bdquo;Z časových důvodů nebyla implementována správa uživatelů.&rdquo; Pomůžete tím zrychlit hodnocení, když neimplementované funkce nebudeme muset dlouze hledat.</p>
+<!-- <p>Zde popište, které body zadání nejsou implementovány a z jakého důvodu. Např. &bdquo;Z časových důvodů nebyla implementována správa uživatelů.&rdquo; Pomůžete tím zrychlit hodnocení, když neimplementované funkce nebudeme muset dlouze hledat.</p> -->
 
 </body>
 </html>
