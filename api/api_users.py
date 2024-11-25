@@ -45,7 +45,7 @@ def edit_user(user_id, data):
     try:
         db.session.commit()
     except Exception as e:
-        print(f"Error commiting to database: {str(e)}")
+        # print(f"Error commiting to database: {str(e)}")
         raise
     return user
 
