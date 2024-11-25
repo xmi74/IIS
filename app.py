@@ -14,22 +14,22 @@ def create_app():
     # localdb_password = getpass.getpass("Enter your MySQL password: ")
     # app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://{localdb_user}:{localdb_password}@localhost/animal_shelter'
 
-    # # Database config for deployed app
-    # db_user = os.getenv('DB_USER', 'root') 
-    # db_password = os.getenv('DB_PASSWORD', 'password123') 
-    # db_name = os.getenv('DB_NAME', 'animal-shelter') 
-    # cloud_sql_connection_name = os.getenv('CLOUD_SQL_CONNECTION_NAME')
+    # Database config for deployed app
+    db_user = os.getenv('DB_USER', 'root') 
+    db_password = os.getenv('DB_PASSWORD', 'password123') 
+    db_name = os.getenv('DB_NAME', 'animal-shelter') 
+    cloud_sql_connection_name = os.getenv('CLOUD_SQL_CONNECTION_NAME')
     
-    # if cloud_sql_connection_name:        
-    #     # Connecting to online database on Google Cloud through deployed app
-    #     app.config['SQLALCHEMY_DATABASE_URI'] = (
-    #         f'mysql+pymysql://{db_user}:{db_password}@/{db_name}'
-    #         f'?unix_socket=/cloudsql/{cloud_sql_connection_name}'
-    #     )
-    # else:
-    #     # Connecting to online database on Google Cloud
-    #     db_host = os.getenv('DB_HOST', '34.116.182.73') 
-    #     app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://{db_user}:{db_password}@{db_host}/{db_name}'
+    if cloud_sql_connection_name:        
+        # Connecting to online database on Google Cloud through deployed app
+        app.config['SQLALCHEMY_DATABASE_URI'] = (
+            f'mysql+pymysql://{db_user}:{db_password}@/{db_name}'
+            f'?unix_socket=/cloudsql/{cloud_sql_connection_name}'
+        )
+    else:
+        # Connecting to online database on Google Cloud
+        db_host = os.getenv('DB_HOST', '34.116.182.73') 
+        app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://{db_user}:{db_password}@{db_host}/{db_name}'
 
     # Shared parameters of database config
     app.config['PERMANENT_SESSION_LIFETIME'] = 7200
