@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Home
+{% endblock %}
+
+{% block body %}
+<div class="container mt-4 text-center">
+    <!-- Animal Photos -->
+    <div class="row mb-4 justify-content-center align-items-center">
+        {% for animal in animals %}
+        <div class="col-md-3 mb-3">
+            <div class="card text-center ">
+                <img src="{{ animal.photo }}" 
+                     class="img-fluid rounded shadow"
+                     style="width: 100%; height: 200px; object-fit: cover;">
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Welcome Message -->
+    <h1 class="text-center text-primary mt-4">Welcome to Our Animal Shelter</h1>
+    <p class="text-center" style="font-size: 1.2rem;">
+        Our mission is to provide love and care for animals in need. Join us as a volunteer and help our furry friends!
+    </p>
+
+    <!-- Volunteer Process -->
+    <h3 class="mt-5 text-primary">How can I Become a Volunteer?</h3>
+    <div class="d-flex flex-column align-items-center" style="font-size: 1.2rem;">
+        <div>Register on our website.</div>
+        <i class="fas fa-arrow-down text-primary my-2"></i>
+        <div>Wait for your profile to be approved by one of our caretakers.</div>
+        <i class="fas fa-arrow-down text-primary my-2"></i>
+        <div>Book a walking session.</div>
+        <div>(needs to be confirmed by a caretaker)</div>
+        <i class="fas fa-arrow-down text-primary my-2"></i>
+        <div>Arrive at the shelter <strong>5 minutes before your session</strong>.</div>
+    </div>
+
+    <!-- Caretakers List -->
+    <h3 class="mt-5 text-primary">Meet Our Caretakers</h3>
+    <div class="row justify-content-center">
+        {% for caretaker in caretakers %}
+        <div class="col-md-4 mb-4">
+            <div class="card text-center h-100">
+                <div class="card-body">
+                    <h5 class="card-title text-dark">{{ caretaker.first_name }} {{ caretaker.last_name }}</h5>
+                    <p class="card-text text-dark">
+                        <strong>Email:</strong> {{ caretaker.email }}
+                    </p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,144 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Request Detail
+{% endblock %}
+
+{% block navtitle %}
+Request Detail
+{% endblock %}
+
+{% block body %}
+<div class="container mt-5 text-white">
+    <!-- Request Title -->
+    <h3 class="text-center">Request Detail</h3>
+
+    <!-- Request Information -->
+    <div class="card bg-dark mx-auto mt-4" style="max-width: 600px;">
+        <div class="card-body text-center">
+            <h5 class="card-title"><strong>Title:</strong> {{ specific_request.title }}</h5>
+            <p class="card-text">
+                <strong>Description:</strong><br>
+                {{ specific_request.description or 'No description provided.' }}
+            </p>
+            <hr class="my-3" style="border-top: 1px solid #ccc;">
+            <p class="card-text"><strong>Created At:</strong> {{ specific_request.created_at.strftime('%d.%m.%Y %H:%M') }}</p>
+            <p class="card-text">
+                <strong>Subject Animal:</strong> 
+                {{ specific_request.animal.name }} ({{ specific_request.animal.species }})
+            </p>
+            <p class="card-text">
+                <strong>From Caretaker:</strong> 
+                {{ specific_request.caretaker.first_name }} {{ specific_request.caretaker.last_name }}
+            </p>
+            <p class="card-text">
+                <strong>Confirmation State:</strong> 
+                {% if specific_request.confirmed %}
+                    <span class="text-success">Confirmed</span>
+                {% else %}
+                    <span class="text-danger">Not Confirmed</span>
+                {% endif %}
+            </p>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="d-flex justify-content-center mt-4">
+        <a href="{{ url_for('routes.dashboard_vet_page') }}" class="btn btn-secondary">Back</a>
+        {% if not specific_request.confirmed %}
+        <button class="btn btn-info ml-3" id="toggleExaminationForm">Create Examination for Request</button>
+        {% endif %}
+    </div>
+
+    <!-- Examination Form -->
+    {% if not specific_request.confirmed %}
+    <div id="examinationForm" class="mt-5 text-center mx-auto" style="max-width: 600px; display: none;">
+        <h4>Create Examination</h4>
+        <form method="POST" action="{{ url_for('routes.request_detail_page', request_id=specific_request.id) }}">
+            {{ form.hidden_tag() }}
+
+            <!-- Animal ID -->
+            <div class="form-group">
+                <label for="animal_id">Animal ID <span class="text-danger">*</span></label>
+                <select name="animal_id" class="form-control">
+                    {% for animal in animals %}
+                    <option value="{{ animal.id }}" 
+                            {% if specific_request.animal and animal.id == specific_request.animal.id %}selected{% endif %}>
+                        ID: {{ animal.id }} | {{ animal.name }} | {{ animal.species }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Date and Time -->
+            <div class="form-group">
+                <label for="date">Date and Time <span class="text-danger">*</span></label>
+                <input type="datetime-local" name="date" class="form-control" value="{{ now.strftime('%Y-%m-%dT%H:%M') }}">
+            </div>
+
+            <!-- Type -->
+            <div class="form-group">
+                <label for="type">Type <span class="text-danger">*</span></label>
+                <select name="type" class="form-control" id="typeField">
+                    <option value="examination" {% if specific_request.title == 'Examination' %}selected{% endif %}>Examination</option>
+                    <option value="vaccination" {% if specific_request.title == 'Vaccination' %}selected{% endif %}>Vaccination</option>
+                    <option value="preventive_checkup" {% if specific_request.title == 'Preventive CheckUp' %}selected{% endif %}>Preventive CheckUp</option>
+                </select>
+            </div>
+
+            <!-- Vaccination Type -->
+            <div class="form-group" id="vaccinationField" style="display: none;">
+                <label for="vaccination_type">Vaccination Type <span class="text-danger">*</span></label>
+                <select name="vaccination_type" class="form-control">
+                    {% for vaccination in VaccinationType %}
+                    <option value="{{ vaccination.name }}">{{ vaccination.value }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Description -->
+            <div class="form-group">
+                <label for="description">Description</label>
+                <textarea name="description" class="form-control">{{ specific_request.description or '' }}</textarea>
+            </div>
+
+            <!-- Required field label -->
+            <div class="form-group text-muted" style="font-size: 0.9rem;">
+                <span class="text-danger">*</span> = Required field
+            </div>
+
+            <button type="submit" class="btn btn-primary">Confirm & Create Examination</button>
+        </form>
+    </div>
+    {% endif %}
+</div>
+
+<!-- JavaScript to Toggle Form -->
+<script>
+    document.getElementById('toggleExaminationForm')?.addEventListener('click', function () {
+        const form = document.getElementById('examinationForm');
+        form.style.display = form.style.display === 'none' ? 'block' : 'none';
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const typeField = document.getElementById('typeField');
+        const vaccinationField = document.getElementById('vaccinationField');
+
+        // Function to toggle vaccination field visibility
+        const toggleVaccinationField = () => {
+            if (typeField.value === 'vaccination') {
+                vaccinationField.style.display = 'block';
+            } else {
+                vaccinationField.style.display = 'none';
+            }
+        };
+
+        // Attach event listener to typeField
+        typeField.addEventListener('change', toggleVaccinationField);
+
+        // Initial toggle based on prefilled value
+        toggleVaccinationField();
+    });
+</script>
+
+{% endblock %}

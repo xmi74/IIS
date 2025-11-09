@@ -1,0 +1,165 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>Projekt IIS</title>
+    <style type="text/css">
+    	table { border-collapse: collapse; }
+    	td, th { border: 1px solid black; padding: 0.3em 0.5em; text-align: left; }
+    	dt { font-weight: bold; margin-top: 0.5em; }
+    </style>
+</head>
+<body>
+
+<!-- Zkontrolujte prosím nastavení kódování v hlavičce dokumentu 
+     podle použitého editoru -->
+
+<h1>Zvířecí útulek</h1> <!-- Nahradte názvem svého zadání -->
+
+<dl>
+	<dt>Autoři</dt>
+	<dd>Igor Mikula <!-- Nahraďte skutečným jménem a e-mailem autora a popisem činnosti -->
+	    <a href="mailto:xmikul74@stud.fit.vutbr.cz">xmikul74@stud.fit.vutbr.cz</a> -
+		Návrh schéma relačnej databázy. Back end a front end implementácia zodpovedností administrátora a veterinára. Testovanie.
+	</dd>
+	<dd>Aurel Strigáč <!-- Nahraďte skutečným jménem a e-mailem autora a popisem činnosti -->
+	    <a href="mailto:xstrig00@stud.fit.vutbr.cz">xstrig00@stud.fit.vutbr.cz</a> -
+		Návrh schéma relačnej databázy. Back end a front end implementácia zodpovedností dobrovolníka a neregistrovaného užívateľa. Testovanie.
+	</dd>
+  <dd>Daniel Putiš <!-- Nahraďte skutečným jménem a e-mailem autora a popisem činnosti -->
+	    <a href="mailto:xputis00@stud.fit.vutbr.cz">xputis00@stud.fit.vutbr.cz</a> -
+		Návrh schéma relačnej databázy. Back end a front end implementácia zodpovedností pečovateľa. Testovanie.
+	</dd>
+	<dt>URL aplikace</dt>
+	<dd><a href="https://mythic-fire-442712-q9.lm.r.appspot.com/">https://mythic-fire-442712-q9.lm.r.appspot.com/</a></dd>
+</dl>
+
+<h2>Uživatelé systému pro testování</h2>
+<table>
+<tr><th>Login</th><th>Heslo</th><th>Role</th></tr>
+<tr><td>admin1</td><td>1234</td><td>Administrátor</td></tr>
+<tr><td>vet1</td><td>1234</td><td>Veterinár</td></tr>
+<tr><td>caretaker1</td><td>1234</td><td>Pečovatel</td></tr>
+<tr><td>volunteer1</td><td>1234</td><td>Dobrovolník</td></tr>
+</table>
+
+<p>(Diagram prípadov použitia nebol vložený, keďže IS implementuje role a prípady použitia definované zadáním.)</p> 
+
+<h3>Video</h3>
+<a href="https://drive.google.com/file/d/1RFIqDRMcbvgJxGDBF33Cla2_Yu8Wtk7g/view?usp=drive_link">Odkaz na video demonštrujúce použitie informačného systému.</a>
+
+<h2>Implementace</h2>
+<p> Python, Flask, HTML, Bootstrap</p>
+<!--<p>Stručná dokumentace k implementaci, která popisuje, které části projektu (např. PHP skripty) implementují jednotlivé případy použití.</p>-->
+<p>
+	Stručný popis najdôležitejších súborov/častí aplikácie:
+	<ul>
+    <!-- MySql databázu ovládame pomocou ORM SqlAlchemy. Python skripty v zložke models reprezentujú tabulky v databáze. Metódy v zložke api implementujú CRUD prácu s ORM triedami. Zložka forms obsahuje python skripty, ktoré implementujú  formuláre v aplikácií. custom_validators.py implementuje naše vlastné špecifické validátory na formluláre. routes.py implementuje cesty k jednotlivým stránkam a spracuváva HTTP požiadavky na tieto cesty. templates obsahuje dynamické HTML stránky, kde dynamickosť zabezpečuje framwork Jinja. app.py inicializuje celú aplikáciu.<br> -->
+		<li><strong>routes.py</strong><br>
+		Tento súbor je umiestnený v koreňovom adresári aplikácie. <br>
+		Implementuje logiku spracovávania HTTP požiadavkov, resp. obsahuje logiku spracovávania všetkách prípadov užitia 
+		a zaobstaráva presmerovávanie na požadované stránky.</li>
+
+		<li><strong>app.py</strong><br>
+			Súbor je umiestnený v koreňovom adresári aplikácie a slúži ako hlavný vstupný bod pre Flask aplikáciu. <br>
+			Inicializuje Flask aplikáciu, nastavuje konfiguráciu pre pripojenie k MySQL databáze pomocou SQLAlchemy.
+			Inicializuje rozšírenia ako SQLAlchemy, bcrypt a login_manager pre správu databázy, hesiel a autentifikácie užívateľov. 
+			Registruje blueprinty pre routovanie a API endpointy, vytvára databázové tabuľky a inicializuje počiatočné dáta pomocou seed skriptu. 
+			Zabezpečuje správu užívateľských session, vrátane nastavenia časových limitov a aktualizácie poslednej aktivity. 
+			Taktiež pridáva hlavičky na kontrolu cache pre všetky HTTP odpovede, čím zabezpečuje aktuálnosť dát na stránkach.
+		</li>
+			
+
+		<li><strong>models/</strong><br>
+		Priečinok obsahuje implemenetáciu databázových modelov (entít)
+		</li>
+
+		<li><strong>forms/</strong><br>
+		Obsahuje súbory s implemetáciou formulárov pre jednotlivé databázové modely a takisto prihlasovanie a registráciu užívateľa. <br>
+		Formuláre zaručujú pomocou validátorov, že zadané dáta budú zapísané v správnom formáte a nedôjde teda k nekonzistenciám a porušeniu integrity v databáze
+		</li>
+
+		<li><strong>api/</strong><br>
+		V priečinku api sú implementované funkcie pracujúce s databázou nad jednotlivými modelmi, ktoré sú využívané v súbore <strong>routes.py</strong>.<br>
+		Typicky tieto funkcie umožňujú získanie jednoho/všetkých inštancií modelu, vymazanie, editovanie a filtrovanie medzi inštanciami.
+		</li>
+
+		<li><strong>templates/</strong><br>
+		Obsahuje podpriečinky pomenované na základe možných rolí užívateľa.
+		V týchto podpriečinkoch sú implementované HTML súbory, reprezentujúce stránky, ktoré je aplikácia schopná zobrazovať.<br>
+		Pre štylizáciu stránok je využitý framework <strong>Bootstrap</strong>, verzie 4.5.
+		Pre zabezpečenie dynamickosti stránok a vyriešenie logických implikácii v HTML súboroch je využitý framework <strong>Jinja</strong>.
+		</li>
+	</ul>
+</p>
+
+<h3>Databáze</h3>
+
+<!--Zde vložte grafické schéma relační databáze (tabulek v databázi).-->
+<div>
+	<img src="doc_data/ERD.png" alt="ERD" style="width: 70%; height: auto;">
+</div>
+<h2>Instalace</h2>
+<li><b>Softwarové požiadavky</b><br>
+	1. Vytvorenie a inštalácia <strong>virtuálneho prostredia</strong>:<br>
+	<code>python3 -m venv venv</code><br>
+	<code>source venv/bin/activate</code> (pre linux) <br>
+	<br>
+
+	V prípade nepoužitia virtuálneho prostreda je potrebné sa uistiť, že je možné používať nástroj <strong>pip</strong>
+	Príklad inštalácie nástroja pip na Ubuntu:
+	<code>sudo apt install python3-pip</code>
+	<br>
+
+	2. Zoznam softwarových balíkov potrebných pre spustenie je uvedený v súbore <strong>requirements.txt</strong>, 
+	ktorý bol vygenerovaný pomocou <code>pip freeze > requirements</code>.<br>
+	Tieto balíky je možné nainštalovať pomocou: <br>
+	<code>pip install -r requirements.txt</code>.
+	<br>
+	Celkový proces je spustenia projektu je takisto popísaný v README.md
+	<br><br>
+		
+</li>
+<!--<li>jak rozbalit, konfigurovat, inicializovat databázi, ...</li>-->
+<li><b>Inicializácia a konfigurácia databázy pri lokálnom spúšťaní</b><br>
+	Je potreba mať nainštalovaný <b>MySQL server</b>. Pre inicializáciu a vytvorenie MySQL databáze sú vytvorené skripty:
+	<ul>
+		<li>
+			<code>create_db.py</code> vytvorí na <strong>localhost</strong> inštanciu databáze s názvom <strong>animal_shelter</strong><br>
+			<strong>Skript po spustení žiada o vloženie prihlasovacích údajov (mena a hesla) od Vášho MySQL.</strong>
+		</li>
+		
+	</ul>
+	<ul>
+		<li>
+			<code>seed.py</code> <strong>vytvorí tabuľky</strong> na základe obsahu priečinka models a <strong>vloží</strong> do nich <strong>prednastavené dáta</strong>. 
+			Tento skript je volaný pri spustení hlavného súboru <strong>app.py</strong>, preto nie je potreba ho spúšťať samostatne.<br>
+			<strong>Po spustení app.py je potrebné opätovné zadanie prihlasovacích údajov od MySQL.</strong>
+		</li>
+	</ul>
+
+	<br>
+	<ul>
+	<p><strong>Postup inicializácie:</strong></p>
+	<li><pre><code>python3 create_db.py</code></pre></li>
+	<pre><code>Enter your MySQL username: root</code></pre>
+	<code><pre>Enter your MySQL password: your_password</code></pre>
+	<li><pre><code>python3 app.py</code></pre></li>
+	<pre><code>Enter your MySQL username: root</code></pre>
+	<code><pre>Enter your MySQL password: your_password</code></pre>
+	</ul>
+</li>
+</ul>
+
+<h2>Deploynutá aplikácia</h2>
+Pre hostovanie databázy aj deploy aplikácie bol využitý <strong>Google Cloud</strong>. 
+Súbor, ktorým je deployment riadený je <strong>app.yaml</strong>, využívajúci nástroj <strong>gunicorn</strong>. Tento súbor možno nájsť v koreňovom adresári odovzdaného riešenia. <br>
+Deploynutú on-line aplikáciu možno nájsť <a href="https://mythic-fire-442712-q9.lm.r.appspot.com">tu</a> <br>.
+
+<h2>Známé problémy</h2>
+<p>V čase odovzdania neboli známe žiadne problémy.</p>
+
+</body>
+</html>

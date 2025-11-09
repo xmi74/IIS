@@ -1,0 +1,21 @@
+<!-- includes autopopulate functionality -->
+<div class="form-group">
+    {{ field.label }}
+    {% if field.flags.required %}
+        <span class="text-danger">*</span>
+    {% endif %}
+    {% if field.type == 'SelectField' %}
+        <select name="{{ field.name }}" id="{{ field.id }}" class="form-control">
+            {% for value, label in field.choices %}
+                <option value="{{ value }}" {% if field.data == value %}selected{% endif %}>
+                    {{ label }}
+                </option>
+            {% endfor %}
+        </select>
+    {% else %}
+        {{ field(class="form-control") }}
+    {% endif %}
+    {% for error in field.errors %}
+        <span class="rounded bg-danger p-1"> {{ error }}</span>
+    {% endfor %}
+</div>

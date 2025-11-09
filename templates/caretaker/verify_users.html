@@ -1,0 +1,55 @@
+{% extends 'caretaker/dashboard_caretaker_base.html' %}
+
+{% block content %}
+<h3>Verify Caretakers</h3>
+<table class="table table-hover table-dark table-striped">
+    <thead>
+        <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Surname</th>
+            <th scope="col">Verified</th>
+            <th scope="col">Switch Verification</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for user in users %}
+            <tr>
+                <td>{{ user.first_name }}</td>
+                <td>{{ user.last_name }}</td>
+                <td>
+                    {% if user.verified %}
+                        <span class="badge bg-success">Yes</span>
+                    {% else %}
+                        <span class="badge bg-danger">No</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <form method="post">
+                        <input type="hidden" name="user_id" value="{{ user.id }}">
+                        {% if user.verified %}
+                            <!-- Show only the Unverify button -->
+                            <button class="btn btn-danger btn-outline"
+                                    type="submit"
+                                    name="validate"
+                                    value="False"
+                            >
+                                Unverify
+                            </button>
+                        {% else %}
+                            <!-- Show only the Verify button -->
+                            <button class="btn btn-success btn-outline"
+                                    type="submit"
+                                    name="validate"
+                                    value="True"
+                            >
+                                Verify
+                            </button>
+                        {% endif %}
+                    </form>
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

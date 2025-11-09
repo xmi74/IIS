@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Examination Detail
+{% endblock %}
+
+{% block navtitle %}
+Examination Detail
+{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <h3 class="text-center">Examination Detail</h3>
+
+    <div class="d-flex mb-3">
+        <a href="{{ url_for('routes.edit_examination_page', examination_id=specific_examination.id) }}" class="btn btn-primary mr-3">Edit</a>
+        <form method="POST" action="{{ url_for('routes.delete_examination_page', examination_id=specific_examination.id) }}" class="d-inline">
+            <button type="submit" class="btn btn-danger">Delete</button>
+        </form>
+    </div>
+    
+
+    <div class="card bg-dark">
+        <div class="card-body">
+            <p><strong>Examination ID:</strong> {{ specific_examination.id }}</p>
+            <p><strong>Created By:</strong> {{ specific_examination.vet.first_name }} {{ specific_examination.vet.last_name }}</p>
+            <p><strong>Date:</strong> {{ specific_examination.date }}</p>
+            <p><strong>Type:</strong> 
+                {% if specific_examination.type == 'vaccination' %}
+                    Vaccination
+                {% elif specific_examination.type == 'preventive_checkup' %}
+                    Preventive Check-Up
+                {% else %}
+                    Examination
+                {% endif %}
+            </p>
+            <p><strong>Animal:</strong> {{ specific_examination.animal.name }} ({{ specific_examination.animal.species }})</p>
+            <p><strong>Vet:</strong> {{ specific_examination.vet.first_name }} {{ specific_examination.vet.last_name }}</p>
+            <p><strong>Description:</strong> {{ specific_examination.description or "No description available." }}</p>
+            {% if specific_examination.type == 'vaccination' %}
+                <p><strong>Vaccination Type:</strong> {{ specific_examination.vaccination_type }}</p>
+            {% endif %}
+        </div>
+    </div>
+    <a href="{{ url_for('routes.dashboard_vet_page') }}" class="btn btn-secondary mt-3">Back to Dashboard</a>
+</div>
+
+{% endblock %}

@@ -1,0 +1,14 @@
+runtime: python39
+entrypoint: gunicorn -w 2 -b :$PORT app:app
+
+instance_class: F1
+
+env_variables:
+  DB_USER: root
+  DB_PASSWORD: password123
+  DB_NAME: animal-shelter
+  CLOUD_SQL_CONNECTION_NAME: mythic-fire-442712-q9:europe-central2:animal-shelter
+
+handlers:
+- url: /.*
+  script: auto

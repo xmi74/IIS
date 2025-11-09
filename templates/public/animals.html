@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Animals
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h3 style="color: lightblue">Our Animals</h3>
+    
+        <form method="GET" action="{{ url_for('routes.animals_page') }}">
+            <div class="form-row">
+                <!-- Filter by Name -->
+                <div class="form-group col-md-2">
+                    <input type="text" name="name" class="form-control" placeholder="Filter by Name">
+                </div>
+        
+                <!-- Filter by Species -->
+                <div class="form-group col-md-2">
+                    <select name="species" class="form-control">
+                        <option value="">All Species</option>
+                        {% for species in Species %}
+                        <option value="{{ species.value }}">{{ species.value }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+        
+                <!-- Submit Button -->
+                <div class="form-group col-md-1">
+                    <button type="submit" class="btn btn-primary">Filter</button>
+                </div>
+            </div>
+        </form>
+        
+
+        <div class="row">
+            {% for animal in animals %}
+            <div class="col-md-4 mb-4">
+                <div class="card text-center">
+                    <!-- Link the image to the animal detail page -->
+                    <a href="{{ url_for('routes.animal_detail', animal_id=animal.id) }}">
+                        <div class="embed-responsive embed-responsive-4by3">
+                            <img src="{{ animal.photo or 'https://via.placeholder.com/300' }}" class="card-img-top embed-responsive-item" alt="{{ animal.name }}">
+                        </div>
+                    </a>
+                    <div class="card-body">
+                        <!-- Link the animals name to the detail page -->
+                        <h5 class="card-title" style="color: rgb(3, 73, 3); font-size: 1.5rem;">
+                            <a href="{{ url_for('routes.animal_detail', animal_id=animal.id) }}" style="color: inherit; text-decoration: none;">
+                                {{ animal.name }}
+                            </a>
+                        </h5>
+                        <p class="card-text" style="color: rgb(12, 12, 122); font-size: 1.2rem;">
+                            <i class="fas fa-paw"></i> {{ animal.species }}
+                        </p>
+                        
+                        <a href="{{ url_for('routes.animal_detail', animal_id=animal.id) }}" class="btn btn-primary">
+                            View Details
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>        
+    </div>
+{% endblock %}

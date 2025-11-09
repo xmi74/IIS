@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Vet Dashboard
+{% endblock %}
+
+{% block navtitle %}
+Vet Dashboard
+{% endblock %}
+
+{% block body %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- Left Side Navigation --> 
+        <nav class="col-md-2 d-md-block bg-dark sidebar border-top">
+            <div class="p-3">
+                <ul class="nav flex-column">
+                    <li class="nav-item active"><a class="nav-link text-white" href="{{ url_for('routes.dashboard_vet_page') }}">Requests</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" href="{{ url_for('routes.vets_examinations_page') }}">Examinations</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" href="{{ url_for('routes.animal_health_records_page') }}">Health Records</a></li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="col-md-10 ml-sm-auto px-4">
+            <h3 class="text-center mt-4">Requests</h3>
+
+            <!-- Filtering -->
+            <form method="GET" action="{{ url_for('routes.dashboard_vet_page') }}" class="mb-4">
+                <div class="form-row">
+                    <div class="form-group col-md-2">
+                        <select name="confirmed" class="form-control">
+                            <option value="" selected>Show All</option>
+                            <option value="true">Show Confirmed</option>
+                            <option value="false">Show Unconfirmed</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-md-1">
+                        <button type="submit" class="btn btn-primary">Filter</button>
+                    </div>
+                </div>
+            </form>
+
+            <div class="table-responsive">
+                <table class="table table-dark table-striped">
+                    <thead>
+                        <tr>
+                            <th>Created</th>
+                            <th>Title</th>
+                            <th>Animal</th>
+                            <th>Caretaker</th>
+                            <th>Confirmed</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for request in vet_requests %}
+                        <tr>
+                            <td>{{ request.created_at }}</td>
+                            <td>{{ request.title }}</td>
+                            <td>{{ request.animal.name }} ({{ request.animal.species }})</td>
+                            <td>{{ request.caretaker.first_name }} {{ request.caretaker.last_name }}</td>
+                            <td>
+                                {% if request.confirmed %}
+                                    <i class="fas fa-check text-success"></i>
+                                {% else %}
+                                    <i class="fas fa-times text-danger"></i>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if not request.confirmed %}
+                                    <a href="{{ url_for('routes.request_detail_page', request_id=request.id) }}" class="btn btn-success btn-sm">Serve</a>
+                                {% else %}
+                                    <a href="{{ url_for('routes.request_detail_page', request_id=request.id) }}" class="btn btn-info btn-sm">View Details</a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends 'caretaker/dashboard_caretaker_base.html' %}
+
+{% block content %}
+<h3>Medical Requests for {{ animal_name }}</h3>
+
+<div class="row d-flex justify-content-end pb-3">
+    <div class="col-auto">
+        <a href="{{ url_for('routes.add_request_page' , id=animal_id) }}" class="btn btn-success ">Create new request</a>
+    </div>
+</div>
+
+<table class="table table-hover table-dark table-striped">
+    <thead>
+        <tr>
+            <th scope="col">Title</th>
+            <th scope="col">Description</th>
+            <th scope="col">Created</th>
+            <th scope="col">State</th>
+            <th scope="col">Options</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for request in requests %}
+            <tr>
+                <td>{{ request.title.capitalize() }}</td>
+                <td>{{ request.description[:20]+'...' or 'No description'}}</td>
+                <td>{{ request.created_at }}</td>
+                {% if request.confirmed %}
+                    <td class="text-success">Confirmed</td>
+                    <td class="row mr-1"></td>
+                {% else %}
+                    <td class="text-danger">Not Confirmed</td>
+
+                    <td class="row mr-1">
+                        <div class="col">
+                            <a href="{{ url_for('routes.edit_request_page', id=request.id) }}" class="btn btn-info btn-md" >Edit</a>
+                        </div>
+
+                        <div class="col">
+                            <form method="post">
+                                <input type="hidden" name="request_id" value="{{request.id}}">
+                                <button class="btn btn-danger btn-outline"
+                                        type="submit"
+                                        name="delete"
+                                        value="True"
+                                >
+                                    Delete
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                {% endif %}
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

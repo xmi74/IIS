@@ -1,0 +1,80 @@
+{% extends 'caretaker/dashboard_caretaker_base.html' %}
+
+{% block content %}
+<h3>Schedules for {{ animal_name }}</h3>
+
+<div class="row">
+    <form method="GET" action="{{ url_for('routes.animal_schedules_page', animal_id=animal_id) }}" class="col-11">
+        <div class="form-row">
+            <div class="form-group form-check form-check-inline col-md-2">
+                <label for="old" class=" form-check-label">Show past events</label>
+                <input type="checkbox" class="form-control form-check-input" name="old" id="old">
+            </div>
+
+            <select class="form-group col-md-2" name="state">
+                <option value="">All States</option>
+                {% for data in ScheduleState %}
+                <option value="{{data.value}}">{{data.value}}</option>
+                {% endfor %}
+            </select>
+            <div class="form-group col-md-1">
+                <button type="submit" class="btn btn-primary">Filter</button>
+            </div>
+        </div>
+    </form>
+
+    <div class="col-1 my-2">
+        <a href="{{ url_for('routes.schedules_add_page' , id=animal_id) }}" class="btn btn-success ">Add</a>
+    </div>
+</div>
+
+<table class="table table-hover table-dark table-striped">
+    <thead>
+        <tr>
+            <th scope="col">Date</th>
+            <th scope="col">Start</th>
+            <th scope="col">End</th>
+            <th scope="col">State</th>
+            <th scope="col">Volunteer</th>
+            <th scope="col">Options</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for schedule in schedules %}
+            <tr>
+                <td>{{ schedule.date.strftime('%d.%m.%Y') }}</td>
+                <td>{{ schedule.start_time }}</td>
+                <td>{{ schedule.end_time }}</td>
+                <td>{{ schedule.state }}</td>
+                <td>
+                    {% if schedule.volunteer %}
+                        {{ schedule.volunteer.first_name }} {{ schedule.volunteer.last_name }} ({{ schedule.volunteer.login }})
+                    {% else %}
+                        <span class="text-muted">N/A</span>
+                    {% endif %}
+                </td>
+                <td class="row mr-1">
+                    <div class="col">
+                        <a href="{{ url_for('routes.schedules_edit_page', id=schedule.id) }}" class="btn btn-info btn-md" >Edit</a>
+                    </div>
+
+                    <div class="col">
+                        <form method="post">
+                            <input type="hidden" name="schedule_id" value="{{schedule.id}}">
+                            <button class="btn btn-danger btn-outline"
+                                    type="submit"
+                                    name="delete"
+                                    value="True"
+                            >
+                                Delete
+                            </button>
+                        </form>
+                    </div>
+
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}
