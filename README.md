@@ -12,7 +12,7 @@ The system supports several user roles with different permissions:
 *   Manages all users in the system.
 *   Creates accounts for caretakers and veterinarians.
 
-#### Caretaker ดูแล
+#### Caretaker
 *   Manages animals and their records (history, health status).
 *   Creates schedules for walks.
 *   Verifies volunteers.
