@@ -32,7 +32,8 @@ The system supports several user roles with different permissions:
 
 ## Application Showcase
 
-<img src="img/showcase.mp4" alt="Showcase Video">
+https://github.com/user-attachments/assets/681d6669-1b12-4413-9067-c0214b96a1c2
+
 
 ## Tech Stack
 *   **Back End:** Flask (Python)
@@ -74,8 +75,8 @@ The system supports several user roles with different permissions:
 
 #### Step 1: Clone the repository
 ```bash
-git clone https://github.com/YOUR_USERNAME/project-name.git
-cd project-name
+git clone https://github.com/xmi74/IIS.git
+cd IIS
 ```
 
 #### Step 2: Create a virtual environment
