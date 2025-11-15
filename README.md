@@ -2,8 +2,6 @@
 
 This is a simple information system for managing abandoned animals in a shelter, with features for volunteers to borrow them for walks.
 
-![showcase (1)](https://github.com/user-attachments/assets/30847c79-4023-439e-a27b-ce319659832a)
-
 This project was created as part of the Information Systems (IIS) course at the Brno University of Technology.
 
 ## Features
@@ -33,9 +31,7 @@ The system supports several user roles with different permissions:
 *   Browses information about the shelter and the animals available for adoption or walks.
 
 ## Application Showcase
-
-https://github.com/user-attachments/assets/681d6669-1b12-4413-9067-c0214b96a1c2
-
+![showcase (1)](https://github.com/user-attachments/assets/30847c79-4023-439e-a27b-ce319659832a)
 
 ## Tech Stack
 *   **Back End:** Flask (Python)
@@ -71,7 +67,7 @@ https://github.com/user-attachments/assets/681d6669-1b12-4413-9067-c0214b96a1c2
 ### Authors
 *   Igor Mikula
 *   Aurel Strigáč
-*   Daniel Putis
+*   Daniel Putiš
 
 ## Getting Started
 
