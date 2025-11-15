@@ -2,6 +2,8 @@
 
 This is a simple information system for managing abandoned animals in a shelter, with features for volunteers to borrow them for walks.
 
+![showcase (1)](https://github.com/user-attachments/assets/30847c79-4023-439e-a27b-ce319659832a)
+
 This project was created as part of the Information Systems (IIS) course at the Brno University of Technology.
 
 ## Features
